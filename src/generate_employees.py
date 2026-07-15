@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 from pathlib import Path
+import math
 import random
 
 import pandas as pd
@@ -9,20 +10,23 @@ from faker import Faker
 # Find the main project folder.
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-# Folder containing our generated CSV files.
+# Folder containing generated CSV files.
 RAW_DATA_DIR = PROJECT_ROOT / "data" / "raw"
 
-# Use a fixed analysis date so results are reproducible.
+# Fixed snapshot date for reproducible analysis.
 AS_OF_DATE = date(2026, 6, 30)
 
-# Using the same seed produces the same random results each time.
+# Fixed random seed for reproducible data.
 RANDOM_SEED = 42
 
-# Begin with a small sample.
+# Continue using a small teaching sample.
 NUM_EMPLOYEES = 50
 
+# No manager should have more than this many direct reports.
+MAX_DIRECT_REPORTS = 6
 
-# Define which job roles are reasonable for each department.
+
+# Reasonable job roles for each department.
 DEPARTMENT_ROLE_MAP = {
     1: [1, 2, 3, 4, 5, 6],
     2: [6, 7, 8],
@@ -35,7 +39,7 @@ DEPARTMENT_ROLE_MAP = {
 }
 
 
-# Control the approximate percentage of employees in each department.
+# Approximate percentage of employees in each department.
 DEPARTMENT_WEIGHTS = {
     1: 0.20,
     2: 0.25,
@@ -48,7 +52,7 @@ DEPARTMENT_WEIGHTS = {
 }
 
 
-# Assign one initial manager role to each department.
+# Job role assigned to managers in each department.
 MANAGER_ROLE_BY_DEPARTMENT = {
     1: 5,
     2: 8,
@@ -61,7 +65,7 @@ MANAGER_ROLE_BY_DEPARTMENT = {
 }
 
 
-# Control the approximate percentage of employees at each location.
+# Approximate employee distribution across locations.
 LOCATION_WEIGHTS = {
     1: 0.28,
     2: 0.24,
@@ -71,12 +75,12 @@ LOCATION_WEIGHTS = {
 }
 
 
-# These roles will be classified as hourly.
+# These individual-contributor roles are hourly.
 HOURLY_ROLE_IDS = {7, 20}
 
 
 def load_reference_table(filename: str) -> pd.DataFrame:
-    """Load one of the previously generated reference tables."""
+    """Load one previously generated reference table."""
 
     path = RAW_DATA_DIR / filename
 
@@ -100,7 +104,9 @@ def random_date(
             "start_date cannot be after end_date."
         )
 
-    total_days = (end_date - start_date).days
+    total_days = (
+        end_date - start_date
+    ).days
 
     random_number_of_days = random.randint(
         0,
@@ -115,22 +121,22 @@ def random_date(
 def choose_from_weight_map(
     weight_map: dict[int, float],
 ) -> int:
-    """Select an ID using predefined probabilities."""
+    """Select one ID using predefined probabilities."""
 
     values = list(weight_map.keys())
     weights = list(weight_map.values())
 
-    selected_value = random.choices(
+    return random.choices(
         values,
         weights=weights,
         k=1,
     )[0]
 
-    return selected_value
 
-
-def choose_education(job_level: int) -> str:
-    """Choose an education level based partly on job level."""
+def choose_education(
+    job_level: int,
+) -> str:
+    """Choose education partly according to job level."""
 
     education_levels = [
         "High School",
@@ -173,11 +179,12 @@ def choose_termination(
         AS_OF_DATE - hire_date
     ).days
 
-    # Employees hired very recently will remain active.
+    # Very recent hires remain active.
     if days_since_hire < 120:
         return "Active", None, None
 
-    # Approximately 22% of eligible employees will be terminated.
+    # Approximately 22% of eligible individual contributors
+    # will be terminated.
     if random.random() > 0.22:
         return "Active", None, None
 
@@ -203,14 +210,123 @@ def choose_termination(
     )
 
 
+def allocate_department_counts(
+    total_employees: int,
+    department_weights: dict[int, float],
+) -> dict[int, int]:
+    """
+    Allocate an exact number of employees across departments.
+
+    Every department receives at least one employee so that
+    it can have a department head.
+    """
+
+    number_of_departments = len(
+        department_weights
+    )
+
+    if total_employees < number_of_departments:
+        raise ValueError(
+            "The employee total must be at least "
+            "the number of departments."
+        )
+
+    if not math.isclose(
+        sum(department_weights.values()),
+        1.0,
+        abs_tol=0.000001,
+    ):
+        raise ValueError(
+            "Department weights must add up to 1."
+        )
+
+    # Give every department one department head first.
+    counts = {
+        department_id: 1
+        for department_id
+        in department_weights
+    }
+
+    remaining_employees = (
+        total_employees
+        - number_of_departments
+    )
+
+    exact_allocations = {
+        department_id: (
+            remaining_employees * weight
+        )
+        for department_id, weight
+        in department_weights.items()
+    }
+
+    floor_allocations = {
+        department_id: int(exact_count)
+        for department_id, exact_count
+        in exact_allocations.items()
+    }
+
+    for department_id, floor_count in (
+        floor_allocations.items()
+    ):
+        counts[department_id] += floor_count
+
+    employees_still_unassigned = (
+        remaining_employees
+        - sum(floor_allocations.values())
+    )
+
+    departments_by_remainder = sorted(
+        department_weights,
+        key=lambda department_id: (
+            exact_allocations[department_id]
+            - floor_allocations[department_id]
+        ),
+        reverse=True,
+    )
+
+    for department_id in (
+        departments_by_remainder[
+            :employees_still_unassigned
+        ]
+    ):
+        counts[department_id] += 1
+
+    return counts
+
+
+def calculate_team_manager_count(
+    department_size: int,
+) -> int:
+    """
+    Determine how many team managers a department needs.
+
+    Small departments can report directly to the department
+    head. Larger departments need team managers.
+    """
+
+    positions_below_head = (
+        department_size - 1
+    )
+
+    if positions_below_head <= MAX_DIRECT_REPORTS:
+        return 0
+
+    # Each team manager occupies one position and may supervise
+    # up to MAX_DIRECT_REPORTS individual contributors.
+    return math.ceil(
+        positions_below_head
+        / (MAX_DIRECT_REPORTS + 1)
+    )
+
+
 def create_employees(
     departments: pd.DataFrame,
     locations: pd.DataFrame,
     job_roles: pd.DataFrame,
 ) -> pd.DataFrame:
-    """Create the synthetic employee table."""
+    """Create employees with a two-level management hierarchy."""
 
-    # Reset random generators for reproducibility.
     random.seed(RANDOM_SEED)
     Faker.seed(RANDOM_SEED)
 
@@ -222,12 +338,6 @@ def create_employees(
         .tolist()
     )
 
-    valid_location_ids = sorted(
-        locations["location_id"]
-        .astype(int)
-        .tolist()
-    )
-
     job_level_by_role = (
         job_roles
         .set_index("job_role_id")["job_level"]
@@ -235,135 +345,259 @@ def create_employees(
         .to_dict()
     )
 
-    employees = []
+    department_counts = (
+        allocate_department_counts(
+            NUM_EMPLOYEES,
+            DEPARTMENT_WEIGHTS,
+        )
+    )
 
-    manager_id_by_department = {}
+    employees = []
 
     next_employee_id = 10001
 
-    # First, create one active manager for each department.
     for department_id in valid_department_ids:
-        job_role_id = (
+        department_size = (
+            department_counts[
+                department_id
+            ]
+        )
+
+        manager_role_id = (
             MANAGER_ROLE_BY_DEPARTMENT[
                 department_id
             ]
         )
 
-        location_id = random.choice(
-            valid_location_ids
-        )
+        # -------------------------------------------------
+        # Step 1: Create the department head.
+        # -------------------------------------------------
 
-        hire_date = random_date(
-            date(2021, 1, 1),
-            date(2022, 12, 31),
-        )
+        department_head_id = next_employee_id
 
-        manager_record = {
-            "employee_id": next_employee_id,
+        department_head = {
+            "employee_id": department_head_id,
             "first_name": fake.first_name(),
             "last_name": fake.last_name(),
-            "hire_date": hire_date,
+            "hire_date": random_date(
+                date(2021, 1, 1),
+                date(2022, 12, 31),
+            ),
             "termination_date": None,
             "employment_status": "Active",
             "termination_type": None,
             "department_id": department_id,
-            "location_id": location_id,
-            "job_role_id": job_role_id,
-            "manager_id": None,
-            "employment_type": (
-                "Hourly"
-                if job_role_id in HOURLY_ROLE_IDS
-                else "Salaried"
+            "location_id": choose_from_weight_map(
+                LOCATION_WEIGHTS
             ),
+            "job_role_id": manager_role_id,
+            "manager_id": None,
+            "employment_type": "Salaried",
             "birth_year": random.randint(
                 1965,
-                1998,
+                1995,
             ),
             "education_level": choose_education(
-                job_level_by_role[job_role_id]
-            ),
-        }
-
-        employees.append(manager_record)
-
-        manager_id_by_department[
-            department_id
-        ] = next_employee_id
-
-        next_employee_id += 1
-
-    # Generate the remaining employees.
-    while len(employees) < NUM_EMPLOYEES:
-        department_id = choose_from_weight_map(
-            DEPARTMENT_WEIGHTS
-        )
-
-        job_role_id = random.choice(
-            DEPARTMENT_ROLE_MAP[
-                department_id
-            ]
-        )
-
-        location_id = choose_from_weight_map(
-            LOCATION_WEIGHTS
-        )
-
-        hire_date = random_date(
-            date(2021, 1, 1),
-            AS_OF_DATE,
-        )
-
-        (
-            employment_status,
-            termination_date,
-            termination_type,
-        ) = choose_termination(hire_date)
-
-        employee_record = {
-            "employee_id": next_employee_id,
-            "first_name": fake.first_name(),
-            "last_name": fake.last_name(),
-            "hire_date": hire_date,
-            "termination_date": termination_date,
-            "employment_status": employment_status,
-            "termination_type": termination_type,
-            "department_id": department_id,
-            "location_id": location_id,
-            "job_role_id": job_role_id,
-            "manager_id": (
-                manager_id_by_department[
-                    department_id
+                job_level_by_role[
+                    manager_role_id
                 ]
             ),
-            "employment_type": (
-                "Hourly"
-                if job_role_id in HOURLY_ROLE_IDS
-                else "Salaried"
-            ),
-            "birth_year": random.randint(
-                1962,
-                2003,
-            ),
-            "education_level": choose_education(
-                job_level_by_role[job_role_id]
+            "organizational_level": (
+                "Department Head"
             ),
         }
 
-        employees.append(employee_record)
+        employees.append(department_head)
 
         next_employee_id += 1
 
-    employee_df = pd.DataFrame(employees)
+        positions_below_head = (
+            department_size - 1
+        )
 
-    employee_df["hire_date"] = pd.to_datetime(
-        employee_df["hire_date"]
+        number_of_team_managers = (
+            calculate_team_manager_count(
+                department_size
+            )
+        )
+
+        team_manager_ids = []
+
+        # -------------------------------------------------
+        # Step 2: Create team managers when necessary.
+        # -------------------------------------------------
+
+        for _ in range(
+            number_of_team_managers
+        ):
+            team_manager_id = next_employee_id
+
+            team_manager = {
+                "employee_id": team_manager_id,
+                "first_name": fake.first_name(),
+                "last_name": fake.last_name(),
+                "hire_date": random_date(
+                    date(2021, 1, 1),
+                    date(2023, 12, 31),
+                ),
+                "termination_date": None,
+                "employment_status": "Active",
+                "termination_type": None,
+                "department_id": department_id,
+                "location_id": (
+                    choose_from_weight_map(
+                        LOCATION_WEIGHTS
+                    )
+                ),
+                "job_role_id": manager_role_id,
+                "manager_id": (
+                    department_head_id
+                ),
+                "employment_type": "Salaried",
+                "birth_year": random.randint(
+                    1968,
+                    1998,
+                ),
+                "education_level": (
+                    choose_education(
+                        job_level_by_role[
+                            manager_role_id
+                        ]
+                    )
+                ),
+                "organizational_level": (
+                    "Team Manager"
+                ),
+            }
+
+            employees.append(team_manager)
+            team_manager_ids.append(
+                team_manager_id
+            )
+
+            next_employee_id += 1
+
+        number_of_individual_contributors = (
+            positions_below_head
+            - number_of_team_managers
+        )
+
+        possible_individual_roles = [
+            role_id
+            for role_id
+            in DEPARTMENT_ROLE_MAP[
+                department_id
+            ]
+            if role_id != manager_role_id
+        ]
+
+        # This fallback protects against a department that
+        # has only one available role.
+        if not possible_individual_roles:
+            possible_individual_roles = [
+                manager_role_id
+            ]
+
+        # -------------------------------------------------
+        # Step 3: Create individual contributors.
+        # -------------------------------------------------
+
+        for position_number in range(
+            number_of_individual_contributors
+        ):
+            job_role_id = random.choice(
+                possible_individual_roles
+            )
+
+            hire_date = random_date(
+                date(2021, 1, 1),
+                AS_OF_DATE,
+            )
+
+            (
+                employment_status,
+                termination_date,
+                termination_type,
+            ) = choose_termination(hire_date)
+
+            if team_manager_ids:
+                # Assign employees across team managers
+                # in a repeating pattern.
+                manager_id = team_manager_ids[
+                    position_number
+                    % len(team_manager_ids)
+                ]
+            else:
+                # In a small department, employees report
+                # directly to the department head.
+                manager_id = department_head_id
+
+            employee = {
+                "employee_id": next_employee_id,
+                "first_name": fake.first_name(),
+                "last_name": fake.last_name(),
+                "hire_date": hire_date,
+                "termination_date": (
+                    termination_date
+                ),
+                "employment_status": (
+                    employment_status
+                ),
+                "termination_type": (
+                    termination_type
+                ),
+                "department_id": department_id,
+                "location_id": (
+                    choose_from_weight_map(
+                        LOCATION_WEIGHTS
+                    )
+                ),
+                "job_role_id": job_role_id,
+                "manager_id": manager_id,
+                "employment_type": (
+                    "Hourly"
+                    if job_role_id
+                    in HOURLY_ROLE_IDS
+                    else "Salaried"
+                ),
+                "birth_year": random.randint(
+                    1962,
+                    2003,
+                ),
+                "education_level": (
+                    choose_education(
+                        job_level_by_role[
+                            job_role_id
+                        ]
+                    )
+                ),
+                "organizational_level": (
+                    "Individual Contributor"
+                ),
+            }
+
+            employees.append(employee)
+
+            next_employee_id += 1
+
+    employee_df = pd.DataFrame(
+        employees
     )
 
-    employee_df["termination_date"] = pd.to_datetime(
-        employee_df["termination_date"]
+    employee_df["hire_date"] = (
+        pd.to_datetime(
+            employee_df["hire_date"]
+        )
     )
 
-    # Int64 allows integer values together with missing values.
+    employee_df["termination_date"] = (
+        pd.to_datetime(
+            employee_df[
+                "termination_date"
+            ]
+        )
+    )
+
     employee_df["manager_id"] = (
         employee_df["manager_id"]
         .astype("Int64")
@@ -378,7 +612,11 @@ def validate_employees(
     locations: pd.DataFrame,
     job_roles: pd.DataFrame,
 ) -> None:
-    """Check whether the employee data follows our rules."""
+    """Validate employee and hierarchy rules."""
+
+    # ---------------------------------------------
+    # Primary-key checks
+    # ---------------------------------------------
 
     if employees["employee_id"].isna().any():
         raise ValueError(
@@ -386,94 +624,119 @@ def validate_employees(
             "missing values."
         )
 
-    if employees["employee_id"].duplicated().any():
+    if employees[
+        "employee_id"
+    ].duplicated().any():
         raise ValueError(
-            "employees: employee_id contains duplicates."
+            "employees: employee_id contains "
+            "duplicates."
         )
 
+    # ---------------------------------------------
+    # Foreign-key checks
+    # ---------------------------------------------
+
     valid_department_ids = set(
-        departments["department_id"].astype(int)
+        departments[
+            "department_id"
+        ].astype(int)
     )
 
     valid_location_ids = set(
-        locations["location_id"].astype(int)
+        locations[
+            "location_id"
+        ].astype(int)
     )
 
     valid_job_role_ids = set(
-        job_roles["job_role_id"].astype(int)
+        job_roles[
+            "job_role_id"
+        ].astype(int)
     )
 
     valid_employee_ids = set(
-        employees["employee_id"].astype(int)
+        employees[
+            "employee_id"
+        ].astype(int)
     )
 
     if not set(
         employees["department_id"]
     ).issubset(valid_department_ids):
         raise ValueError(
-            "employees: one or more department_id "
-            "values are invalid."
+            "employees: one or more "
+            "department IDs are invalid."
         )
 
     if not set(
         employees["location_id"]
     ).issubset(valid_location_ids):
         raise ValueError(
-            "employees: one or more location_id "
-            "values are invalid."
+            "employees: one or more "
+            "location IDs are invalid."
         )
 
     if not set(
         employees["job_role_id"]
     ).issubset(valid_job_role_ids):
         raise ValueError(
-            "employees: one or more job_role_id "
-            "values are invalid."
+            "employees: one or more "
+            "job-role IDs are invalid."
         )
 
-    manager_ids = set(
+    used_manager_ids = set(
         employees["manager_id"]
         .dropna()
         .astype(int)
     )
 
-    if not manager_ids.issubset(
+    if not used_manager_ids.issubset(
         valid_employee_ids
     ):
         raise ValueError(
-            "employees: one or more manager_id "
-            "values are invalid."
+            "employees: one or more manager IDs "
+            "are not valid employees."
         )
+
+    # ---------------------------------------------
+    # Basic employment checks
+    # ---------------------------------------------
 
     self_managed = (
         employees["manager_id"].notna()
         & (
-            employees["manager_id"].astype("Int64")
-            == employees["employee_id"].astype("Int64")
+            employees["manager_id"]
+            == employees["employee_id"]
         )
     )
 
     if self_managed.any():
         raise ValueError(
-            "employees: an employee cannot be "
-            "their own manager."
+            "employees: an employee cannot "
+            "manage themselves."
         )
 
-    invalid_role_assignment = employees.apply(
-        lambda row: int(row["job_role_id"])
-        not in DEPARTMENT_ROLE_MAP[
-            int(row["department_id"])
-        ],
-        axis=1,
+    invalid_role_assignment = (
+        employees.apply(
+            lambda row: (
+                int(row["job_role_id"])
+                not in DEPARTMENT_ROLE_MAP[
+                    int(row["department_id"])
+                ]
+            ),
+            axis=1,
+        )
     )
 
     if invalid_role_assignment.any():
         raise ValueError(
             "employees: one or more job roles "
-            "do not match their assigned department."
+            "do not match the department."
         )
 
-    as_of_timestamp = pd.Timestamp(AS_OF_DATE)
+    as_of_timestamp = pd.Timestamp(
+        AS_OF_DATE
+    )
 
     if (
         employees["hire_date"]
@@ -484,15 +747,24 @@ def validate_employees(
             "after the analysis date."
         )
 
+    active = (
+        employees["employment_status"]
+        == "Active"
+    )
+
     terminated = (
         employees["employment_status"]
         == "Terminated"
     )
 
-    active = (
-        employees["employment_status"]
-        == "Active"
-    )
+    if employees.loc[
+        active,
+        "termination_date",
+    ].notna().any():
+        raise ValueError(
+            "employees: an active employee "
+            "has a termination date."
+        )
 
     if employees.loc[
         terminated,
@@ -512,43 +784,221 @@ def validate_employees(
             "is missing a termination type."
         )
 
-    if employees.loc[
-        active,
-        "termination_date",
-    ].notna().any():
-        raise ValueError(
-            "employees: an active employee "
-            "has a termination date."
-        )
-
-    if employees.loc[
-        active,
-        "termination_type",
-    ].notna().any():
-        raise ValueError(
-            "employees: an active employee "
-            "has a termination type."
-        )
-
     invalid_termination_dates = (
         terminated
         & (
-            employees["termination_date"]
+            employees[
+                "termination_date"
+            ]
             < employees["hire_date"]
         )
     )
 
     if invalid_termination_dates.any():
         raise ValueError(
-            "employees: a termination date occurs "
-            "before a hire date."
+            "employees: a termination date "
+            "occurs before a hire date."
+        )
+
+    # ---------------------------------------------
+    # Organizational-level checks
+    # ---------------------------------------------
+
+    allowed_levels = {
+        "Department Head",
+        "Team Manager",
+        "Individual Contributor",
+    }
+
+    if not set(
+        employees[
+            "organizational_level"
+        ]
+    ).issubset(allowed_levels):
+        raise ValueError(
+            "employees: an organizational level "
+            "is invalid."
+        )
+
+    department_heads = employees[
+        employees[
+            "organizational_level"
+        ]
+        == "Department Head"
+    ]
+
+    if department_heads[
+        "manager_id"
+    ].notna().any():
+        raise ValueError(
+            "employees: department heads "
+            "should not have managers."
+        )
+
+    if (
+        len(department_heads)
+        != len(departments)
+    ):
+        raise ValueError(
+            "employees: every department must "
+            "have exactly one department head."
+        )
+
+    individual_contributors = employees[
+        employees[
+            "organizational_level"
+        ]
+        == "Individual Contributor"
+    ]
+
+    if individual_contributors[
+        "manager_id"
+    ].isna().any():
+        raise ValueError(
+            "employees: every individual "
+            "contributor must have a manager."
+        )
+
+    team_managers = employees[
+        employees[
+            "organizational_level"
+        ]
+        == "Team Manager"
+    ]
+
+    if team_managers[
+        "manager_id"
+    ].isna().any():
+        raise ValueError(
+            "employees: every team manager "
+            "must report to a department head."
+        )
+
+    # ---------------------------------------------
+    # Manager relationship checks
+    # ---------------------------------------------
+
+    manager_lookup = (
+        employees
+        .set_index("employee_id")
+    )
+
+    managed_employees = employees[
+        employees["manager_id"].notna()
+    ].copy()
+
+    managed_employees[
+        "manager_department_id"
+    ] = (
+        managed_employees["manager_id"]
+        .astype(int)
+        .map(
+            manager_lookup[
+                "department_id"
+            ]
+        )
+    )
+
+    if (
+        managed_employees[
+            "department_id"
+        ]
+        != managed_employees[
+            "manager_department_id"
+        ]
+    ).any():
+        raise ValueError(
+            "employees: an employee and manager "
+            "belong to different departments."
+        )
+
+    managed_employees[
+        "manager_status"
+    ] = (
+        managed_employees["manager_id"]
+        .astype(int)
+        .map(
+            manager_lookup[
+                "employment_status"
+            ]
+        )
+    )
+
+    if (
+        managed_employees[
+            "manager_status"
+        ]
+        != "Active"
+    ).any():
+        raise ValueError(
+            "employees: an employee reports "
+            "to an inactive manager."
+        )
+
+    team_manager_details = (
+        team_managers.copy()
+    )
+
+    team_manager_details[
+        "manager_level"
+    ] = (
+        team_manager_details[
+            "manager_id"
+        ]
+        .astype(int)
+        .map(
+            manager_lookup[
+                "organizational_level"
+            ]
+        )
+    )
+
+    if (
+        team_manager_details[
+            "manager_level"
+        ]
+        != "Department Head"
+    ).any():
+        raise ValueError(
+            "employees: team managers must "
+            "report to department heads."
+        )
+
+    # ---------------------------------------------
+    # Span-of-control check
+    # ---------------------------------------------
+
+    direct_report_counts = (
+        employees["manager_id"]
+        .dropna()
+        .astype(int)
+        .value_counts()
+    )
+
+    if (
+        direct_report_counts
+        > MAX_DIRECT_REPORTS
+    ).any():
+        excessive_managers = (
+            direct_report_counts[
+                direct_report_counts
+                > MAX_DIRECT_REPORTS
+            ]
+            .index
+            .tolist()
+        )
+
+        raise ValueError(
+            "employees: managers exceed the "
+            f"{MAX_DIRECT_REPORTS}-report limit. "
+            f"Manager IDs: {excessive_managers}"
         )
 
 
 def save_employees(
     employees: pd.DataFrame,
 ) -> None:
-    """Save the employee table as a CSV file."""
+    """Save the improved employee sample."""
 
     output_path = (
         RAW_DATA_DIR
@@ -571,27 +1021,48 @@ def save_employees(
 def print_summary(
     employees: pd.DataFrame,
 ) -> None:
-    """Print a simple summary of the generated table."""
+    """Print hierarchy and workforce summaries."""
 
     print("\nEmployment status:")
     print(
-        employees["employment_status"]
-        .value_counts()
+        employees[
+            "employment_status"
+        ].value_counts()
+    )
+
+    print("\nOrganizational levels:")
+    print(
+        employees[
+            "organizational_level"
+        ].value_counts()
     )
 
     print("\nEmployees by department_id:")
     print(
-        employees["department_id"]
+        employees[
+            "department_id"
+        ]
         .value_counts()
         .sort_index()
     )
 
-    print("\nFirst five employees:")
-    print(employees.head())
+    direct_report_counts = (
+        employees["manager_id"]
+        .dropna()
+        .astype(int)
+        .value_counts()
+    )
+
+    print("\nLargest number of direct reports:")
+    print(
+        int(
+            direct_report_counts.max()
+        )
+    )
 
 
 def main() -> None:
-    """Run the complete employee-generation process."""
+    """Run the improved employee-generation process."""
 
     departments = load_reference_table(
         "departments.csv"
@@ -623,7 +1094,8 @@ def main() -> None:
     print_summary(employees)
 
     print(
-        "\nEmployee sample generated successfully."
+        "\nImproved employee hierarchy "
+        "generated successfully."
     )
 
 

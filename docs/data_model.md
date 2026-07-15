@@ -122,6 +122,16 @@ Foreign keys:
 | employment_type | Salaried or hourly |
 | birth_year | Synthetic birth year |
 | education_level | Highest education level |
+| organizational_level | Department head, team manager, or individual contributor |
+
+### Employee hierarchy rules
+
+- Every department must have exactly one department head.
+- Department heads do not have a manager in the current simplified model.
+- Team managers must report to department heads.
+- Individual contributors must report to a valid active manager.
+- Employees and their managers must belong to the same department.
+- No manager may exceed the defined direct-report limit.
 
 ### candidates
 
