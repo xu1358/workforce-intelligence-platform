@@ -122,16 +122,19 @@ Foreign keys:
 | employment_type | Salaried or hourly |
 | birth_year | Synthetic birth year |
 | education_level | Highest education level |
-| organizational_level | Department head, team manager, or individual contributor |
+| organizational_level | Department head, senior manager, team manager, or individual contributor |
 
 ### Employee hierarchy rules
 
 - Every department must have exactly one department head.
 - Department heads do not have a manager in the current simplified model.
-- Team managers must report to department heads.
-- Individual contributors must report to a valid active manager.
+- Senior managers must report to department heads.
+- Team managers must report to senior managers or department heads.
+- Individual contributors must report to team managers or department heads.
 - Employees and their managers must belong to the same department.
-- No manager may exceed the defined direct-report limit.
+- All referenced managers must be active.
+- Department heads may have no more than 20 direct reports.
+- Senior managers and team managers may have no more than 12 direct reports.
 
 ### candidates
 
