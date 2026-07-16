@@ -206,10 +206,21 @@ Foreign key:
 | compensation_id | Unique compensation record |
 | employee_id | Employee |
 | effective_date | Date the compensation became effective |
-| base_salary | Annual base salary |
-| bonus_target | Target bonus percentage |
-| equity_value | Estimated annual equity value |
+| base_salary | Annualized base pay in USD |
+| bonus_target | Target bonus percentage; 10.0 means 10% |
+| equity_value | Estimated annual equity value in USD |
 | change_reason | Hire, promotion, annual review, or adjustment |
+
+### Compensation history rules
+
+- Every employee must have exactly one hire compensation record.
+- The hire compensation date must match the employee's hire date.
+- Compensation records cannot occur before hire or after employment ends.
+- Compensation records for one employee must use unique effective dates.
+- Base salary cannot decrease in the current synthetic model.
+- Base salary must remain within the allowed job-role salary range.
+- Bonus target is stored as a percentage, where 10.0 means 10%.
+- Base salary is annualized for both salaried and hourly employees.
 
 ### performance_reviews
 
