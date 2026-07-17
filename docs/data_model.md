@@ -317,13 +317,30 @@ Foreign key:
 
 | Column | Description |
 |---|---|
-| event_id | Unique event identifier |
-| employee_id | Employee affected |
-| event_date | Event date |
-| event_type | Promotion, transfer, manager change, leave, or termination |
-| old_value | Previous value |
-| new_value | New value |
-| notes | Optional event explanation |
+| event_id | Unique employee-event identifier |
+| employee_id | Employee affected by the event |
+| event_date | Date the event occurred |
+| event_type | Hire, promotion, transfer, manager change, leave, or termination |
+| old_value | Value before the event; blank for hire events |
+| new_value | Value after the event |
+| notes | Explanation of the event and value type |
+
+### Employee event rules
+
+- Event IDs must be complete and unique.
+- Employee IDs must reference valid employee records.
+- Events cannot occur before hire or after employment ends.
+- Employee, event-date, and event-type combinations must be unique.
+- Every employee must have exactly one hire event.
+- Hire-event dates must match employee hire dates.
+- Terminated employees must have exactly one termination event.
+- Active employees cannot have termination events.
+- Termination-event dates must match employee termination dates.
+- Promotion events must agree with promotion records in compensation history.
+- Transfer events use old and new location IDs.
+- Manager-change events use old and new manager IDs.
+- Managers referenced in manager-change events must be valid active employees in the appropriate department and management level.
+- Each leave period contains one leave-start event and one return event.
 
 ## 5. Main relationships
 
