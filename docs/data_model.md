@@ -233,14 +233,29 @@ Foreign keys:
 
 | Column | Description |
 |---|---|
-| review_id | Unique review identifier |
+| review_id | Unique performance-review identifier |
 | employee_id | Employee being reviewed |
-| review_date | Review date |
-| review_period | Period evaluated |
-| performance_rating | Numeric rating |
-| goal_completion | Percentage of goals completed |
+| review_date | Date the review was completed |
+| review_period | Annual review label such as 2025 Annual |
+| performance_rating | Rating from 1.0 to 5.0 |
+| goal_completion | Goal-completion percentage from 0 to 120 |
 | promotion_recommended | Whether promotion was recommended |
-| reviewer_id | Employee who completed the review |
+| reviewer_id | Current manager who completed the review |
+
+### Performance review rules
+
+- Review IDs must be complete and unique.
+- Employees and reviewers must reference valid employee records.
+- Employees cannot review themselves.
+- Reviewers must be active department heads, senior managers, or team managers.
+- Employees and reviewers must belong to the same department.
+- The reviewer must match the employee's current manager in the present synthetic model.
+- Reviews cannot occur before hire or after employment ends.
+- Reviews occur only after at least one complete year of employment.
+- An employee can have only one review in each annual review period.
+- Performance ratings must remain between 1.0 and 5.0.
+- Goal completion must remain between 0% and 120%.
+- Department heads do not receive reviews until an executive level is added.
 
 ### training_programs
 
