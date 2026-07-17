@@ -174,15 +174,32 @@ Foreign keys:
 
 | Column | Description |
 |---|---|
-| requisition_id | Unique job opening |
+| requisition_id | Unique job-opening identifier |
 | job_role_id | Role being recruited |
 | department_id | Hiring department |
 | location_id | Hiring location |
 | open_date | Date the requisition opened |
-| close_date | Date the requisition closed |
+| close_date | Date the requisition was filled or cancelled; blank when open |
 | target_headcount | Number of employees requested |
 | recruiter_id | Employee responsible for recruiting |
 | requisition_status | Open, filled, or cancelled |
+
+### Job requisition rules
+
+- Requisition IDs must be complete, unique, and sequential.
+- Job-role, department, location, and recruiter IDs must reference valid records.
+- Target headcount must be a positive whole number.
+- Requisition status must be Open, Filled, or Cancelled.
+- Open requisitions must have blank close dates.
+- Filled and cancelled requisitions must have close dates.
+- Close dates cannot occur before open dates.
+- Requisitions cannot open or close after the analysis date.
+- Recruiters must be employed throughout their assigned requisition period.
+- Role, department, and location combinations must exist in the employee population.
+- Historical filled requisitions are grouped by role, department, location, and hiring quarter.
+- Filled requisition target headcount must agree with employee hiring counts.
+- Filled requisition target headcount must total 10,000.
+- The current dataset contains 120 open requisitions and 250 cancelled requisitions.
 
 ### applications
 
