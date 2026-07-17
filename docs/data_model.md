@@ -142,11 +142,24 @@ Primary key: `candidate_id`
 
 | Column | Description |
 |---|---|
-| candidate_id | Unique candidate identifier |
-| application_source | Recruiting source |
-| education_level | Highest education level |
-| years_experience | Previous experience |
-| candidate_location | Candidate location |
+| candidate_id | Unique recruiting-candidate identifier |
+| application_source | Channel through which the candidate entered recruiting |
+| education_level | Candidate's highest education level |
+| years_experience | Candidate's previous professional experience |
+| candidate_location | Candidate's city and state |
+
+### Candidate rules
+
+- Candidate IDs must be complete, unique, and sequential.
+- The first candidate ID is 200001.
+- The candidate table contains 40,000 records.
+- Application sources must use approved recruiting channels.
+- Education levels must agree with the workforce education categories.
+- Years of experience must be whole numbers between 0 and 30.
+- Candidate locations must use a City, State format.
+- The first 10,000 candidates are reserved for future accepted applications linked to employees.
+- Candidate IDs and employee IDs remain separate identifiers.
+- Candidates can later submit one or more applications.
 
 ### job_requisitions
 
