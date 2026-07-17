@@ -280,14 +280,32 @@ Foreign keys:
 
 | Column | Description |
 |---|---|
-| training_record_id | Unique training record |
-| employee_id | Employee |
-| program_id | Training program |
-| start_date | Training start date |
-| completion_date | Completion date |
+| training_record_id | Unique employee-training record identifier |
+| employee_id | Employee assigned to the training program |
+| program_id | Training program assigned to the employee |
+| start_date | Date the employee began the program |
+| completion_date | Date the program was completed or failed; blank when incomplete |
 | completion_status | Completed, incomplete, or failed |
-| training_hours | Completed hours |
-| score | Optional assessment score |
+| training_hours | Number of training hours recorded |
+| score | Optional assessment score from 0 to 100 |
+
+### Training record rules
+
+- Training-record IDs must be complete and unique.
+- Employee and program IDs must reference valid records.
+- An employee can have only one record for each training program in the current model.
+- Training cannot begin before hire or after employment ends.
+- Completed and failed programs must have completion dates.
+- Incomplete programs must not have completion dates.
+- Completion dates cannot occur before start dates or after employment ends.
+- Completed programs must meet or exceed the program's required hours.
+- Failed and incomplete programs must remain below the required hours.
+- Completed assessment scores must remain between 70 and 100.
+- Failed assessment scores must remain below 70.
+- Incomplete programs do not receive assessment scores.
+- Every employee must have exactly one onboarding record.
+- Managers must receive leadership training.
+- Manufacturing, supply-chain, and hourly employees must receive safety training.
 
 ### employee_events
 
