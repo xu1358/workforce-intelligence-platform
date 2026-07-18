@@ -209,19 +209,40 @@ Foreign keys:
 
 - `candidate_id` references `candidates.candidate_id`
 - `requisition_id` references `job_requisitions.requisition_id`
-- `hire_employee_id` references `employees.employee_id`
+- `employee_id` references `employees.employee_id` when the application is hired
 
 | Column | Description |
 |---|---|
-| application_id | Unique application identifier |
-| candidate_id | Candidate |
-| requisition_id | Job requisition |
-| application_date | Application date |
-| screen_date | Resume-screen date |
-| interview_date | Interview date |
-| offer_date | Offer date |
-| offer_status | Accepted, rejected, declined, or no offer |
-| hire_employee_id | Employee identifier created after hiring |
+| application_id | Unique job-application identifier |
+| candidate_id | Candidate who submitted the application |
+| requisition_id | Job requisition receiving the application |
+| application_date | Date the application was submitted |
+| application_status | Hired, rejected, withdrawn, offer declined, in process, or position cancelled |
+| interview_score | Optional interview score from 0 to 100 |
+| offer_date | Date an offer was made; blank when no offer occurred |
+| decision_date | Date the application reached its current or final outcome |
+| employee_id | Employee created from a hired application; blank for non-hired applications |
+
+### Application rules
+
+- Application IDs must be complete, unique, and sequential.
+- Candidate, requisition, and populated employee IDs must reference valid records.
+- Every candidate must have at least one application.
+- A candidate can apply to a requisition only once.
+- Applications cannot occur before the requisition opens or after it closes.
+- Final applications must have decision dates.
+- In-process applications must have blank decision dates and belong to open requisitions.
+- Hired and offer-declined applications must have offer dates.
+- Other application statuses must have blank offer dates.
+- Hired applications must belong to filled requisitions.
+- Position-cancelled applications must belong to cancelled requisitions.
+- Interview scores must remain between 0 and 100.
+- Hired applications must have interview scores of at least 75.
+- Offer-declined applications must have interview scores of at least 70.
+- Hired applications must contain employee IDs.
+- Non-hired applications must have blank employee IDs.
+- Every employee must be connected to exactly one hired application.
+- Hired application counts must match filled requisition target headcounts.
 
 ### compensation_history
 
