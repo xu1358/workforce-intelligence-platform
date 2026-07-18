@@ -73,7 +73,7 @@ EXPECTED_COLUMNS = {
         "employment_type",
         "birth_year",
         "education_level",
-        "hierarchy_level",
+        "organizational_level",
     ],
 
     "candidates": [

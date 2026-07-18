@@ -90,3 +90,30 @@ The database schema includes:
 - Indexes for frequently joined foreign-key columns
 
 At the end of Checkpoint 17, all database tables exist but contain no data. CSV data will be loaded in the next checkpoint.
+
+## Data loading
+
+The synthetic CSV files are loaded into PostgreSQL using:
+
+`python src/load_postgresql_data.py`
+
+The loading script:
+
+- Validates required CSV files and column order.
+- Removes existing database rows before reloading.
+- Loads tables in foreign-key dependency order.
+- Uses PostgreSQL `COPY` for efficient bulk loading.
+- Runs all loads inside a database transaction.
+- Rolls back the transaction if an error occurs.
+
+The loaded data can be validated with:
+
+`python src/validate_database_load.py`
+
+Validation compares the number of rows in every CSV file with the number of rows in its PostgreSQL table.
+
+Additional SQL validation queries are stored in:
+
+`sql/validate_loaded_data.sql`
+
+At the end of Checkpoint 18, all twelve PostgreSQL tables contain the generated synthetic data.

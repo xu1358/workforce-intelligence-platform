@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS employees (
     employment_type TEXT NOT NULL,
     birth_year INTEGER NOT NULL,
     education_level TEXT NOT NULL,
-    hierarchy_level TEXT NOT NULL,
+    organizational_level TEXT NOT NULL,
 
     CONSTRAINT fk_employees_department
         FOREIGN KEY (
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS employees (
 
     CONSTRAINT chk_employees_hierarchy
         CHECK (
-            hierarchy_level
+            organizational_level
             IN (
                 'Department Head',
                 'Senior Manager',
