@@ -50,3 +50,43 @@ At the end of Checkpoint 16:
 - Python can connect successfully.
 - Database credentials are stored securely in `.env`.
 - The database tables have not yet been created or loaded.
+
+## Database schema
+
+The PostgreSQL database contains twelve tables:
+
+1. `departments`
+2. `locations`
+3. `job_roles`
+4. `training_programs`
+5. `employees`
+6. `candidates`
+7. `job_requisitions`
+8. `applications`
+9. `compensation_history`
+10. `performance_reviews`
+11. `training_records`
+12. `employee_events`
+
+The schema is defined in:
+
+`sql/create_tables.sql`
+
+The schema can be created with:
+
+`python src/create_database_schema.py`
+
+The schema can be validated with:
+
+`python src/validate_database_schema.py`
+
+The database schema includes:
+
+- Primary keys
+- Foreign keys
+- Self-referencing employee-manager relationships
+- Unique constraints
+- Check constraints
+- Indexes for frequently joined foreign-key columns
+
+At the end of Checkpoint 17, all database tables exist but contain no data. CSV data will be loaded in the next checkpoint.
