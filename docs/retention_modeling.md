@@ -99,3 +99,55 @@ The validation checks:
 - Missing-value patterns
 - Numerical feature distributions
 - Categorical feature distributions
+
+## Baseline model
+
+The first attrition-classification model uses Logistic Regression.
+
+The baseline workflow includes:
+
+- Stratified 80/20 train/test split
+- Median imputation for numerical features
+- Standard scaling for numerical features
+- Most-frequent imputation for categorical features
+- One-hot encoding for categorical features
+- Balanced class weights
+- Logistic Regression classification
+
+A Dummy Classifier is also evaluated as a simple benchmark.
+
+## Evaluation metrics
+
+The baseline models are evaluated with:
+
+- Accuracy
+- Precision
+- Recall
+- F1 score
+- ROC-AUC
+- PR-AUC
+- Confusion matrix
+
+Accuracy is not used as the only evaluation measure because employee attrition may be an imbalanced classification problem.
+
+## Baseline training
+
+The model can be trained with:
+
+`python src/train_baseline_retention_model.py`
+
+The trained pipeline is saved locally as:
+
+`models/baseline_retention_model.joblib`
+
+Test-set predictions are saved locally as:
+
+`data/processed/baseline_retention_predictions.csv`
+
+The generated model and prediction files are not committed to Git.
+
+## Baseline notebook
+
+Detailed baseline-model analysis is performed in:
+
+`notebooks/13_baseline_retention_model.ipynb`
