@@ -151,3 +151,48 @@ The generated model and prediction files are not committed to Git.
 Detailed baseline-model analysis is performed in:
 
 `notebooks/13_baseline_retention_model.ipynb`
+
+## Model comparison
+
+The baseline Logistic Regression model is compared against:
+
+- Random Forest
+- Gradient Boosting
+
+All models use the same stratified training and testing split.
+
+The primary model-selection metric is PR-AUC because attrition is an imbalanced classification problem.
+
+Additional evaluation metrics include:
+
+- Accuracy
+- Precision
+- Recall
+- F1 score
+- ROC-AUC
+- True positives
+- False positives
+- True negatives
+- False negatives
+
+The model-comparison workflow can be run with:
+
+`python src/compare_retention_models.py`
+
+Model-comparison results are generated locally at:
+
+`data/processed/retention_model_comparison.csv`
+
+Selected-model test predictions are generated locally at:
+
+`data/processed/selected_retention_predictions.csv`
+
+The selected model is saved locally at:
+
+`models/selected_retention_model.joblib`
+
+Generated model and processed-data files are not committed to Git.
+
+Detailed analysis is available in:
+
+`notebooks/14_retention_model_comparison.ipynb`
