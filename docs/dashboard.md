@@ -112,3 +112,29 @@ These datasets are built with:
 `python src/build_dashboard_data.py`
 
 The generated dashboard datasets are excluded from Git.
+
+## Dashboard Screenshots
+
+### Workforce Overview
+
+![Workforce Overview](screenshots/01_overview.png)
+
+### Workforce Distribution
+
+![Workforce Distribution](screenshots/02_workforce.png)
+
+### Recruiting Intelligence
+
+![Recruiting Intelligence](screenshots/03_recruiting.png)
+
+### Retention Risk
+
+![Retention Risk](screenshots/04_retention_risk.png)
+
+### Highest-Ranked Retention Risks
+
+![Retention Risk Employee Table](screenshots/05_risk_table.png)
+
+### Model Performance
+
+![Model Performance](screenshots/06_model_performance.png)

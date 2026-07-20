@@ -337,6 +337,20 @@ Model probabilities are not calibrated and should not be interpreted as exact re
 
 ---
 
+## Dashboard Preview
+
+### Executive Workforce Overview
+
+The Overview dashboard presents high-level workforce, recruiting, and retention-risk KPIs.
+
+### Employee Retention Risk
+
+The Retention Risk dashboard provides model-based employee risk rankings and interactive department, region, and risk-segment filters.
+
+### Model Performance
+
+The Model Performance dashboard compares Logistic Regression, Random Forest, and Gradient Boosting and presents the selected model's evaluation metrics.
+
 ## Interactive Dashboard
 
 The Streamlit dashboard contains five main sections.
