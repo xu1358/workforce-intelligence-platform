@@ -196,3 +196,66 @@ Generated model and processed-data files are not committed to Git.
 Detailed analysis is available in:
 
 `notebooks/14_retention_model_comparison.ipynb`
+
+## Model interpretation
+
+The selected retention model is interpreted using model-specific feature importance.
+
+For Logistic Regression:
+
+- Coefficient magnitude represents model-effect strength.
+- Positive coefficients are associated with higher predicted attrition risk.
+- Negative coefficients are associated with lower predicted attrition risk.
+
+For tree-based models, feature importance is non-directional.
+
+Feature importance represents model associations and should not be interpreted as causal evidence.
+
+Detailed transformed-feature results are generated locally at:
+
+`data/processed/retention_feature_importance.csv`
+
+Original feature-group importance is generated locally at:
+
+`data/processed/retention_feature_group_importance.csv`
+
+## Threshold analysis
+
+Classification thresholds from 0.10 through 0.90 are evaluated.
+
+For each threshold, the analysis calculates:
+
+- Accuracy
+- Precision
+- Recall
+- F1 score
+- True positives
+- False positives
+- True negatives
+- False negatives
+
+The project threshold-selection rule first requires at least 60% recall and then selects the eligible threshold with the highest precision.
+
+This threshold-selection rule is a project assumption rather than a universal business rule.
+
+Threshold results are generated locally at:
+
+`data/processed/retention_threshold_analysis.csv`
+
+## Risk segmentation
+
+Test-set employees are grouped by relative predicted attrition risk:
+
+- High risk: top 10% of predicted probabilities
+- Medium risk: next 20%
+- Low risk: remaining 70%
+
+Risk segments are generated locally at:
+
+`data/processed/retention_risk_segments.csv`
+
+Because model probabilities have not been calibrated, risk segments should be interpreted as relative model rankings rather than exact real-world attrition probabilities.
+
+Detailed interpretation is available in:
+
+`notebooks/15_retention_model_interpretation.ipynb`
