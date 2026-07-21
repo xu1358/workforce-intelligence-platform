@@ -466,6 +466,17 @@ Additional data-generation and validation scripts are located in `src/` and `not
 
 ---
 
+## Installation
+
+Clone the repository and create a Python virtual environment.
+
+On Windows PowerShell:
+
+```powershell
+python -m venv .venv
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+
 ## Running the Project
 
 ### 1. Activate the virtual environment

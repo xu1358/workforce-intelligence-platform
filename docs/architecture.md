@@ -592,3 +592,31 @@ Individual employee risk scores should not be used as the sole basis for employm
 ```
 
 This architecture demonstrates an end-to-end workflow spanning data engineering, relational databases, SQL analytics, machine learning, and interactive business intelligence.
+
+## 18. Reproducibility
+
+Python dependencies are documented in:
+
+`requirements.txt`
+
+Database environment variables are documented using:
+
+`.env.example`
+
+The real `.env` file is excluded from version control.
+
+Generated datasets under:
+
+- `data/raw/`
+- `data/interim/`
+- `data/processed/`
+
+are excluded from Git.
+
+Trained model artifacts under:
+
+`models/`
+
+are also excluded from Git.
+
+The repository therefore stores the source code and configuration templates required to reproduce the pipeline while avoiding private credentials and generated artifacts.
