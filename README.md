@@ -558,6 +558,13 @@ The dashboard will normally be available locally at:
 http://localhost:8501
 ```
 
+## End-to-End Validation
+
+The complete project pipeline can be validated with:
+
+```powershell
+.\scripts\run_end_to_end.ps1
+
 ---
 
 ## Project Documentation
