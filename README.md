@@ -170,6 +170,16 @@ The data represents six fictional source systems:
 6. Employee Event System
 
 ---
+## Portfolio Highlights
+
+- Generated approximately 10,000 employees and 40,000 candidates across six synthetic HR source systems.
+- Designed and populated a 12-table PostgreSQL relational database.
+- Built automated data-generation, database-loading, modeling, dashboard, and validation pipelines.
+- Developed SQL analytics for workforce, turnover, recruiting, compensation, performance, and training.
+- Compared Logistic Regression, Random Forest, and Gradient Boosting for employee attrition classification.
+- Achieved 71.2% recall, 0.6968 ROC-AUC, and 0.1709 PR-AUC with the selected Logistic Regression model.
+- Created Low-, Medium-, and High-Risk groups with increasing observed attrition rates.
+- Built an interactive five-section Streamlit dashboard with workforce, recruiting, retention-risk, and model-performance views.
 
 ## Data Engineering Pipeline
 
