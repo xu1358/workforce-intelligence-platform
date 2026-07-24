@@ -43,7 +43,7 @@ Average annual headcount is estimated as:
 
 `(Starting headcount + Ending headcount) / 2`
 
-The current employee table stores each employee's organizational assignment and does not fully reconstruct historical department assignments for every date. Department-level historical turnover should therefore be interpreted as a synthetic analytical estimate.
+Version 1 does not generate department transfers: all 10,000 employees retain their hire department, so current-department and event-time department attribution are identical by construction. Transfer events represent location changes, not department changes. Department-level turnover remains a synthetic analytical estimate because its underlying termination rates are generated. Historical location analysis should reconstruct event-time location when relevant. See [Historical Assignment Attribution Analysis](department_history_bias.md).
 
 ## Current-record methodology
 
