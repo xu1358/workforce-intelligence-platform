@@ -1,0 +1,59 @@
+version: "1.0"
+source: "Checkpoint 32 generator audit and Checkpoint 33 EDA"
+as_of_date: "2026-06-30"
+
+workforce:
+  total_employees: 10000
+  terminated_employees: 1713
+  cumulative_attrition_rate: 0.1713
+  voluntary_terminations: 1299
+  involuntary_terminations: 414
+  individual_contributors: 9158
+  permanently_active_leaders: 842
+
+modeling_snapshot:
+  snapshot_date: "2025-06-30"
+  prediction_end_date: "2026-06-30"
+  eligible_employees: 7386
+  positive_cases: 627
+  positive_rate: 0.084890
+
+organizational_levels:
+  Department Head:
+    headcount: 8
+    terminations: 0
+  Senior Manager:
+    headcount: 68
+    terminations: 0
+  Team Manager:
+    headcount: 766
+    terminations: 0
+  Individual Contributor:
+    headcount: 9158
+    terminations: 1713
+
+departments:
+  Engineering:
+    headcount: 2000
+    terminations: 305
+  Manufacturing:
+    headcount: 2499
+    terminations: 528
+  Supply Chain:
+    headcount: 1200
+    terminations: 185
+  Sales:
+    headcount: 1000
+    terminations: 153
+  Finance:
+    headcount: 800
+    terminations: 122
+  Human Resources:
+    headcount: 701
+    terminations: 101
+  Information Technology:
+    headcount: 1000
+    terminations: 164
+  Customer Support:
+    headcount: 800
+    terminations: 155

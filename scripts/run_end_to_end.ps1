@@ -132,6 +132,10 @@ if (-not $SkipDataGeneration) {
         "src\generate_attrition_outcomes.py"
 
     Invoke-PythonScript `
+        "Validate Version 2 attrition data" `
+        "src\validate_v2_attrition_data.py"
+
+    Invoke-PythonScript `
         "Generate candidates" `
         "src\generate_candidates.py"
 

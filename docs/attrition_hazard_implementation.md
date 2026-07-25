@@ -119,15 +119,16 @@ All random draws use the configured seed. Repeated full data-generation
 runs produce identical raw tables, attrition outcomes, and monthly
 diagnostics.
 
-The expected Checkpoint 36 reference run produces:
+After the Checkpoint 37 calibration review, the current reference run
+produces:
 
 - 10,000 simulated employees
-- 2,637 cumulative terminations
-- 26.37% cumulative termination rate across all hire cohorts
-- 74.10% voluntary share
-- 297 team-manager exits
-- 2,053 manager reassignments
-- 728 positive outcomes in the 2025-06-30 twelve-month modeling window
+- 2,591 cumulative terminations
+- 25.91% cumulative termination rate across all hire cohorts
+- 71.17% voluntary share
+- 276 team-manager exits
+- 1,913 manager reassignments
+- 803 positive outcomes in the 2025-06-30 twelve-month modeling window
 
-Checkpoint 37 will compare these relationships with Version 1 and
-decide whether any coefficients require recalibration before modeling.
+Checkpoint 37 compares these relationships with Version 1 and records
+the calibration decision before temporal modeling begins.

@@ -22,9 +22,9 @@ hierarchy:
   maximum_other_manager_reports: 12
 
 baseline_probabilities:
-  stay_active: 0.9913
-  voluntary_exit: 0.0065
-  involuntary_exit: 0.0022
+  stay_active: 0.9928
+  voluntary_exit: 0.0054
+  involuntary_exit: 0.0018
 
 calibration_targets:
   annual_attrition_rate:
@@ -59,13 +59,13 @@ probability_limits:
   maximum_combined_probability: 0.0500
 
 latent_effects:
-  shared_employee_frailty_sd: 0.25
-  voluntary_employee_frailty_sd: 0.20
-  involuntary_employee_frailty_sd: 0.15
-  shared_monthly_noise_sd: 0.10
-  department_period_effect_sd: 0.10
-  location_period_effect_sd: 0.06
-  organization_period_shock_sd: 0.08
+  shared_employee_frailty_sd: 0.10
+  voluntary_employee_frailty_sd: 0.06
+  involuntary_employee_frailty_sd: 0.06
+  shared_monthly_noise_sd: 0.05
+  department_period_effect_sd: 0.06
+  location_period_effect_sd: 0.03
+  organization_period_shock_sd: 0.04
 
 tenure_effects:
   onboarding_protection:
@@ -99,8 +99,8 @@ features:
       minimum: -2.5
       maximum: 2.5
     coefficients:
-      voluntary: -0.05
-      involuntary: -0.65
+      voluntary: -0.22
+      involuntary: -1.00
 
   performance_trend:
     description: "Change in performance across available prior reviews."
@@ -111,8 +111,8 @@ features:
       minimum: -2.5
       maximum: 2.5
     coefficients:
-      voluntary: -0.12
-      involuntary: -0.30
+      voluntary: -0.35
+      involuntary: -0.70
 
   no_prior_review:
     description: "One when no performance review exists before the month."
@@ -131,8 +131,8 @@ features:
       minimum: -2.5
       maximum: 2.5
     coefficients:
-      voluntary: -0.28
-      involuntary: -0.05
+      voluntary: -0.75
+      involuntary: -0.12
 
   trailing_compensation_growth:
     description: "Compensation growth during the prior 12 months."
@@ -143,8 +143,8 @@ features:
       minimum: -2.5
       maximum: 2.5
     coefficients:
-      voluntary: -0.20
-      involuntary: -0.05
+      voluntary: -0.55
+      involuntary: -0.12
 
   months_since_promotion:
     description: >-
@@ -157,15 +157,15 @@ features:
       minimum: -2.0
       maximum: 2.5
     coefficients:
-      voluntary: 0.16
-      involuntary: 0.03
+      voluntary: 0.43
+      involuntary: 0.08
 
   no_prior_promotion:
     description: "One when no promotion has occurred before the month."
     transform:
       type: "binary"
     coefficients:
-      voluntary: 0.08
+      voluntary: 0.18
       involuntary: 0.00
 
   completed_training_hours:
@@ -177,8 +177,8 @@ features:
       minimum: -2.0
       maximum: 2.5
     coefficients:
-      voluntary: -0.10
-      involuntary: -0.04
+      voluntary: -0.28
+      involuntary: -0.10
 
   failed_training_count:
     description: "Failed training records during the prior 12 months."
@@ -186,8 +186,8 @@ features:
       type: "capped_count"
       maximum: 2
     coefficients:
-      voluntary: 0.05
-      involuntary: 0.20
+      voluntary: 0.15
+      involuntary: 0.55
 
   manager_changes:
     description: "Manager changes during the prior 12 months."
@@ -195,16 +195,16 @@ features:
       type: "capped_count"
       maximum: 2
     coefficients:
-      voluntary: 0.15
-      involuntary: 0.05
+      voluntary: 0.38
+      involuntary: 0.12
 
   hourly_employee:
     description: "One for hourly employment and zero for salaried."
     transform:
       type: "binary"
     coefficients:
-      voluntary: 0.08
-      involuntary: 0.08
+      voluntary: 0.18
+      involuntary: 0.15
 
   job_level:
     description: "Current job level expressed on a standardized scale."
@@ -215,8 +215,8 @@ features:
       minimum: -1.5
       maximum: 2.5
     coefficients:
-      voluntary: -0.05
-      involuntary: -0.08
+      voluntary: -0.10
+      involuntary: -0.15
 
 organizational_level_effects:
   Individual Contributor:
