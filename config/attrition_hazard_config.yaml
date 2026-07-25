@@ -1,0 +1,251 @@
+version: "2.0"
+description: >-
+  Initial design parameters for the Version 2 monthly
+  competing-risks attrition simulator.
+
+random_seed: 42
+
+simulation:
+  time_step: "month"
+  as_of_date: "2026-06-30"
+  cause_model: "multinomial_logit"
+  feature_lag_months: 1
+  allow_first_month_exit: true
+  censor_at_as_of_date: true
+
+baseline_probabilities:
+  stay_active: 0.9913
+  voluntary_exit: 0.0065
+  involuntary_exit: 0.0022
+
+calibration_targets:
+  annual_attrition_rate:
+    minimum: 0.07
+    preferred: 0.10
+    maximum: 0.13
+
+  voluntary_share:
+    minimum: 0.65
+    preferred: 0.75
+    maximum: 0.80
+
+  twelve_month_positive_cases:
+    minimum: 500
+    preferred: 750
+    maximum: 1100
+
+  model_roc_auc:
+    minimum: 0.62
+    preferred: 0.68
+    maximum: 0.75
+
+  top_decile_lift:
+    minimum: 1.5
+    preferred: 2.0
+    maximum: 3.0
+
+probability_limits:
+  minimum_cause_probability: 0.0001
+  maximum_voluntary_probability: 0.0400
+  maximum_involuntary_probability: 0.0250
+  maximum_combined_probability: 0.0500
+
+latent_effects:
+  shared_employee_frailty_sd: 0.25
+  voluntary_employee_frailty_sd: 0.20
+  involuntary_employee_frailty_sd: 0.15
+  shared_monthly_noise_sd: 0.10
+  department_period_effect_sd: 0.10
+  location_period_effect_sd: 0.06
+  organization_period_shock_sd: 0.08
+
+tenure_effects:
+  onboarding_protection:
+    transform: "exp(-tenure_months / 3)"
+    voluntary_coefficient: -0.40
+    involuntary_coefficient: -0.35
+
+  early_tenure_peak:
+    transform: "exp(-((tenure_months - 18) / 12) ** 2)"
+    voluntary_coefficient: 0.12
+    involuntary_coefficient: 0.03
+
+  long_tenure_stability:
+    transform: "log1p(tenure_months) / log(73)"
+    voluntary_coefficient: -0.12
+    involuntary_coefficient: -0.08
+
+seasonality:
+  enabled: true
+  transform: "sin(2 * pi * calendar_month / 12)"
+  voluntary_amplitude: 0.05
+  involuntary_amplitude: 0.03
+
+features:
+  performance_level:
+    description: "Most recent performance rating available before the month."
+    transform:
+      type: "z_score"
+      center: 3.5
+      scale: 0.5
+      minimum: -2.5
+      maximum: 2.5
+    coefficients:
+      voluntary: -0.05
+      involuntary: -0.65
+
+  performance_trend:
+    description: "Change in performance across available prior reviews."
+    transform:
+      type: "z_score"
+      center: 0.0
+      scale: 0.25
+      minimum: -2.5
+      maximum: 2.5
+    coefficients:
+      voluntary: -0.12
+      involuntary: -0.30
+
+  no_prior_review:
+    description: "One when no performance review exists before the month."
+    transform:
+      type: "binary"
+    coefficients:
+      voluntary: 0.04
+      involuntary: 0.00
+
+  salary_position:
+    description: >-
+      Current salary relative to the median for active peers
+      in the same job family and job level.
+    transform:
+      type: "robust_z_score"
+      minimum: -2.5
+      maximum: 2.5
+    coefficients:
+      voluntary: -0.28
+      involuntary: -0.05
+
+  trailing_compensation_growth:
+    description: "Compensation growth during the prior 12 months."
+    transform:
+      type: "z_score"
+      center: 0.03
+      scale: 0.05
+      minimum: -2.5
+      maximum: 2.5
+    coefficients:
+      voluntary: -0.20
+      involuntary: -0.05
+
+  months_since_promotion:
+    description: >-
+      Months since the latest prior promotion, or months
+      since hire when no promotion has occurred.
+    transform:
+      type: "z_score"
+      center: 24
+      scale: 18
+      minimum: -2.0
+      maximum: 2.5
+    coefficients:
+      voluntary: 0.16
+      involuntary: 0.03
+
+  no_prior_promotion:
+    description: "One when no promotion has occurred before the month."
+    transform:
+      type: "binary"
+    coefficients:
+      voluntary: 0.08
+      involuntary: 0.00
+
+  completed_training_hours:
+    description: "Completed training hours during the prior 12 months."
+    transform:
+      type: "z_score"
+      center: 12
+      scale: 10
+      minimum: -2.0
+      maximum: 2.5
+    coefficients:
+      voluntary: -0.10
+      involuntary: -0.04
+
+  failed_training_count:
+    description: "Failed training records during the prior 12 months."
+    transform:
+      type: "capped_count"
+      maximum: 2
+    coefficients:
+      voluntary: 0.05
+      involuntary: 0.20
+
+  manager_changes:
+    description: "Manager changes during the prior 12 months."
+    transform:
+      type: "capped_count"
+      maximum: 2
+    coefficients:
+      voluntary: 0.15
+      involuntary: 0.05
+
+  hourly_employee:
+    description: "One for hourly employment and zero for salaried."
+    transform:
+      type: "binary"
+    coefficients:
+      voluntary: 0.08
+      involuntary: 0.08
+
+  job_level:
+    description: "Current job level expressed on a standardized scale."
+    transform:
+      type: "z_score"
+      center: 2.5
+      scale: 1.0
+      minimum: -1.5
+      maximum: 2.5
+    coefficients:
+      voluntary: -0.05
+      involuntary: -0.08
+
+organizational_level_effects:
+  Individual Contributor:
+    voluntary: 0.00
+    involuntary: 0.00
+
+  Team Manager:
+    voluntary: -0.10
+    involuntary: -0.25
+
+  Senior Manager:
+    voluntary: -0.15
+    involuntary: -0.35
+
+  Department Head:
+    voluntary: -0.15
+    involuntary: -0.40
+
+excluded_direct_predictors:
+  - "age"
+  - "gender"
+  - "race"
+  - "ethnicity"
+  - "nationality"
+  - "disability"
+  - "education_level"
+  - "leave_reason"
+  - "termination_type"
+  - "future_events"
+  - "future_performance"
+  - "future_compensation"
+
+validation_rules:
+  maximum_single_group_rate_ratio: 2.0
+  maximum_feature_target_correlation: 0.40
+  minimum_subgroup_size_for_rate_check: 100
+  require_nonzero_leadership_attrition_probability: true
+  require_no_future_information: true
+  require_reproducible_output: true
+  require_probability_calibration_check: true
