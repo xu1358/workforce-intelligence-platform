@@ -20,8 +20,13 @@ RANDOM_SEED = 42
 NUM_EMPLOYEES = 10_000
 FIRST_EMPLOYEE_ID = 100_001
 
-MAX_DEPARTMENT_HEAD_REPORTS = 20
+MAX_DEPARTMENT_HEAD_REPORTS = 30
 MAX_MANAGER_REPORTS = 12
+
+# Build spare team-manager capacity so that reports can be
+# reassigned when a team manager leaves.  The hard validation
+# limit remains MAX_MANAGER_REPORTS.
+TARGET_TEAM_MANAGER_REPORTS = 8
 
 
 # ---------------------------------------------------------
@@ -175,77 +180,6 @@ def choose_education(
 
 
 # ---------------------------------------------------------
-# Employment-status logic
-# ---------------------------------------------------------
-
-def choose_termination(
-    hire_date: date,
-    department_id: int,
-    location_id: int,
-) -> tuple[str, date | None, str | None]:
-    """Generate an employee's employment outcome."""
-
-    days_since_hire = (
-        AS_OF_DATE - hire_date
-    ).days
-
-    # Recent employees remain active.
-    if days_since_hire < 120:
-        return "Active", None, None
-
-    termination_probability = 0.18
-
-    # Manufacturing and Customer Support have
-    # slightly higher synthetic turnover.
-    if department_id in {2, 8}:
-        termination_probability += 0.06
-
-    # Reno receives a small synthetic location effect.
-    if location_id == 3:
-        termination_probability += 0.03
-
-    # Employees with less than one year of service
-    # receive a small adjustment.
-    if days_since_hire < 365:
-        termination_probability -= 0.05
-
-    termination_probability = max(
-        0.05,
-        min(termination_probability, 0.40),
-    )
-
-    if random.random() > termination_probability:
-        return "Active", None, None
-
-    earliest_termination = (
-        hire_date + timedelta(days=60)
-    )
-
-    termination_date = random_date(
-        earliest_termination,
-        AS_OF_DATE,
-    )
-
-    termination_type = random.choices(
-        [
-            "Voluntary",
-            "Involuntary",
-        ],
-        weights=[
-            0.75,
-            0.25,
-        ],
-        k=1,
-    )[0]
-
-    return (
-        "Terminated",
-        termination_date,
-        termination_type,
-    )
-
-
-# ---------------------------------------------------------
 # Department-allocation logic
 # ---------------------------------------------------------
 
@@ -389,7 +323,7 @@ def calculate_hierarchy_counts(
 
         team_manager_capacity = (
             team_manager_count
-            * MAX_MANAGER_REPORTS
+            * TARGET_TEAM_MANAGER_REPORTS
         )
 
         if (
@@ -722,16 +656,6 @@ def create_full_workforce(
                 AS_OF_DATE,
             )
 
-            (
-                employment_status,
-                termination_date,
-                termination_type,
-            ) = choose_termination(
-                hire_date,
-                department_id,
-                location_id,
-            )
-
             if team_manager_ids:
                 manager_id = (
                     team_manager_ids[
@@ -751,15 +675,11 @@ def create_full_workforce(
                 "first_name": fake.first_name(),
                 "last_name": fake.last_name(),
                 "hire_date": hire_date,
-                "termination_date": (
-                    termination_date
-                ),
-                "employment_status": (
-                    employment_status
-                ),
-                "termination_type": (
-                    termination_type
-                ),
+                # Attrition is applied later, after the
+                # potential histories have been generated.
+                "termination_date": None,
+                "employment_status": "Active",
+                "termination_type": None,
                 "department_id": department_id,
                 "location_id": location_id,
                 "job_role_id": job_role_id,

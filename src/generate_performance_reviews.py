@@ -121,9 +121,8 @@ def clamp(
 def choose_employee_baseline(
     department_id: int,
     organizational_level: str,
-    termination_type: str | None,
 ) -> float:
-    """Create a stable performance tendency for one employee."""
+    """Create an outcome-independent performance tendency."""
 
     baseline = random.gauss(
         3.45,
@@ -141,16 +140,6 @@ def choose_employee_baseline(
             organizational_level
         ]
     )
-
-    # Involuntary terminations receive a noticeable
-    # synthetic performance adjustment.
-    if termination_type == "Involuntary":
-        baseline -= 0.45
-
-    # Voluntary terminations receive only a very small
-    # adjustment because many strong performers also leave.
-    elif termination_type == "Voluntary":
-        baseline -= 0.05
 
     return clamp(
         baseline,
@@ -334,15 +323,6 @@ def create_performance_reviews(
                 ).date()
             )
 
-        if pd.isna(
-            employee.termination_type
-        ):
-            termination_type = None
-        else:
-            termination_type = str(
-                employee.termination_type
-            )
-
         employee_baseline = (
             choose_employee_baseline(
                 department_id=int(
@@ -350,9 +330,6 @@ def create_performance_reviews(
                 ),
                 organizational_level=(
                     employee.organizational_level
-                ),
-                termination_type=(
-                    termination_type
                 ),
             )
         )

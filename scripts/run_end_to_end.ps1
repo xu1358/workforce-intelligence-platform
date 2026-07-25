@@ -128,6 +128,10 @@ if (-not $SkipDataGeneration) {
         "src\generate_employee_events.py"
 
     Invoke-PythonScript `
+        "Apply attrition hazard and censor histories" `
+        "src\generate_attrition_outcomes.py"
+
+    Invoke-PythonScript `
         "Generate candidates" `
         "src\generate_candidates.py"
 

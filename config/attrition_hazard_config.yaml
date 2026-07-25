@@ -13,6 +13,14 @@ simulation:
   allow_first_month_exit: true
   censor_at_as_of_date: true
 
+hierarchy:
+  protected_levels:
+    - "Department Head"
+    - "Senior Manager"
+  reassign_reports_after_manager_exit: true
+  maximum_department_head_reports: 30
+  maximum_other_manager_reports: 12
+
 baseline_probabilities:
   stay_active: 0.9913
   voluntary_exit: 0.0065
