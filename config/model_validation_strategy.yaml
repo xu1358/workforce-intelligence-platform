@@ -1,0 +1,49 @@
+version: "2.0"
+description: >-
+  Temporal train, validation, and reserved-test assignments for the
+  Version 2 retention model. The test target is not used by this
+  checkpoint.
+
+target_column: "attrition_next_12m"
+
+primary_temporal_split:
+  train:
+    snapshot_date: "2023-06-30"
+    purpose: "Fit model parameters."
+  validation:
+    snapshot_date: "2024-06-30"
+    purpose: >-
+      Compare models, fit calibration, and select operating policies.
+  test:
+    snapshot_date: "2025-06-30"
+    purpose: "Reserved for one final evaluation after all decisions."
+
+split_order:
+  - "train"
+  - "validation"
+  - "test"
+
+reserved_test_policy:
+  target_access_in_checkpoint_40: false
+  include_target_in_assignment_file: false
+  report_test_positive_rate: false
+
+grouped_robustness:
+  enabled: true
+  method: "StratifiedGroupKFold"
+  development_splits:
+    - "train"
+    - "validation"
+  group_column: "employee_id"
+  folds: 5
+  shuffle: true
+  random_seed: 42
+
+validation:
+  minimum_rows_per_primary_split: 1000
+  minimum_development_positive_cases: 100
+  minimum_group_fold_validation_positive_cases: 100
+  maximum_group_fold_positive_rate_spread: 0.03
+  require_chronological_primary_splits: true
+  require_nonoverlapping_target_windows: true
+  require_employee_disjoint_group_folds: true

@@ -1,5 +1,6 @@
 param(
-    [switch]$SkipDataGeneration
+    [switch]$SkipDataGeneration,
+    [switch]$RunLegacyV1Outputs
 )
 
 
@@ -163,6 +164,10 @@ Invoke-PythonScript `
     "Diagnose feature redundancy and stability" `
     "src\diagnose_feature_redundancy.py"
 
+Invoke-PythonScript `
+    "Create temporal model splits" `
+    "src\create_model_splits.py"
+
 
 # ---------------------------------------------------------
 # PostgreSQL pipeline
@@ -193,40 +198,58 @@ Invoke-PythonScript `
 # Machine-learning pipeline
 # ---------------------------------------------------------
 
-Invoke-PythonScript `
-    "Build retention modeling dataset" `
-    "src\build_retention_dataset.py"
+if ($RunLegacyV1Outputs) {
 
-Invoke-PythonScript `
-    "Train baseline retention model" `
-    "src\train_baseline_retention_model.py"
+    Write-Host ""
+    Write-Host (
+        "WARNING: Running legacy Version 1 model and dashboard outputs. " +
+        "These outputs must not be used for Version 2 decisions."
+    )
 
-Invoke-PythonScript `
-    "Compare retention models" `
-    "src\compare_retention_models.py"
+    Invoke-PythonScript `
+        "Build legacy retention modeling dataset" `
+        "src\build_retention_dataset.py"
 
-Invoke-PythonScript `
-    "Analyze selected retention model" `
-    "src\analyze_retention_model.py"
+    Invoke-PythonScript `
+        "Train legacy baseline retention model" `
+        "src\train_baseline_retention_model.py"
+
+    Invoke-PythonScript `
+        "Compare legacy retention models" `
+        "src\compare_retention_models.py"
+
+    Invoke-PythonScript `
+        "Analyze legacy selected retention model" `
+        "src\analyze_retention_model.py"
 
 
-# ---------------------------------------------------------
-# Dashboard pipeline
-# ---------------------------------------------------------
+    # -----------------------------------------------------
+    # Dashboard pipeline
+    # -----------------------------------------------------
 
-Invoke-PythonScript `
-    "Build dashboard data layer" `
-    "src\build_dashboard_data.py"
+    Invoke-PythonScript `
+        "Build legacy dashboard data layer" `
+        "src\build_dashboard_data.py"
 
 
-# ---------------------------------------------------------
-# Final output validation
-# ---------------------------------------------------------
+    # -----------------------------------------------------
+    # Legacy final output validation
+    # -----------------------------------------------------
 
-Invoke-PythonScript `
-    "Validate final project outputs" `
-    "src\validate_project_outputs.py"
+    Invoke-PythonScript `
+        "Validate legacy final project outputs" `
+        "src\validate_project_outputs.py"
+}
 
+else {
+
+    Write-Host ""
+    Write-Host "Legacy Version 1 modeling and dashboard steps were skipped."
+    Write-Host (
+        "This protects the reserved Version 2 test period from " +
+        "legacy threshold selection."
+    )
+}
 
 # ---------------------------------------------------------
 # Completion
