@@ -176,6 +176,10 @@ Invoke-PythonScript `
     "Calibrate selected retention model" `
     "src\calibrate_retention_model.py"
 
+Invoke-PythonScript `
+    "Evaluate retention ranking" `
+    "src\evaluate_retention_ranking.py"
+
 
 # ---------------------------------------------------------
 # PostgreSQL pipeline

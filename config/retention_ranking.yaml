@@ -1,0 +1,63 @@
+version: "2.0"
+description: >-
+  Validation-stage ranking analysis for the selected sigmoid-calibrated
+  Logistic Regression. The reserved 2025 test target is not accessed.
+
+selected_calibration_method: "Sigmoid"
+validation_snapshot: "2024-06-30"
+
+ranking_grid:
+  fractions:
+    - 0.01
+    - 0.025
+    - 0.05
+    - 0.10
+    - 0.15
+    - 0.20
+    - 0.25
+    - 0.30
+    - 0.40
+    - 0.50
+    - 0.75
+    - 1.00
+  reporting_fraction: 0.10
+  count_rounding: "ceiling"
+  stable_tie_breaking: true
+
+curves:
+  gains_and_lift_points: 100
+  include_precision_recall: true
+  include_roc: true
+  include_cumulative_gains: true
+  include_lift: true
+
+bootstrap:
+  iterations: 500
+  confidence_level: 0.95
+  random_seed: 42
+  method: "stratified_validation_bootstrap"
+
+confusion_matrix:
+  policy: "top_fraction_reporting_only"
+  reporting_fraction: 0.10
+  final_operating_threshold_selected: false
+
+figures:
+  format: "png"
+  dpi: 160
+  expected_files:
+    - "precision_recall_curve.png"
+    - "roc_curve.png"
+    - "cumulative_gains_curve.png"
+    - "lift_curve.png"
+    - "score_distribution.png"
+    - "top_decile_confusion_matrix.png"
+
+validation:
+  minimum_rows: 1000
+  minimum_positive_cases: 100
+  expected_grid_rows: 12
+  expected_curve_types: 4
+  probability_minimum: 0.0
+  probability_maximum: 1.0
+  metric_reconciliation_tolerance: 0.000000000001
