@@ -49,7 +49,7 @@ also reported because no single metric describes every operational use.
 |---|---:|---:|---:|---:|---:|
 | Logistic Regression | 0.1638 | 0.6211 | 0.2403 | 1.8570 | 18.60% |
 | Gradient Boosting | 0.1615 | 0.6293 | 0.2073 | 1.7548 | 17.58% |
-| Random Forest | 0.1517 | 0.6224 | 0.1719 | 1.7207 | 17.24% |
+| Random Forest | 0.1523 | 0.6233 | 0.1722 | 1.7378 | 17.41% |
 
 Logistic Regression has the highest observed PR-AUC and top-decile lift.
 Gradient Boosting has the highest observed ROC-AUC. Random Forest has the
@@ -78,7 +78,7 @@ The mean five-fold employee-grouped PR-AUC values are:
 |---|---:|
 | Logistic Regression | 0.1665 |
 | Gradient Boosting | 0.1664 |
-| Random Forest | 0.1567 |
+| Random Forest | 0.1554 |
 
 All yearly rows for one employee stay in one fold. Employee overlap
 between fitting and validation is zero in every fold.
@@ -102,7 +102,7 @@ The PR-AUC intervals are:
 |---|---:|---:|---:|
 | Logistic Regression | 0.1482 | 0.1638 | 0.1857 |
 | Gradient Boosting | 0.1483 | 0.1615 | 0.1799 |
-| Random Forest | 0.1402 | 0.1517 | 0.1674 |
+| Random Forest | 0.1409 | 0.1523 | 0.1681 |
 
 Pairwise conclusions:
 

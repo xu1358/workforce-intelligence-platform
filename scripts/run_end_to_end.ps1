@@ -172,6 +172,10 @@ Invoke-PythonScript `
     "Compare Version 2 retention models" `
     "src\compare_retention_models_v2.py"
 
+Invoke-PythonScript `
+    "Calibrate selected retention model" `
+    "src\calibrate_retention_model.py"
+
 
 # ---------------------------------------------------------
 # PostgreSQL pipeline
