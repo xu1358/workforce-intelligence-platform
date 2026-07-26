@@ -159,6 +159,10 @@ Invoke-PythonScript `
     "Build multi-snapshot temporal datasets" `
     "src\build_multi_snapshot_retention_dataset.py"
 
+Invoke-PythonScript `
+    "Diagnose feature redundancy and stability" `
+    "src\diagnose_feature_redundancy.py"
+
 
 # ---------------------------------------------------------
 # PostgreSQL pipeline

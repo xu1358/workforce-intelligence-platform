@@ -1,0 +1,167 @@
+version: "2.0"
+description: >-
+  Interpretable Version 2 feature policy selected using development
+  snapshots only. The 2025 snapshot remains untouched for later testing.
+
+target_column: "attrition_next_12m"
+
+development_snapshots:
+  - "2023-06-30"
+  - "2024-06-30"
+
+reserved_holdout_snapshot: "2025-06-30"
+
+model_population:
+  eligible_organizational_levels:
+    - "Individual Contributor"
+    - "Team Manager"
+  excluded_organizational_levels:
+    - "Department Head"
+    - "Senior Manager"
+  reason: >-
+    Department heads and senior managers are protected from termination
+    by the Version 2 hierarchy design. Including structurally impossible
+    outcomes would create an artificial low-risk model signal.
+
+metadata_columns:
+  - "employee_id"
+  - "dataset_type"
+  - "snapshot_sequence"
+  - "snapshot_date"
+  - "prediction_end_date"
+
+numerical_features:
+  - "approx_age"
+  - "tenure_years"
+  - "salary_growth_12m_percent"
+  - "salary_position_percent"
+  - "days_since_compensation_change"
+  - "performance_rating"
+  - "performance_trend"
+  - "no_prior_review"
+  - "completed_training_hours_12m"
+  - "failed_training_programs_12m"
+  - "prior_transfer_events"
+  - "manager_changes_12m"
+  - "leaves_12m"
+  - "months_since_promotion"
+  - "no_prior_promotion"
+
+categorical_features:
+  - "education_level"
+  - "organizational_level"
+  - "department_name"
+  - "city"
+  - "job_level"
+  - "promotion_recommended"
+
+reference_categories:
+  education_level:
+    - "Bachelor's"
+    - "Associate"
+    - "Doctorate"
+    - "High School"
+    - "Master's"
+  organizational_level:
+    - "Individual Contributor"
+    - "Team Manager"
+  department_name:
+    - "Engineering"
+    - "Customer Support"
+    - "Finance"
+    - "Human Resources"
+    - "Information Technology"
+    - "Manufacturing"
+    - "Sales"
+    - "Supply Chain"
+  city:
+    - "Austin"
+    - "Buffalo"
+    - "Fremont"
+    - "Phoenix"
+    - "Reno"
+  job_level:
+    - "2"
+    - "1"
+    - "3"
+    - "4"
+  promotion_recommended:
+    - "False"
+    - "True"
+
+dropped_features:
+  employment_type: >-
+    Exactly determined by job level in the Version 2 generator; retain
+    job level as the more informative representation.
+  department_group: >-
+    Determined by department name; retain the more detailed department.
+  region: >-
+    Determined by city; retain city and use one geographic representation.
+  location_type: >-
+    Determined by city; retain city and avoid duplicate location encoding.
+  job_title: >-
+    High-cardinality role label that also determines job family and level.
+  job_family: >-
+    Structurally overlaps department in the synthetic generator and created
+    exact encoded dependencies; retain department and job level.
+  initial_base_salary: >-
+    Overlaps current pay and job level; relative pay measures are preferred.
+  base_salary: >-
+    Strong proxy for job level; salary position is the selected comparison.
+  bonus_target: >-
+    Strong compensation-package proxy for job level.
+  equity_value: >-
+    Strong compensation-package proxy for job level.
+  salary_growth_percent: >-
+    All-time growth overlaps tenure; retain trailing twelve-month growth.
+  compensation_record_count: >-
+    Mostly measures tenure and record opportunities.
+  promotion_compensation_count: >-
+    Duplicates promotion-event history.
+  goal_completion: >-
+    Strongly overlaps performance rating in the synthetic review generator.
+  days_since_review: >-
+    Equals compensation-change recency when a review is present.
+  review_count: >-
+    Mostly measures tenure and whether a review opportunity existed.
+  average_performance_rating: >-
+    Strongly overlaps the latest performance rating.
+  completed_training_programs_12m: >-
+    Strongly overlaps completed training hours; retain hours.
+  average_training_score_12m: >-
+    Missing when no completed scored training exists and adds limited
+    information beyond training hours and failures.
+  prior_promotion_events: >-
+    Promotion recency and the no-prior-promotion flag are more interpretable.
+  prior_manager_change_events: >-
+    Lifetime count overlaps tenure; retain the trailing twelve-month count.
+  prior_leave_events: >-
+    Lifetime count overlaps tenure; retain the trailing twelve-month count.
+  prior_change_events: >-
+    Sum of several event counts already represented separately.
+  promotions_12m: >-
+    Overlaps promotion recency and the no-prior-promotion flag.
+  days_since_last_change_event: >-
+    Missing for most rows and mixes different event meanings.
+
+preprocessing:
+  numerical_imputation: "median"
+  numerical_scaling: "standard"
+  categorical_imputation: "most_frequent"
+  one_hot_drop: "first"
+  promotion_missing_value: "False"
+  promotion_recency_missing_when_no_prior: true
+
+coefficient_bootstrap:
+  iterations: 200
+  random_seed: 42
+  confidence_level: 0.95
+  minimum_sign_stability: 0.90
+  logistic_c: 1.0
+  class_weight: "balanced"
+
+diagnostic_thresholds:
+  high_pairwise_correlation: 0.80
+  acceptable_maximum_vif: 5.0
+  elevated_vif: 10.0
+  acceptable_condition_number: 30.0

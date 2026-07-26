@@ -128,6 +128,12 @@ This prevents two different tasks from being mixed:
 
 The dashboard redesign in Checkpoint 48 will preserve this distinction.
 
+Checkpoint 39 adds a downstream model-eligibility rule. Department
+heads and senior managers remain in this current active file, but they
+are excluded from retention-model fitting and scoring because the
+Version 2 hierarchy protects those levels from generated termination.
+The eligible current scoring population is therefore 7,305 employees.
+
 ## Main outputs
 
 ```text
