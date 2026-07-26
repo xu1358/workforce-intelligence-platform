@@ -155,6 +155,11 @@ else {
 }
 
 
+Invoke-PythonScript `
+    "Build multi-snapshot temporal datasets" `
+    "src\build_multi_snapshot_retention_dataset.py"
+
+
 # ---------------------------------------------------------
 # PostgreSQL pipeline
 # ---------------------------------------------------------

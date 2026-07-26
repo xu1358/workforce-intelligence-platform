@@ -1,0 +1,30 @@
+version: "2.0"
+description: >-
+  Leakage-safe historical snapshots for twelve-month attrition
+  backtesting and a separate current active-workforce scoring population.
+
+historical_snapshots:
+  - sequence: 1
+    snapshot_date: "2023-06-30"
+    prediction_end_date: "2024-06-30"
+  - sequence: 2
+    snapshot_date: "2024-06-30"
+    prediction_end_date: "2025-06-30"
+  - sequence: 3
+    snapshot_date: "2025-06-30"
+    prediction_end_date: "2026-06-30"
+
+current_scoring:
+  sequence: 4
+  as_of_date: "2026-06-30"
+
+eligibility:
+  minimum_tenure_days: 0
+  require_employed_at_snapshot: true
+
+validation:
+  minimum_historical_rows_per_snapshot: 1000
+  minimum_positive_cases_per_snapshot: 100
+  minimum_positive_rate: 0.05
+  maximum_positive_rate: 0.20
+  require_consecutive_nonoverlapping_windows: true
