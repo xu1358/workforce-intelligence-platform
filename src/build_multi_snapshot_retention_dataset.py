@@ -171,6 +171,16 @@ def months_between(
     ).astype("float64")
 
 
+def maximum_timestamp(values: pd.Series) -> pd.Timestamp | None:
+    """Return the maximum timestamp, or None when no date exists."""
+
+    maximum = values.max()
+    if pd.isna(maximum):
+        return None
+
+    return pd.Timestamp(maximum)
+
+
 def reconstruct_location_ids(
     eligible: pd.DataFrame,
     events: pd.DataFrame,
@@ -225,7 +235,7 @@ def reconstruct_location_ids(
 def build_compensation_features(
     compensation: pd.DataFrame,
     snapshot_date: pd.Timestamp,
-) -> tuple[pd.DataFrame, pd.Timestamp | pd.NaT]:
+) -> tuple[pd.DataFrame, pd.Timestamp | None]:
     """Build compensation features using records available at snapshot."""
 
     available = compensation.loc[
@@ -299,13 +309,13 @@ def build_compensation_features(
         snapshot_date - features["latest_compensation_date"]
     ).dt.days
 
-    return features, available["effective_date"].max()
+    return features, maximum_timestamp(available["effective_date"])
 
 
 def build_performance_features(
     performance: pd.DataFrame,
     snapshot_date: pd.Timestamp,
-) -> tuple[pd.DataFrame, pd.Timestamp | pd.NaT]:
+) -> tuple[pd.DataFrame, pd.Timestamp | None]:
     """Build performance features using reviews available at snapshot."""
 
     available = performance.loc[
@@ -341,13 +351,13 @@ def build_performance_features(
     ).dt.days
     features["no_prior_review"] = 0
 
-    return features, available["review_date"].max()
+    return features, maximum_timestamp(available["review_date"])
 
 
 def build_training_features(
     training: pd.DataFrame,
     snapshot_date: pd.Timestamp,
-) -> tuple[pd.DataFrame, pd.Timestamp | pd.NaT]:
+) -> tuple[pd.DataFrame, pd.Timestamp | None]:
     """Build trailing-twelve-month completed training features."""
 
     trailing_start = snapshot_date - pd.DateOffset(years=1)
@@ -368,7 +378,7 @@ def build_training_features(
                     "average_training_score_12m",
                 ]
             ),
-            pd.NaT,
+            None,
         )
 
     available["completed_hours"] = np.where(
@@ -394,13 +404,13 @@ def build_training_features(
         average_training_score_12m=("completed_score", "mean"),
     )
 
-    return features, available["completion_date"].max()
+    return features, maximum_timestamp(available["completion_date"])
 
 
 def build_event_features(
     events: pd.DataFrame,
     snapshot_date: pd.Timestamp,
-) -> tuple[pd.DataFrame, pd.Timestamp | pd.NaT]:
+) -> tuple[pd.DataFrame, pd.Timestamp | None]:
     """Build all-time and trailing-twelve-month event features."""
 
     available = events.loc[
@@ -481,7 +491,7 @@ def build_event_features(
         features["latest_promotion_date"].isna().astype(int)
     )
 
-    return features, available["event_date"].max()
+    return features, maximum_timestamp(available["event_date"])
 
 
 def add_salary_position(snapshot: pd.DataFrame) -> pd.DataFrame:
