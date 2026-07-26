@@ -168,6 +168,10 @@ Invoke-PythonScript `
     "Create temporal model splits" `
     "src\create_model_splits.py"
 
+Invoke-PythonScript `
+    "Compare Version 2 retention models" `
+    "src\compare_retention_models_v2.py"
+
 
 # ---------------------------------------------------------
 # PostgreSQL pipeline
