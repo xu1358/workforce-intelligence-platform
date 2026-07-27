@@ -1,0 +1,33 @@
+analysis:
+  expected_as_of_date: "2026-06-30"
+  planning_horizon_months: 12
+  focus_department: "Manufacturing"
+  planning_label: "Model-based 12-month workforce-stability scenario"
+  backfill_label: "Expected residual backfill demand"
+
+population:
+  eligible_organizational_levels:
+    - "Individual Contributor"
+    - "Team Manager"
+  protected_organizational_levels:
+    - "Department Head"
+    - "Senior Manager"
+
+interpretation:
+  estimate_notice: >-
+    Expected departures and backfill demand are probability-weighted scenario
+    estimates, not exact staffing forecasts or known future outcomes.
+  intervention_notice: >-
+    Expected prevented departures assume the configured intervention success
+    probability and do not claim that any individual departure is preventable.
+  operational_notice: >-
+    Vacancy days, coverage hours, training hours, and time-to-productivity days
+    are planning units derived from the committed base cost scenario. They
+    should not be added together or interpreted as dollar amounts.
+  governance_notice: >-
+    The plan supports human review and workforce-capacity planning. Automatic
+    employment action is prohibited.
+
+validation:
+  expected_selected_employees: 700
+  numeric_tolerance: 0.000001

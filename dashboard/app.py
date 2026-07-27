@@ -64,6 +64,18 @@ DASHBOARD_FILES = {
     "metadata": (
         "dashboard_metadata.csv"
     ),
+    "stability_department": (
+        "workforce_stability_by_department.csv"
+    ),
+    "stability_role": (
+        "manufacturing_backfill_by_role.csv"
+    ),
+    "stability_summary": (
+        "manufacturing_stability_summary.csv"
+    ),
+    "stability_metadata": (
+        "workforce_stability_metadata.csv"
+    ),
 }
 
 
@@ -263,6 +275,38 @@ policy_summary_row = (
     policy_summary.iloc[0]
 )
 
+stability_department = (
+    data[
+        "stability_department"
+    ]
+)
+
+stability_role = (
+    data[
+        "stability_role"
+    ]
+)
+
+stability_summary = (
+    data[
+        "stability_summary"
+    ]
+)
+
+stability_metadata = (
+    data[
+        "stability_metadata"
+    ]
+)
+
+stability_summary_row = (
+    stability_summary.iloc[0]
+)
+
+stability_metadata_row = (
+    stability_metadata.iloc[0]
+)
+
 
 # ---------------------------------------------------------
 # Dashboard title
@@ -446,6 +490,7 @@ filtered_risk = (
 (
     overview_tab,
     workforce_tab,
+    stability_tab,
     recruiting_tab,
     retention_tab,
     model_tab,
@@ -453,6 +498,7 @@ filtered_risk = (
     [
         "Overview",
         "Workforce",
+        "Workforce Stability",
         "Recruiting",
         "Retention Risk",
         "Model Performance",
@@ -774,6 +820,259 @@ with workforce_tab:
 
     st.dataframe(
         location
+    )
+
+
+# =========================================================
+# WORKFORCE STABILITY TAB
+# =========================================================
+
+with stability_tab:
+
+    st.header(
+        "Manufacturing Workforce Stability"
+    )
+
+    st.caption(
+        f"{stability_metadata_row['planning_label']} — "
+        f"data as of {stability_metadata_row['as_of_date']}."
+    )
+
+    st.info(
+        stability_metadata_row[
+            "estimate_notice"
+        ]
+    )
+
+    (
+        stability_kpi_1,
+        stability_kpi_2,
+        stability_kpi_3,
+        stability_kpi_4,
+        stability_kpi_5,
+    ) = st.columns(
+        5
+    )
+
+    with stability_kpi_1:
+
+        st.metric(
+            "Active Manufacturing Workforce",
+            format_integer(
+                stability_summary_row[
+                    "active_workforce_employees"
+                ]
+            ),
+        )
+
+    with stability_kpi_2:
+
+        st.metric(
+            "Expected Departures",
+            f"{float(stability_summary_row['expected_departures_12m']):.1f}",
+        )
+
+    with stability_kpi_3:
+
+        st.metric(
+            "Selected for Review",
+            format_integer(
+                stability_summary_row[
+                    "selected_for_human_review"
+                ]
+            ),
+        )
+
+    with stability_kpi_4:
+
+        st.metric(
+            "Expected Prevented",
+            f"{float(stability_summary_row['expected_prevented_departures']):.1f}",
+        )
+
+    with stability_kpi_5:
+
+        st.metric(
+            "Residual Expected Backfills",
+            f"{float(stability_summary_row['residual_expected_backfills']):.1f}",
+        )
+
+    st.divider()
+
+    (
+        stability_left,
+        stability_right,
+    ) = st.columns(
+        2
+    )
+
+    with stability_left:
+
+        st.subheader(
+            "Expected Backfill Demand by Department"
+        )
+
+        backfill_chart = px.bar(
+            stability_department.sort_values(
+                "residual_expected_backfills",
+                ascending=False,
+            ),
+            x="department_name",
+            y="residual_expected_backfills",
+            color="focus_department",
+            labels={
+                "department_name": (
+                    "Department"
+                ),
+                "residual_expected_backfills": (
+                    "Expected Residual Backfills"
+                ),
+                "focus_department": (
+                    "Manufacturing Focus"
+                ),
+            },
+        )
+
+        backfill_chart.update_layout(
+            xaxis_tickangle=-35
+        )
+
+        st.plotly_chart(
+            backfill_chart,
+            width="stretch",
+        )
+
+    with stability_right:
+
+        st.subheader(
+            "Expected Net Value by Department"
+        )
+
+        net_value_chart = px.bar(
+            stability_department.sort_values(
+                "planned_net_value_usd",
+                ascending=False,
+            ),
+            x="department_name",
+            y="planned_net_value_usd",
+            color="focus_department",
+            labels={
+                "department_name": (
+                    "Department"
+                ),
+                "planned_net_value_usd": (
+                    "Expected Net Value (USD)"
+                ),
+                "focus_department": (
+                    "Manufacturing Focus"
+                ),
+            },
+        )
+
+        net_value_chart.update_layout(
+            xaxis_tickangle=-35
+        )
+
+        st.plotly_chart(
+            net_value_chart,
+            width="stretch",
+        )
+
+    st.subheader(
+        "Manufacturing Backfill Scenario by Role"
+    )
+
+    role_chart = px.bar(
+        stability_role,
+        x="job_title",
+        y="residual_expected_backfills",
+        labels={
+            "job_title": (
+                "Manufacturing Role"
+            ),
+            "residual_expected_backfills": (
+                "Expected Residual Backfills"
+            ),
+        },
+    )
+
+    role_chart.update_layout(
+        xaxis_tickangle=-20
+    )
+
+    st.plotly_chart(
+        role_chart,
+        width="stretch",
+    )
+
+    role_columns = [
+        "job_title",
+        "active_workforce_employees",
+        "expected_departures_12m",
+        "selected_for_human_review",
+        "expected_prevented_departures",
+        "residual_expected_backfills",
+        "residual_training_hours",
+        "residual_coverage_hours",
+    ]
+
+    st.dataframe(
+        stability_role[
+            role_columns
+        ]
+    )
+
+    st.subheader(
+        "Manufacturing Operational Planning Units"
+    )
+
+    (
+        unit_1,
+        unit_2,
+        unit_3,
+        unit_4,
+    ) = st.columns(
+        4
+    )
+
+    with unit_1:
+
+        st.metric(
+            "Residual Vacancy Days",
+            f"{float(stability_summary_row['residual_vacancy_days']):,.0f}",
+        )
+
+    with unit_2:
+
+        st.metric(
+            "Time-to-Productivity Days",
+            f"{float(stability_summary_row['residual_time_to_productivity_days']):,.0f}",
+        )
+
+    with unit_3:
+
+        st.metric(
+            "Replacement Training Hours",
+            f"{float(stability_summary_row['residual_training_hours']):,.0f}",
+        )
+
+    with unit_4:
+
+        st.metric(
+            "Temporary Coverage Hours",
+            f"{float(stability_summary_row['residual_coverage_hours']):,.0f}",
+        )
+
+    st.warning(
+        stability_metadata_row[
+            "operational_notice"
+        ]
+    )
+
+    st.warning(
+        stability_metadata_row[
+            "governance_notice"
+        ]
     )
 
 

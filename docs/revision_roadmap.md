@@ -45,25 +45,30 @@ The Version 2 work will follow these principles:
 ## Phase 4 — Build the Operational Decision System
 
 - **Checkpoint 45:** Define the retention cost model.
-- **Checkpoint 46:** Replace fixed thresholding with expected-value optimization.
-- **Checkpoint 47:** Build the top-700 intervention scenario.
-- **Checkpoint 48:** Separate historical evaluation from current workforce scoring in the dashboard.
-- **Checkpoint 49:** Reframe the project around manufacturing workforce stability and backfill planning.
+- **Checkpoint 46:** Replace fixed thresholding with expected-value optimization and build the top-700 intervention scenario.
+- **Checkpoint 47:** Separate historical evaluation from current workforce scoring in the dashboard.
+- **Checkpoint 48:** Reframe the project around manufacturing workforce stability and backfill planning.
+
+### Execution-number note
+
+The expected-value optimization and top-700 scenario were completed together
+in Checkpoint 46. The remaining checkpoint numbers were shifted forward by one
+so the roadmap matches the implemented Git history.
 
 ## Phase 5 — Improve Engineering and Portfolio Quality
 
-- **Checkpoint 50:** Add automated tests.
-- **Checkpoint 51:** Add code-quality tools and GitHub Actions.
-- **Checkpoint 52:** Consolidate the notebooks into a curated portfolio sequence.
-- **Checkpoint 53:** Rewrite the README around findings and operational decisions.
-- **Checkpoint 54:** Add the IBM employee-attrition external benchmark.
+- **Checkpoint 49:** Add automated tests.
+- **Checkpoint 50:** Add code-quality tools and GitHub Actions.
+- **Checkpoint 51:** Consolidate the notebooks into a curated portfolio sequence.
+- **Checkpoint 52:** Rewrite the README around findings and operational decisions.
+- **Checkpoint 53:** Add the IBM employee-attrition external benchmark.
 
 ## Optional Advanced Extensions
 
-- **Checkpoint 55:** Add SHAP analysis and explanation-stability checks.
-- **Checkpoint 56:** Add survival-analysis methods.
-- **Checkpoint 57:** Add formal budget-constrained allocation.
-- **Checkpoint 58:** Deploy a public demonstration dashboard.
+- **Checkpoint 54:** Add SHAP analysis and explanation-stability checks.
+- **Checkpoint 55:** Add survival-analysis methods.
+- **Checkpoint 56:** Add formal budget-constrained allocation.
+- **Checkpoint 57:** Deploy a public demonstration dashboard.
 
 ## Primary Version 2 Decision Question
 

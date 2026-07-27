@@ -279,6 +279,10 @@ Invoke-PythonScript `
     "Build current-state Version 2 dashboard data" `
     "src\build_dashboard_current_state.py"
 
+Invoke-PythonScript `
+    "Analyze manufacturing workforce stability" `
+    "src\analyze_workforce_stability.py"
+
 # ---------------------------------------------------------
 # Completion
 # ---------------------------------------------------------
