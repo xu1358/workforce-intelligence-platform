@@ -1,0 +1,100 @@
+version: "2.0"
+description: >-
+  Validation-stage subgroup and fairness diagnostics for the selected
+  sigmoid-calibrated Logistic Regression. The reserved 2025 test target
+  is not accessed, and the analysis does not make a binary fairness claim.
+
+selected_calibration_method: "Sigmoid"
+validation_snapshot: "2024-06-30"
+reporting_fraction: 0.10
+
+group_attributes:
+  - "age_band"
+  - "education_level"
+  - "region"
+  - "employment_type"
+  - "department_name"
+  - "job_level"
+  - "organizational_level"
+
+derived_groups:
+  age_band:
+    source_column: "approx_age"
+    bins:
+      - 0
+      - 30
+      - 40
+      - 50
+      - 60
+      - 200
+    labels:
+      - "Under 30"
+      - "30-39"
+      - "40-49"
+      - "50-59"
+      - "60+"
+    right_closed: false
+
+unavailable_attributes:
+  gender:
+    status: "not_present"
+    action: "document_only"
+    reason: >-
+      The Version 2 employee schema does not contain gender. The analysis
+      must not invent or infer a missing protected attribute.
+
+comparison_eligibility:
+  minimum_group_rows: 100
+  minimum_positive_cases: 20
+  minimum_negative_cases: 50
+  minimum_selected_rows: 10
+
+intervals:
+  method: "wilson"
+  confidence_level: 0.95
+
+attribute_exclusion_sensitivity:
+  enabled: true
+  excluded_features:
+    - "approx_age"
+    - "education_level"
+  variant_name: "Age and education excluded"
+  baseline_name: "Selected model"
+  purpose: >-
+    Diagnose whether removing direct age and education inputs materially
+    changes overall performance or subgroup disparities. This is not a
+    replacement-model selection step and cannot remove proxy information.
+
+screening_thresholds:
+  demographic_parity_difference: 0.10
+  equal_opportunity_difference: 0.10
+  false_positive_rate_difference: 0.10
+  maximum_absolute_calibration_gap: 0.05
+  note: >-
+    These are portfolio diagnostic review triggers, not legal thresholds
+    and not proof that a model is fair or unfair.
+
+interpretation_policy:
+  no_binary_fairness_verdict: true
+  no_causal_claims: true
+  synthetic_data_caveat_required: true
+  final_operating_threshold_selected: false
+  intersectional_analysis_deferred: true
+
+figures:
+  format: "png"
+  dpi: 160
+  expected_files:
+    - "selection_rate_by_group.png"
+    - "recall_by_group.png"
+    - "calibration_gap_by_group.png"
+    - "disparity_comparison.png"
+
+validation:
+  minimum_validation_rows: 1000
+  minimum_validation_positive_cases: 100
+  expected_model_variants: 2
+  expected_group_attributes: 7
+  probability_minimum: 0.0
+  probability_maximum: 1.0
+  metric_reconciliation_tolerance: 0.000000000001

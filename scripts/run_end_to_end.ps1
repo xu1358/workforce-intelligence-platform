@@ -180,6 +180,10 @@ Invoke-PythonScript `
     "Evaluate retention ranking" `
     "src\evaluate_retention_ranking.py"
 
+Invoke-PythonScript `
+    "Analyze model fairness and subgroups" `
+    "src\analyze_model_fairness.py"
+
 
 # ---------------------------------------------------------
 # PostgreSQL pipeline
