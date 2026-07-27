@@ -1,0 +1,42 @@
+dashboard:
+  expected_as_of_date: "2026-06-30"
+  probability_label: "Estimated 12-month attrition probability"
+  workforce_status_label: "Current active synthetic workforce"
+  model_status_label: "Out-of-time tested planning projection"
+  score_horizon_months: 12
+
+population:
+  eligible_organizational_levels:
+    - "Individual Contributor"
+    - "Team Manager"
+  protected_organizational_levels:
+    - "Department Head"
+    - "Senior Manager"
+
+probability_bands:
+  high_quantile: 0.90
+  medium_quantile: 0.70
+  labels:
+    high: "Highest score band"
+    medium: "Middle score band"
+    low: "Lower score band"
+
+governance:
+  human_review_required: true
+  automatic_employment_action_permitted: false
+  synthetic_data_notice: >-
+    All people and outcomes in this project are synthetic.
+  current_score_caveat: >-
+    Current scores are planning projections from a model refitted on all
+    observed historical snapshots. Outcomes after the as-of date are unknown,
+    so these rows are not a new performance test.
+  legacy_score_caveat: >-
+    Legacy Version 1 full-snapshot scores were in-sample prioritization scores
+    and are not used in this current workforce view.
+  use_notice: >-
+    Selection means human review for a supportive retention conversation.
+    Automatic employment action is prohibited.
+
+validation:
+  expected_selected_for_review: 700
+  probability_tolerance: 0.000000000001

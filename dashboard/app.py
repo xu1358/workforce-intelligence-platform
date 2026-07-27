@@ -55,6 +55,15 @@ DASHBOARD_FILES = {
     "model_summary": (
         "model_summary.csv"
     ),
+    "policy_summary": (
+        "current_policy_summary.csv"
+    ),
+    "policy_group": (
+        "current_policy_by_department.csv"
+    ),
+    "metadata": (
+        "dashboard_metadata.csv"
+    ),
 }
 
 
@@ -228,6 +237,32 @@ model_summary = (
     ]
 )
 
+policy_summary = (
+    data[
+        "policy_summary"
+    ]
+)
+
+policy_group = (
+    data[
+        "policy_group"
+    ]
+)
+
+metadata = (
+    data[
+        "metadata"
+    ]
+)
+
+metadata_row = (
+    metadata.iloc[0]
+)
+
+policy_summary_row = (
+    policy_summary.iloc[0]
+)
+
 
 # ---------------------------------------------------------
 # Dashboard title
@@ -239,10 +274,38 @@ st.title(
 )
 
 st.caption(
-    "Synthetic workforce analytics, "
-    "recruiting intelligence, and "
-    "employee retention risk analysis."
+    f"{metadata_row['workforce_status_label']} — "
+    f"data as of {metadata_row['as_of_date']}."
 )
+
+st.info(
+    f"**{metadata_row['model_status_label']}**  \n"
+    f"{metadata_row['probability_label']} for the "
+    f"{int(metadata_row['score_horizon_months'])} months "
+    "after the as-of date."
+)
+
+with st.expander(
+    "How to interpret this current workforce view",
+):
+
+    st.write(
+        metadata_row[
+            "current_score_caveat"
+        ]
+    )
+
+    st.write(
+        metadata_row[
+            "legacy_score_caveat"
+        ]
+    )
+
+    st.warning(
+        metadata_row[
+            "use_notice"
+        ]
+    )
 
 
 # ---------------------------------------------------------
@@ -255,14 +318,14 @@ st.sidebar.title(
 
 st.sidebar.caption(
     "The filters below apply to the "
-    "Retention Risk employee analysis."
+    "current active retention plan."
 )
 
 
 # Department filter
 department_options = sorted(
     risk_employees[
-        "hire_department_name"
+        "department_name"
     ]
     .dropna()
     .unique()
@@ -285,7 +348,7 @@ selected_departments = (
 # Region filter
 region_options = sorted(
     risk_employees[
-        "hire_region"
+        "region"
     ]
     .dropna()
     .unique()
@@ -305,21 +368,46 @@ selected_regions = (
 )
 
 
-# Risk segment filter
-risk_options = [
-    "High",
-    "Medium",
-    "Low",
-]
+# Probability-band filter
+band_options = (
+    risk_employees[
+        "probability_band"
+    ]
+    .dropna()
+    .drop_duplicates()
+    .tolist()
+)
 
-selected_risk_segments = (
+selected_probability_bands = (
     st.sidebar.multiselect(
-        "Risk Segment",
+        "Probability Band",
         options=(
-            risk_options
+            band_options
         ),
         default=(
-            risk_options
+            band_options
+        ),
+    )
+)
+
+# Review-status filter
+review_options = (
+    risk_employees[
+        "review_status"
+    ]
+    .dropna()
+    .drop_duplicates()
+    .tolist()
+)
+
+selected_review_statuses = (
+    st.sidebar.multiselect(
+        "Review Status",
+        options=(
+            review_options
+        ),
+        default=(
+            review_options
         ),
     )
 )
@@ -331,22 +419,20 @@ selected_risk_segments = (
 
 filtered_risk = (
     risk_employees[
-        risk_employees[
-            "hire_department_name"
-        ].isin(
+        risk_employees["department_name"].isin(
             selected_departments
         )
         &
-        risk_employees[
-            "hire_region"
-        ].isin(
+        risk_employees["region"].isin(
             selected_regions
         )
         &
-        risk_employees[
-            "risk_segment"
-        ].isin(
-            selected_risk_segments
+        risk_employees["probability_band"].isin(
+            selected_probability_bands
+        )
+        &
+        risk_employees["review_status"].isin(
+            selected_review_statuses
         )
     ]
     .copy()
@@ -437,10 +523,10 @@ with overview_tab:
     with kpi_4:
 
         st.metric(
-            "High-Risk Employees",
+            "Selected for Human Review",
             format_integer(
-                overview_row[
-                    "high_risk_employees"
+                policy_summary_row[
+                    "selected_for_human_review"
                 ]
             ),
         )
@@ -484,10 +570,10 @@ with overview_tab:
     with kpi_7:
 
         st.metric(
-            "Retention Snapshot Population",
+            "Current Eligible Population",
             format_integer(
-                overview_row[
-                    "retention_snapshot_population"
+                policy_summary_row[
+                    "eligible_employees"
                 ]
             ),
         )
@@ -552,28 +638,28 @@ with overview_tab:
     with overview_right:
 
         st.subheader(
-            "Retention Risk Population"
+            "Current Review Plan by Department"
         )
 
         risk_chart = px.bar(
-            risk_summary,
-            x="risk_segment",
-            y="employee_count",
-            category_orders={
-                "risk_segment": [
-                    "Low",
-                    "Medium",
-                    "High",
-                ]
-            },
+            policy_group.sort_values(
+                "selected_for_human_review",
+                ascending=False,
+            ),
+            x="department_name",
+            y="selected_for_human_review",
             labels={
-                "risk_segment": (
-                    "Risk Segment"
+                "department_name": (
+                    "Department"
                 ),
-                "employee_count": (
-                    "Employees"
+                "selected_for_human_review": (
+                    "Selected for Human Review"
                 ),
             },
+        )
+
+        risk_chart.update_layout(
+            xaxis_tickangle=-35
         )
 
         st.plotly_chart(
@@ -583,11 +669,9 @@ with overview_tab:
 
 
     st.info(
-        "Retention risk scores are model-based "
-        "prioritization scores generated from "
-        "synthetic workforce data. They are not "
-        "causal estimates or guaranteed departure "
-        "probabilities."
+        metadata_row[
+            "use_notice"
+        ]
     )
 
 
@@ -855,12 +939,13 @@ with recruiting_tab:
 with retention_tab:
 
     st.header(
-        "Employee Retention Risk"
+        "Current Active Retention Plan"
     )
 
     st.caption(
-        "Filters in the sidebar apply to "
-        "this section."
+        f"Only model-eligible employees active as of "
+        f"{metadata_row['as_of_date']} are shown. "
+        "Filters in the sidebar apply to this section."
     )
 
 
@@ -886,19 +971,15 @@ with retention_tab:
             .mean()
         )
 
-        high_risk_count = int(
-            (
-                filtered_risk[
-                    "risk_segment"
-                ]
-                == "High"
-            )
-            .sum()
+        selected_review_count = int(
+            filtered_risk[
+                "selected_for_human_review"
+            ].sum()
         )
 
-        average_tenure = (
+        average_net_value = (
             filtered_risk[
-                "tenure_years"
+                "predicted_net_value_usd"
             ]
             .mean()
         )
@@ -907,9 +988,9 @@ with retention_tab:
 
         average_probability = 0
 
-        high_risk_count = 0
+        selected_review_count = 0
 
-        average_tenure = 0
+        average_net_value = 0
 
 
     (
@@ -935,7 +1016,7 @@ with retention_tab:
     with retention_kpi_2:
 
         st.metric(
-            "Average Risk Score",
+            "Average Estimated Probability",
             format_decimal_percent(
                 average_probability
             ),
@@ -945,9 +1026,9 @@ with retention_tab:
     with retention_kpi_3:
 
         st.metric(
-            "High-Risk Employees",
+            "Selected for Human Review",
             format_integer(
-                high_risk_count
+                selected_review_count
             ),
         )
 
@@ -955,8 +1036,8 @@ with retention_tab:
     with retention_kpi_4:
 
         st.metric(
-            "Average Tenure",
-            f"{average_tenure:.2f} years",
+            "Average Predicted Net Value",
+            f"${average_net_value:,.0f}",
         )
 
 
@@ -964,11 +1045,11 @@ with retention_tab:
 
 
     # -----------------------------------------------------
-    # Risk distribution
+    # Review-status distribution
     # -----------------------------------------------------
 
     st.subheader(
-        "Risk Segment Distribution"
+        "Probability Bands and Review Status"
     )
 
     if (
@@ -977,16 +1058,17 @@ with retention_tab:
     ):
 
         filtered_distribution = (
-            filtered_risk[
-                "risk_segment"
-            ]
-            .value_counts()
-            .rename_axis(
-                "risk_segment"
+            filtered_risk.groupby(
+                [
+                    "probability_band",
+                    "review_status",
+                ],
+                as_index=False,
             )
-            .reset_index(
-                name=(
-                    "employee_count"
+            .agg(
+                employee_count=(
+                    "employee_id",
+                    "count",
                 )
             )
         )
@@ -994,21 +1076,19 @@ with retention_tab:
         risk_distribution_chart = (
             px.bar(
                 filtered_distribution,
-                x="risk_segment",
+                x="probability_band",
                 y="employee_count",
-                category_orders={
-                    "risk_segment": [
-                        "Low",
-                        "Medium",
-                        "High",
-                    ]
-                },
+                color="review_status",
+                barmode="stack",
                 labels={
-                    "risk_segment": (
-                        "Risk Segment"
+                    "probability_band": (
+                        "Probability Band"
                     ),
                     "employee_count": (
                         "Employees"
+                    ),
+                    "review_status": (
+                        "Review Status"
                     ),
                 },
             )
@@ -1032,7 +1112,9 @@ with retention_tab:
     # -----------------------------------------------------
 
     st.subheader(
-        "Attrition Risk Score Distribution"
+        metadata_row[
+            "probability_label"
+        ]
     )
 
     if (
@@ -1049,7 +1131,7 @@ with retention_tab:
                 nbins=30,
                 labels={
                     "attrition_probability": (
-                        "Attrition Risk Score"
+                        "Estimated Probability"
                     ),
                 },
             )
@@ -1066,21 +1148,26 @@ with retention_tab:
     # -----------------------------------------------------
 
     st.subheader(
-        "Highest-Ranked Retention Risks"
+        "Human-Review Prioritization"
     )
 
     employee_columns = [
         "employee_id",
-        "hire_department_name",
-        "hire_region",
-        "hire_job_family",
-        "hire_job_level",
+        "as_of_date",
+        "employment_status",
+        "department_name",
+        "city",
+        "region",
+        "organizational_level",
         "employment_type",
-        "tenure_years",
+        "job_level",
         "base_salary",
-        "performance_rating",
         "attrition_probability",
-        "risk_segment",
+        "probability_band",
+        "predicted_net_value_usd",
+        "expected_value_rank",
+        "selected_for_human_review",
+        "review_status",
     ]
 
 
@@ -1098,8 +1185,14 @@ with retention_tab:
             available_employee_columns
         ]
         .sort_values(
-            "attrition_probability",
-            ascending=False,
+            [
+                "selected_for_human_review",
+                "expected_value_rank",
+            ],
+            ascending=[
+                False,
+                True,
+            ],
         )
         .reset_index(
             drop=True
@@ -1113,11 +1206,8 @@ with retention_tab:
 
 
     st.warning(
-        "This project uses synthetic employees. "
-        "In a real HR system, individual risk "
-        "predictions would require appropriate "
-        "privacy, governance, fairness, and "
-        "human-review controls."
+        f"{metadata_row['synthetic_data_notice']} "
+        f"{metadata_row['use_notice']}"
     )
 
 
@@ -1128,7 +1218,7 @@ with retention_tab:
 with model_tab:
 
     st.header(
-        "Retention Model Performance"
+        "Version 2 Model Evidence"
     )
 
     summary_row = (
@@ -1141,13 +1231,12 @@ with model_tab:
     # -----------------------------------------------------
 
     st.subheader(
-        "Selected Model"
+        "Selected Model, Calibration, and Policy"
     )
 
     st.success(
-        summary_row[
-            "selected_model"
-        ]
+        f"{summary_row['selected_model']} with "
+        f"{summary_row['selected_calibration_method']} calibration"
     )
 
 
@@ -1164,81 +1253,85 @@ with model_tab:
     with model_kpi_1:
 
         st.metric(
-            "Test Recall",
-            format_decimal_percent(
-                summary_row[
-                    "test_recall"
-                ]
-            ),
+            "Final Test PR-AUC",
+            f"{float(summary_row['final_test_pr_auc']):.4f}",
         )
 
 
     with model_kpi_2:
 
         st.metric(
-            "Test Precision",
-            format_decimal_percent(
-                summary_row[
-                    "test_precision"
-                ]
-            ),
+            "Final Test ROC-AUC",
+            f"{float(summary_row['final_test_roc_auc']):.4f}",
         )
 
 
     with model_kpi_3:
 
         st.metric(
-            "ROC-AUC",
-            f"{float(summary_row['test_roc_auc']):.4f}",
+            "Final Test Brier Score",
+            f"{float(summary_row['final_test_brier_score']):.4f}",
         )
 
 
     with model_kpi_4:
 
         st.metric(
-            "PR-AUC",
-            f"{float(summary_row['test_pr_auc']):.4f}",
+            "Final Test Snapshot",
+            str(
+                summary_row[
+                    "final_test_snapshot"
+                ]
+            ),
         )
 
 
     # -----------------------------------------------------
-    # Thresholds
+    # Frozen policy
     # -----------------------------------------------------
 
     st.subheader(
-        "Decision Thresholds"
+        "Frozen Current Planning Policy"
     )
 
     (
-        threshold_1,
-        threshold_2,
-        threshold_3,
+        policy_1,
+        policy_2,
+        policy_3,
     ) = st.columns(
         3
     )
 
 
-    with threshold_1:
+    with policy_1:
 
         st.metric(
-            "Classification Threshold",
-            f"{float(summary_row['recommended_classification_threshold']):.2f}",
+            "Policy",
+            str(
+                summary_row[
+                    "selected_policy"
+                ]
+            ),
         )
 
 
-    with threshold_2:
+    with policy_2:
 
         st.metric(
-            "Medium Risk Starts",
-            f"{float(summary_row['medium_risk_threshold']):.4f}",
+            "Maximum Reviews",
+            format_integer(
+                summary_row[
+                    "maximum_employees"
+                ]
+            ),
         )
 
 
-    with threshold_3:
+    with policy_3:
 
         st.metric(
-            "High Risk Starts",
-            f"{float(summary_row['high_risk_threshold']):.4f}",
+            "Budget",
+            f"${float(summary_row['budget_usd']):,.0f}",
         )
 
 
@@ -1250,54 +1343,8 @@ with model_tab:
     # -----------------------------------------------------
 
     st.subheader(
-        "Model Comparison"
+        "Once-Only Out-of-Time Final Test"
     )
-
-    model_metric_long = (
-        model_performance
-        .melt(
-            id_vars=[
-                "model",
-            ],
-            value_vars=[
-                "roc_auc",
-                "pr_auc",
-            ],
-            var_name=(
-                "metric"
-            ),
-            value_name=(
-                "score"
-            ),
-        )
-    )
-
-
-    comparison_chart = px.bar(
-        model_metric_long,
-        x="model",
-        y="score",
-        color="metric",
-        barmode="group",
-        labels={
-            "model": (
-                "Model"
-            ),
-            "score": (
-                "Score"
-            ),
-            "metric": (
-                "Metric"
-            ),
-        },
-    )
-
-
-    st.plotly_chart(
-        comparison_chart,
-        width="stretch",
-    )
-
 
     st.dataframe(
         model_performance
@@ -1305,12 +1352,11 @@ with model_tab:
 
 
     st.info(
-        "The model was selected primarily "
-        "using PR-AUC because employee "
-        "attrition is an imbalanced "
-        "classification problem. Model "
-        "performance is measured on the "
-        "held-out test set."
+        "The displayed performance metrics come from the "
+        "reserved 2025 final test. The current 2026 workforce "
+        "has no known future outcome, so current scores are "
+        "planning projections and are not used to claim new "
+        "model performance."
     )
 
 
