@@ -1,0 +1,86 @@
+version: "2.0"
+description: >-
+  Validation-selected and once-only test evaluation of retention
+  intervention policies using the calibrated Logistic Regression and the
+  transparent Checkpoint 45 economic assumptions.
+
+model:
+  selected_base_model: "Logistic Regression"
+  selected_calibration_method: "Sigmoid"
+  validation_snapshot: "2024-06-30"
+  test_snapshot: "2025-06-30"
+  current_snapshot: "2026-06-30"
+
+reference_economic_scenario:
+  replacement_impact: "Base"
+  intervention_cost: "Standard"
+  intervention_effectiveness: "Base"
+
+candidate_policies:
+  no_intervention:
+    display_name: "No intervention"
+  fixed_threshold:
+    display_name: "Fixed 0.50 threshold"
+    probability_threshold: 0.50
+  cost_optimal_threshold:
+    display_name: "Validation cost-optimal threshold"
+    selection_basis: "maximum_validation_predicted_net_value"
+  top_fraction:
+    display_name: "Top 10% probability"
+    fraction: 0.10
+  top_count:
+    display_name: "Top 700 probability"
+    count: 700
+  budget_expected_value:
+    display_name: "Budget-constrained expected value"
+    maximum_employees: 700
+    budget_usd: 1750000
+    require_positive_expected_net_value: true
+
+policy_selection:
+  selected_policy: "budget_expected_value"
+  reason: >-
+    The selected policy directly answers the committed constrained-resource
+    question, respects the 700-employee capacity, stays within the explicit
+    budget, and prioritizes predicted expected net value rather than using an
+    arbitrary probability threshold.
+  freeze_before_test_access: true
+  prohibit_post_test_policy_changes: true
+
+final_model:
+  grouped_calibration_folds: 5
+  random_seed: 42
+  probability_clip: 0.000001
+  refit_on_train_and_validation_before_test: true
+  refit_on_all_historical_periods_for_current_scoring: true
+
+test_evaluation:
+  access_test_target_once_after_policy_freeze: true
+  bootstrap_iterations: 500
+  confidence_level: 0.95
+  random_seed: 42
+
+current_plan:
+  create_anonymized_synthetic_plan: true
+  include_employee_names: false
+  require_human_review: true
+  prohibit_automatic_employment_action: true
+
+figures:
+  format: "png"
+  dpi: 160
+  expected_files:
+    - "policy_net_value_comparison.png"
+    - "policy_capture_comparison.png"
+    - "scenario_sensitivity.png"
+
+validation:
+  expected_candidate_policies: 6
+  expected_cost_scenarios: 27
+  minimum_test_rows: 1000
+  minimum_test_positive_cases: 100
+  maximum_selected_employees: 700
+  maximum_budget_usd: 1750000
+  probability_minimum: 0.0
+  probability_maximum: 1.0
+  numeric_tolerance: 0.000001

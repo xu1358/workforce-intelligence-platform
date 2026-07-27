@@ -188,6 +188,10 @@ Invoke-PythonScript `
     "Calculate retention economics" `
     "src\calculate_retention_economics.py"
 
+Invoke-PythonScript `
+    "Optimize and evaluate retention policy" `
+    "src\optimize_retention_policy.py"
+
 
 # ---------------------------------------------------------
 # PostgreSQL pipeline
