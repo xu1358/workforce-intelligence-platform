@@ -184,6 +184,10 @@ Invoke-PythonScript `
     "Analyze model fairness and subgroups" `
     "src\analyze_model_fairness.py"
 
+Invoke-PythonScript `
+    "Calculate retention economics" `
+    "src\calculate_retention_economics.py"
+
 
 # ---------------------------------------------------------
 # PostgreSQL pipeline

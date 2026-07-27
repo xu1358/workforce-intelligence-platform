@@ -1,0 +1,93 @@
+version: "2.0"
+description: >-
+  Transparent scenario assumptions for translating one avoidable employee
+  departure into financial and operational planning units. These are
+  synthetic portfolio assumptions, not observed causal effects or company
+  accounting estimates.
+
+currency: "USD"
+
+population:
+  validation_snapshot: "2024-06-30"
+  current_snapshot: "2026-06-30"
+  eligible_organizational_levels:
+    - "Individual Contributor"
+    - "Team Manager"
+  excluded_organizational_levels:
+    - "Department Head"
+    - "Senior Manager"
+
+replacement_impact_scenarios:
+  - name: "Low"
+    salary_multiplier: 0.50
+    vacancy_days: 30
+    time_to_productivity_days: 60
+    training_hours_per_replacement: 40
+    coverage_hours_per_vacancy_day: 2
+  - name: "Base"
+    salary_multiplier: 1.00
+    vacancy_days: 60
+    time_to_productivity_days: 90
+    training_hours_per_replacement: 80
+    coverage_hours_per_vacancy_day: 3
+  - name: "High"
+    salary_multiplier: 1.50
+    vacancy_days: 90
+    time_to_productivity_days: 150
+    training_hours_per_replacement: 120
+    coverage_hours_per_vacancy_day: 4
+
+intervention_cost_scenarios:
+  - name: "Lean"
+    cost_per_employee_usd: 1000
+  - name: "Standard"
+    cost_per_employee_usd: 2500
+  - name: "Intensive"
+    cost_per_employee_usd: 5000
+
+intervention_effectiveness_scenarios:
+  - name: "Conservative"
+    success_probability: 0.10
+  - name: "Base"
+    success_probability: 0.25
+  - name: "Optimistic"
+    success_probability: 0.40
+
+reference_scenario:
+  replacement_impact: "Base"
+  intervention_cost: "Standard"
+  intervention_effectiveness: "Base"
+
+economic_definition:
+  replacement_cost_formula: >-
+    employee base salary multiplied by the replacement-impact salary
+    multiplier
+  maximum_avoidable_cost_formula: >-
+    replacement cost multiplied by intervention success probability,
+    conditional on the employee otherwise leaving
+  break_even_attrition_probability_formula: >-
+    intervention cost divided by maximum avoidable cost
+  operational_units_are_separate: true
+  note: >-
+    Vacancy days, time-to-productivity days, training hours, and coverage
+    hours are reported separately and are not added to replacement-cost
+    dollars. This avoids double counting unpriced operational effects.
+
+policy_boundary:
+  use_model_probabilities: false
+  select_operating_threshold: false
+  rank_employees: false
+  access_reserved_test_outcomes: false
+  next_checkpoint: >-
+    Checkpoint 46 will combine these assumptions with validation-stage
+    probabilities to compare expected-value intervention policies.
+
+validation:
+  expected_replacement_scenarios: 3
+  expected_intervention_cost_scenarios: 3
+  expected_effectiveness_scenarios: 3
+  expected_combined_scenarios: 27
+  minimum_salary_multiplier: 0.50
+  maximum_salary_multiplier: 1.50
+  minimum_population_rows: 1000
+  numeric_tolerance: 0.000001
