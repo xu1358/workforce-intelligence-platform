@@ -91,10 +91,26 @@ Write-Host "=================================================="
 Write-Host "Validate Python syntax"
 Write-Host "=================================================="
 
-& $Python -m compileall src dashboard
+& $Python -m compileall src dashboard tests
 
 if ($LASTEXITCODE -ne 0) {
     throw "Python syntax validation failed."
+}
+
+
+# ---------------------------------------------------------
+# Automated tests
+# ---------------------------------------------------------
+
+Write-Host ""
+Write-Host "=================================================="
+Write-Host "Run automated test suite"
+Write-Host "=================================================="
+
+& $Python -m pytest -q
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Automated test suite failed."
 }
 
 
