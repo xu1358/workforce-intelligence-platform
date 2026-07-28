@@ -78,17 +78,11 @@ def test_model_population_levels_align_across_configs(
     """Scoring, economics, and planning must use the same eligible levels."""
 
     feature_levels = set(
-        feature_policy["model_population"][
-            "eligible_organizational_levels"
-        ]
+        feature_policy["model_population"]["eligible_organizational_levels"]
     )
-    cost_levels = set(
-        cost_policy["population"]["eligible_organizational_levels"]
-    )
+    cost_levels = set(cost_policy["population"]["eligible_organizational_levels"])
     stability_levels = set(
-        stability_config["population"][
-            "eligible_organizational_levels"
-        ]
+        stability_config["population"]["eligible_organizational_levels"]
     )
 
     assert feature_levels == cost_levels == stability_levels
@@ -106,15 +100,12 @@ def test_protected_levels_align_across_configs(
     """Protected hierarchy levels must remain consistently excluded."""
 
     assert set(hazard_config["hierarchy"]["protected_levels"]) == set(
-        feature_policy["model_population"][
-            "excluded_organizational_levels"
-        ]
+        feature_policy["model_population"]["excluded_organizational_levels"]
     )
-    assert set(
-        stability_config["population"][
-            "protected_organizational_levels"
-        ]
-    ) == {"Department Head", "Senior Manager"}
+    assert set(stability_config["population"]["protected_organizational_levels"]) == {
+        "Department Head",
+        "Senior Manager",
+    }
 
 
 def test_cost_scenario_cross_product_matches_contract(
@@ -129,10 +120,7 @@ def test_cost_scenario_cross_product_matches_contract(
     )
 
     assert scenario_count == 27
-    assert (
-        scenario_count
-        == cost_policy["validation"]["expected_combined_scenarios"]
-    )
+    assert scenario_count == cost_policy["validation"]["expected_combined_scenarios"]
 
 
 def test_frozen_policy_capacity_matches_budget(
@@ -140,9 +128,7 @@ def test_frozen_policy_capacity_matches_budget(
 ) -> None:
     """The 700-person reference policy must fit its explicit budget."""
 
-    candidate = retention_policy["candidate_policies"][
-        "budget_expected_value"
-    ]
+    candidate = retention_policy["candidate_policies"]["budget_expected_value"]
 
     assert candidate["maximum_employees"] == 700
     assert candidate["budget_usd"] == 1_750_000
@@ -153,12 +139,8 @@ def test_policy_freeze_and_once_only_test_rules_are_enabled(
 ) -> None:
     """The final test cannot influence policy selection or retuning."""
 
-    assert retention_policy["policy_selection"][
-        "freeze_before_test_access"
-    ]
-    assert retention_policy["policy_selection"][
-        "prohibit_post_test_policy_changes"
-    ]
+    assert retention_policy["policy_selection"]["freeze_before_test_access"]
+    assert retention_policy["policy_selection"]["prohibit_post_test_policy_changes"]
     assert retention_policy["test_evaluation"][
         "access_test_target_once_after_policy_freeze"
     ]
@@ -171,9 +153,7 @@ def test_current_plan_requires_human_review(
     """Risk scores may support review but cannot authorize employment action."""
 
     assert retention_policy["current_plan"]["require_human_review"]
-    assert retention_policy["current_plan"][
-        "prohibit_automatic_employment_action"
-    ]
+    assert retention_policy["current_plan"]["prohibit_automatic_employment_action"]
     assert "human review" in (
         stability_config["interpretation"]["governance_notice"].lower()
     )

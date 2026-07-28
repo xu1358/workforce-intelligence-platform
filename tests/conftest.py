@@ -36,60 +36,46 @@ def project_root() -> Path:
 def hazard_config(project_root: Path) -> dict[str, Any]:
     """Load the attrition-hazard configuration."""
 
-    return load_yaml(
-        project_root / "config" / "attrition_hazard_config.yaml"
-    )
+    return load_yaml(project_root / "config" / "attrition_hazard_config.yaml")
 
 
 @pytest.fixture(scope="session")
 def temporal_config(project_root: Path) -> dict[str, Any]:
     """Load the temporal-snapshot configuration."""
 
-    return load_yaml(
-        project_root / "config" / "temporal_snapshots.yaml"
-    )
+    return load_yaml(project_root / "config" / "temporal_snapshots.yaml")
 
 
 @pytest.fixture(scope="session")
 def feature_policy(project_root: Path) -> dict[str, Any]:
     """Load the Version 2 feature policy."""
 
-    return load_yaml(
-        project_root / "config" / "retention_feature_policy.yaml"
-    )
+    return load_yaml(project_root / "config" / "retention_feature_policy.yaml")
 
 
 @pytest.fixture(scope="session")
 def split_strategy(project_root: Path) -> dict[str, Any]:
     """Load the temporal model-split strategy."""
 
-    return load_yaml(
-        project_root / "config" / "model_validation_strategy.yaml"
-    )
+    return load_yaml(project_root / "config" / "model_validation_strategy.yaml")
 
 
 @pytest.fixture(scope="session")
 def cost_policy(project_root: Path) -> dict[str, Any]:
     """Load the retention-cost assumptions."""
 
-    return load_yaml(
-        project_root / "config" / "retention_cost_assumptions.yaml"
-    )
+    return load_yaml(project_root / "config" / "retention_cost_assumptions.yaml")
 
 
 @pytest.fixture(scope="session")
 def retention_policy(project_root: Path) -> dict[str, Any]:
     """Load the frozen retention-policy configuration."""
 
-    return load_yaml(
-        project_root / "config" / "retention_policy.yaml"
-    )
+    return load_yaml(project_root / "config" / "retention_policy.yaml")
 
 
 @pytest.fixture(scope="session")
 def stability_config(project_root: Path) -> dict[str, Any]:
     """Load the workforce-stability configuration."""
 
-    return load_yaml(
-        project_root / "config" / "workforce_stability.yaml"
-    )
+    return load_yaml(project_root / "config" / "workforce_stability.yaml")

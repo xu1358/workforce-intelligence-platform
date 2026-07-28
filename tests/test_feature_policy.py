@@ -21,45 +21,26 @@ from src.retention_feature_policy import (
 def policy_dataset(policy: dict[str, Any]) -> pd.DataFrame:
     """Build a small frame that covers every configured category."""
 
-    row_count = max(
-        len(values)
-        for values in policy["reference_categories"].values()
-    )
+    row_count = max(len(values) for values in policy["reference_categories"].values())
     data: dict[str, Any] = {}
 
     for index, column in enumerate(policy["metadata_columns"]):
         data[column] = [
-            (
-                100_000 + row
-                if column == "employee_id"
-                else f"metadata-{index}-{row}"
-            )
+            (100_000 + row if column == "employee_id" else f"metadata-{index}-{row}")
             for row in range(row_count)
         ]
 
     for index, column in enumerate(policy["numerical_features"]):
-        data[column] = [
-            float(row + index + 1)
-            for row in range(row_count)
-        ]
+        data[column] = [float(row + index + 1) for row in range(row_count)]
 
     for column in policy["categorical_features"]:
         categories = policy["reference_categories"][column]
-        data[column] = [
-            categories[row % len(categories)]
-            for row in range(row_count)
-        ]
+        data[column] = [categories[row % len(categories)] for row in range(row_count)]
 
     for index, column in enumerate(policy["dropped_features"]):
-        data[column] = [
-            f"dropped-{index}-{row}"
-            for row in range(row_count)
-        ]
+        data[column] = [f"dropped-{index}-{row}" for row in range(row_count)]
 
-    data[policy["target_column"]] = [
-        row % 2
-        for row in range(row_count)
-    ]
+    data[policy["target_column"]] = [row % 2 for row in range(row_count)]
 
     return pd.DataFrame(data)
 
@@ -72,8 +53,7 @@ def test_selected_features_preserve_committed_order(
     result = selected_features(feature_policy)
 
     assert result == (
-        feature_policy["numerical_features"]
-        + feature_policy["categorical_features"]
+        feature_policy["numerical_features"] + feature_policy["categorical_features"]
     )
     assert len(result) == 21
 

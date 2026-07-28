@@ -135,12 +135,8 @@ def test_population_summary_uses_reference_multiplier(
         & summary["department_name"].eq("Engineering")
     ].iloc[0]
 
-    assert engineering_validation[
-        "reference_replacement_cost_multiplier"
-    ] == 1.0
-    assert engineering_validation[
-        "average_reference_replacement_cost_usd"
-    ] == 80_000.0
+    assert engineering_validation["reference_replacement_cost_multiplier"] == 1.0
+    assert engineering_validation["average_reference_replacement_cost_usd"] == 80_000.0
 
 
 def test_individual_economics_formula(

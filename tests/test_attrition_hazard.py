@@ -391,10 +391,7 @@ def test_cause_probabilities_are_bounded_and_sum_to_one(
 
     limits = hazard_config["probability_limits"]
     assert stay + voluntary + involuntary == pytest.approx(1.0)
-    assert (
-        voluntary + involuntary
-        <= limits["maximum_combined_probability"] + 1e-12
-    )
+    assert voluntary + involuntary <= limits["maximum_combined_probability"] + 1e-12
     assert stay >= 0.0
 
 

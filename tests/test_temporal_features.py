@@ -64,9 +64,7 @@ def test_first_before_returns_earliest_available_record() -> None:
 def test_months_between_uses_calendar_months() -> None:
     """Calendar-month recency should not depend on month length."""
 
-    earlier = pd.Series(
-        pd.to_datetime(["2024-01-31", "2023-12-01"])
-    )
+    earlier = pd.Series(pd.to_datetime(["2024-01-31", "2023-12-01"]))
 
     result = months_between(pd.Timestamp("2025-01-01"), earlier)
 
@@ -76,9 +74,7 @@ def test_months_between_uses_calendar_months() -> None:
 def test_maximum_timestamp_handles_values_and_missing() -> None:
     """Cutoff audits should distinguish a real maximum from no date."""
 
-    values = pd.Series(
-        pd.to_datetime(["2024-01-01", "2025-03-01", None])
-    )
+    values = pd.Series(pd.to_datetime(["2024-01-01", "2025-03-01", None]))
     missing = pd.Series(pd.to_datetime([None, None]))
 
     assert maximum_timestamp(values) == pd.Timestamp("2025-03-01")

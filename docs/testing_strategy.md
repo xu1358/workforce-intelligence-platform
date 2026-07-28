@@ -252,5 +252,5 @@ specified. They do not prove:
 - That future workforce behavior will match expected values exactly
 - That every possible software defect has been tested
 
-Checkpoint 50 will add code-quality tools and GitHub Actions so these tests can
-run automatically on repository changes.
+Checkpoint 50 adds Ruff code-quality checks and GitHub Actions so these tests
+run automatically on repository changes. See `docs/code_quality_and_ci.md`.

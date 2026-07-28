@@ -9,5 +9,6 @@ psycopg2-binary
 pytest>=8.0,<10.0
 python-dotenv
 PyYAML
+ruff>=0.16,<1.0
 scikit-learn
 streamlit

@@ -99,6 +99,33 @@ if ($LASTEXITCODE -ne 0) {
 
 
 # ---------------------------------------------------------
+# Code quality
+# ---------------------------------------------------------
+
+Write-Host ""
+Write-Host "=================================================="
+Write-Host "Lint Python with Ruff"
+Write-Host "=================================================="
+
+& $Python -m ruff check src dashboard tests
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Ruff lint validation failed."
+}
+
+Write-Host ""
+Write-Host "=================================================="
+Write-Host "Check automated-test formatting"
+Write-Host "=================================================="
+
+& $Python -m ruff format --check tests
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Ruff formatting validation failed."
+}
+
+
+# ---------------------------------------------------------
 # Automated tests
 # ---------------------------------------------------------
 

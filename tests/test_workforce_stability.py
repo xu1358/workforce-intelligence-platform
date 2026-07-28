@@ -167,9 +167,7 @@ def test_policy_assumptions_extract_committed_governance(
     decision = pd.DataFrame(
         [
             {
-                "selected_policy_display_name": (
-                    "Budget-constrained expected value"
-                ),
+                "selected_policy_display_name": ("Budget-constrained expected value"),
                 "policy_frozen_before_test": True,
                 "test_evaluated_once": True,
                 "maximum_employees": 700,
@@ -217,15 +215,11 @@ def test_planning_columns_match_hand_calculation() -> None:
     _, scores = current_population_and_scores()
     result = add_planning_columns(scores, planning_assumptions())
 
-    assert result["expected_departure_contribution"].sum() == pytest.approx(
-        0.70
+    assert result["expected_departure_contribution"].sum() == pytest.approx(0.70)
+    assert result["expected_prevented_departure_contribution"].sum() == pytest.approx(
+        0.10
     )
-    assert result[
-        "expected_prevented_departure_contribution"
-    ].sum() == pytest.approx(0.10)
-    assert result["residual_backfill_contribution"].sum() == pytest.approx(
-        0.60
-    )
+    assert result["residual_backfill_contribution"].sum() == pytest.approx(0.60)
     assert result["planned_intervention_spend_usd"].sum() == 2_500.0
     assert result["planned_avoided_cost_usd"].sum() == 6_000.0
     assert result["planned_net_value_usd"].sum() == 3_500.0
@@ -243,32 +237,23 @@ def test_aggregate_plan_includes_protected_headcount(
         stability_config,
     )
     enriched = add_planning_columns(eligible, planning_assumptions())
-    active = (
-        population.groupby(
-            ["department_name", "department_group"],
-            as_index=False,
-        )
-        .agg(active_workforce_employees=("employee_id", "count"))
-    )
+    active = population.groupby(
+        ["department_name", "department_group"],
+        as_index=False,
+    ).agg(active_workforce_employees=("employee_id", "count"))
     result = aggregate_plan(
         enriched,
         ["department_name", "department_group"],
         active,
     )
-    manufacturing = result.loc[
-        result["department_name"].eq("Manufacturing")
-    ].iloc[0]
+    manufacturing = result.loc[result["department_name"].eq("Manufacturing")].iloc[0]
 
     assert manufacturing["active_workforce_employees"] == 3
     assert manufacturing["model_eligible_employees"] == 2
     assert manufacturing["protected_active_employees"] == 1
     assert manufacturing["expected_departures_12m"] == pytest.approx(0.60)
-    assert manufacturing["expected_prevented_departures"] == pytest.approx(
-        0.10
-    )
-    assert manufacturing["residual_expected_backfills"] == pytest.approx(
-        0.50
-    )
+    assert manufacturing["expected_prevented_departures"] == pytest.approx(0.10)
+    assert manufacturing["residual_expected_backfills"] == pytest.approx(0.50)
 
 
 def test_build_outputs_reconciles_manufacturing_roles(

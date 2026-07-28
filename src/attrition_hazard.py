@@ -9,7 +9,6 @@ stay active, voluntary exit, or involuntary exit.
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import date
 import math
 from pathlib import Path
 import random

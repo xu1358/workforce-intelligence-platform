@@ -688,9 +688,6 @@ def main() -> None:
     voluntary_count = int(
         employees["termination_type"].eq("Voluntary").sum()
     )
-    involuntary_count = int(
-        employees["termination_type"].eq("Involuntary").sum()
-    )
     termination_count = int(terminated.sum())
     cumulative_rate = float(terminated.mean())
     voluntary_share = voluntary_count / termination_count

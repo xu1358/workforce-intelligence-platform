@@ -38,9 +38,7 @@ def split_dataset() -> pd.DataFrame:
                         if employee_id <= 55
                         else "Team Manager"
                     ),
-                    "attrition_next_12m": int(
-                        (employee_id + sequence) % 5 == 0
-                    ),
+                    "attrition_next_12m": int((employee_id + sequence) % 5 == 0),
                 }
             )
 
@@ -93,14 +91,22 @@ def test_primary_assignments_exclude_protected_levels_and_mask_test(
     )
 
     assert 999 not in set(population["employee_id"])
-    assert population.loc[
-        population["primary_split"].eq("test"),
-        "attrition_next_12m",
-    ].isna().all()
-    assert population.loc[
-        population["primary_split"].isin(["train", "validation"]),
-        "attrition_next_12m",
-    ].notna().all()
+    assert (
+        population.loc[
+            population["primary_split"].eq("test"),
+            "attrition_next_12m",
+        ]
+        .isna()
+        .all()
+    )
+    assert (
+        population.loc[
+            population["primary_split"].isin(["train", "validation"]),
+            "attrition_next_12m",
+        ]
+        .notna()
+        .all()
+    )
 
 
 def test_grouped_folds_keep_employee_histories_together(
@@ -118,15 +124,10 @@ def test_grouped_folds_keep_employee_histories_together(
         population,
         split_strategy,
     )
-    development = assigned.loc[
-        assigned["primary_split"].isin(["train", "validation"])
-    ]
+    development = assigned.loc[assigned["primary_split"].isin(["train", "validation"])]
 
     assert development["group_cv_fold"].notna().all()
-    assert (
-        development.groupby("employee_id")["group_cv_fold"].nunique().max()
-        == 1
-    )
+    assert development.groupby("employee_id")["group_cv_fold"].nunique().max() == 1
     assert summary["employee_overlap"].eq(0).all()
     assert set(summary["fold"]) == {1, 2, 3, 4, 5}
 
@@ -144,10 +145,14 @@ def test_reserved_test_has_no_group_fold(
     )
     assigned, _ = assign_grouped_folds(population, split_strategy)
 
-    assert assigned.loc[
-        assigned["primary_split"].eq("test"),
-        "group_cv_fold",
-    ].isna().all()
+    assert (
+        assigned.loc[
+            assigned["primary_split"].eq("test"),
+            "group_cv_fold",
+        ]
+        .isna()
+        .all()
+    )
 
 
 def test_primary_summary_redacts_test_outcomes(
@@ -162,9 +167,7 @@ def test_primary_summary_redacts_test_outcomes(
         feature_policy,
     )
     summary = create_primary_summary(population, split_strategy)
-    test_row = summary.loc[
-        summary["primary_split"].eq("test")
-    ].iloc[0]
+    test_row = summary.loc[summary["primary_split"].eq("test")].iloc[0]
 
     assert test_row["target_status"] == "RESERVED_NOT_ACCESSED"
     assert test_row["positive_cases"] == "RESERVED"
