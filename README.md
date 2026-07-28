@@ -56,6 +56,7 @@ pipeline.
 | Final-test policy | 17.06% capture; $2.03M outcome-aligned net value | Once-only evaluation with no post-test retuning |
 | Current planning projection | 35.0 expected prevented departures; $2.40M expected net value | Scenario projection, not an observed outcome |
 | Manufacturing plan | 229.7 expected departures; 221.3 residual backfills | Probability-weighted 12-month planning estimates |
+| Explanation stability | Minimum rank correlation 0.8857; minimum top-10 overlap 0.6667 | Aggregate model drivers remain broadly stable across grouped refits |
 
 The final-test model is better than random ranking, but it is not strong enough
 to justify automatic individual decisions. Its appropriate role is to support
@@ -72,6 +73,7 @@ The repository demonstrates a complete analytical decision system:
 - explicit feature-redundancy and multicollinearity controls;
 - temporal model development with a reserved final test;
 - employee-grouped robustness checks and bootstrap uncertainty;
+- exact aggregate linear-SHAP explanations and grouped-refit stability checks;
 - sigmoid probability calibration;
 - ranking, subgroup, fairness, and sensitivity analysis;
 - an explicit retention cost model;
@@ -171,6 +173,29 @@ After all development choices are frozen, the selected model is fitted on the
 Read the full [model comparison](docs/model_comparison_v2.md),
 [calibration analysis](docs/calibration_analysis.md), and
 [ranking analysis](docs/ranking_analysis.md).
+
+### Model explanations and stability
+
+Checkpoint 54 explains the current Logistic Regression on its native log-odds
+scale. Exact linear SHAP values are grouped from 35 encoded columns into the
+21 raw policy features and saved only as aggregate evidence.
+
+The leading current-population drivers are `salary_position_percent`,
+`tenure_years`, and `performance_rating`. Five employee-grouped diagnostic
+refits produce a minimum pairwise importance-rank correlation of 0.8857, a
+median correlation of 0.9299, and a minimum top-10 Jaccard overlap of 0.6667.
+Every globally top-10 feature keeps the same highest-probability-quartile
+direction in all five refits.
+
+These are model-score associations, not causal effects. Contributions explain
+base-model log-odds rather than calibrated probability percentage points. No
+employee-level explanation is saved, the once-only final test is not reopened,
+and the frozen top-700 policy is not changed.
+
+Read the full
+[explanation and stability methodology](docs/model_explanations_and_stability.md)
+and the executed
+[supporting notebook](notebooks/32_retention_explanation_stability.ipynb).
 
 ## External Methodological Benchmark
 
@@ -333,7 +358,8 @@ are embedded, so they can be read on GitHub without rerunning the pipeline.
 
 The original 30 checkpoint notebooks remain in `notebooks/` as detailed
 technical evidence and an audit trail. Notebook 31 separately documents the
-IBM external benchmark and is not part of the four-notebook primary narrative.
+IBM external benchmark, and Notebook 32 documents aggregate explanation
+stability. Neither is part of the four-notebook primary narrative.
 
 ## Technology Stack
 
@@ -360,7 +386,7 @@ workforce-intelligence-platform/
 ├── models/                # Generated model artifacts
 ├── notebooks/
 │   ├── portfolio/         # Four reviewer-facing executed notebooks
-│   └── 01_...31_...       # Detailed supporting and benchmark notebooks
+│   └── 01_...32_...       # Detailed supporting and extension notebooks
 ├── scripts/               # Checkpoint and end-to-end PowerShell runners
 ├── sql/                   # Schema, validation, and analytical SQL
 ├── src/                   # Generation, modeling, policy, and dashboard code
@@ -420,7 +446,8 @@ The real `.env` file is ignored by Git.
 The complete pipeline generates the synthetic data, validates Version 2,
 loads PostgreSQL, fits and evaluates the models, freezes and tests the policy,
 builds the current dashboard layer, and validates the portfolio notebooks and
-README. It also downloads, verifies, and runs the isolated IBM benchmark.
+README. It also explains the current model, checks explanation stability, and
+downloads, verifies, and runs the isolated IBM benchmark.
 
 ```powershell
 .\scripts\run_end_to_end.ps1
@@ -456,7 +483,7 @@ It performs:
 2. Ruff lint checks;
 3. test-format checks;
 4. README structure, evidence, link, and stale-claim validation; and
-5. the complete 96-test automated suite.
+5. the complete 105-test automated suite.
 
 The same compile, lint, formatting, and pytest gates run automatically in
 [GitHub Actions](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml).
@@ -469,9 +496,22 @@ Checkpoint 53 adds the external source verification and complete benchmark:
 
 It downloads only the pinned fictional IBM CSV, checks its checksum and
 schema, runs the repeated out-of-fold benchmark, saves aggregate evidence, and
-runs the complete 96-test suite. It does not connect to PostgreSQL or
+runs the complete test suite. It does not connect to PostgreSQL or
 regenerate the primary workforce. The exact workflow is committed in the
 [Checkpoint 53 runner](scripts/run_checkpoint53.ps1).
+
+Checkpoint 54 reproduces aggregate current-model explanations and grouped
+stability evidence:
+
+```powershell
+.\scripts\run_checkpoint54.ps1
+```
+
+It reconciles current calibrated scores to Checkpoint 46, calculates exact
+linear SHAP values, performs five employee-grouped stability refits, validates
+aggregate-only governance, generates three figures, and runs the complete
+105-test suite. It does not reopen the final test or alter the policy. See the
+[Checkpoint 54 runner](scripts/run_checkpoint54.ps1).
 
 ## Documentation Guide
 
@@ -492,6 +532,7 @@ regenerate the primary workforce. The exact workflow is committed in the
 | Policy | [Retention policy analysis](docs/retention_policy_analysis.md) |
 | Current dashboard | [Dashboard timeline and safety](docs/dashboard_current_state.md) |
 | Manufacturing plan | [Workforce-stability analysis](docs/manufacturing_workforce_stability.md) |
+| Model explanations | [Explanation and stability analysis](docs/model_explanations_and_stability.md) |
 | External benchmark | [IBM HR Analytics benchmark](docs/ibm_external_benchmark.md) |
 | Testing | [Testing strategy](docs/testing_strategy.md) |
 | Code quality | [Code quality and CI](docs/code_quality_and_ci.md) |
@@ -506,6 +547,8 @@ regenerate the primary workforce. The exact workflow is committed in the
 - The final model has modest discrimination and only one reserved temporal
   test period.
 - Calibration on synthetic data does not guarantee calibration elsewhere.
+- Model explanations are log-odds associations, not causal intervention
+  effects or calibrated probability changes.
 - Subgroup sample sizes and simulator structure affect fairness diagnostics.
 - Cost and effectiveness values are scenario assumptions.
 - No retention intervention was performed, so causal impact is unknown.
@@ -518,12 +561,16 @@ Checkpoint 53 keeps the IBM HR Analytics benchmark separate from the primary
 temporal model and does not convert fictional data into real employee
 evidence.
 
+Checkpoint 54 keeps aggregate explanation evidence separate from employee
+review decisions and does not interpret feature importance as causation.
+
 ## Version History
 
 - `v1.0-portfolio` preserves the completed Version 1 baseline.
 - `revision-v2` contains the temporal modeling, calibration, fairness,
   economics, policy, current-state dashboard, testing, CI, and curated
-  portfolio revisions, plus the isolated IBM methodological benchmark.
+  portfolio revisions, plus the isolated IBM methodological benchmark and
+  aggregate explanation-stability analysis.
 
 ## Disclaimer
 

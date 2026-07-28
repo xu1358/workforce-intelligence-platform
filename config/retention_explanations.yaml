@@ -1,0 +1,58 @@
+version: "2.0"
+description: >-
+  Aggregate, noncausal explanation and stability policy for the selected
+  Version 2 Logistic Regression. Explanations describe the current synthetic
+  scoring population without changing the frozen intervention policy.
+
+model_contract:
+  selected_base_model: "Logistic Regression"
+  selected_calibration_method: "Sigmoid"
+  training_scope: "All three completed historical snapshots"
+  scoring_snapshot: "2026-06-30"
+  expected_historical_rows: 16368
+  expected_current_rows: 7305
+  expected_encoded_features: 35
+  expected_raw_features: 21
+
+explanation:
+  method: "exact_interventional_linear_shap"
+  formula: "coefficient * (transformed_value - transformed_background_mean)"
+  output_scale: "base_model_log_odds"
+  background: "Mean transformed value across all historical training rows"
+  aggregate_one_hot_to_raw_feature: true
+  save_employee_level_explanations: false
+  probability_quartiles:
+    - "Lowest probability"
+    - "Lower-middle probability"
+    - "Upper-middle probability"
+    - "Highest probability"
+  top_driver_count: 10
+
+stability:
+  employee_grouped_folds: 5
+  random_seed: 42
+  ranking_top_k: 10
+  minimum_pairwise_spearman: 0.85
+  minimum_median_pairwise_spearman: 0.90
+  minimum_pairwise_top_k_jaccard: 0.65
+  minimum_top_feature_direction_stability: 0.90
+
+governance:
+  explanations_are_associations_not_causes: true
+  human_review_required: true
+  automatic_employment_action_permitted: false
+  final_test_reopened: false
+  policy_retuning_permitted: false
+  row_level_explanation_export_permitted: false
+
+figures:
+  format: "png"
+  dpi: 160
+  expected_files:
+    - "retention_global_shap_importance.png"
+    - "retention_shap_fold_stability.png"
+    - "retention_shap_probability_quartiles.png"
+
+validation:
+  numeric_tolerance: 0.0000000001
+  current_probability_reconciliation_tolerance: 0.000000000001

@@ -64,10 +64,12 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 53:** Add the isolated IBM employee-attrition methodological
   benchmark with pinned provenance, repeated out-of-fold evaluation,
   calibration, subgroup diagnostics, and explicit non-comparability controls.
+- **Checkpoint 54:** Add exact aggregate linear-SHAP explanations and
+  employee-grouped explanation-stability checks without changing the final
+  test or frozen policy.
 
 ## Optional Advanced Extensions
 
-- **Checkpoint 54:** Add SHAP analysis and explanation-stability checks.
 - **Checkpoint 55:** Add survival-analysis methods.
 - **Checkpoint 56:** Add formal budget-constrained allocation.
 - **Checkpoint 57:** Deploy a public demonstration dashboard.

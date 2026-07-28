@@ -226,7 +226,9 @@ Checkpoint 50 adds configuration tests that verify:
 Checkpoints 51 and 52 extend the same suite with curated-notebook and
 recruiter-facing README contracts. Checkpoint 53 adds isolated
 external-benchmark source, schema, feature, metric, and governance contracts.
-The complete automated suite now contains 96 tests.
+Checkpoint 54 adds exact linear-explanation, raw-feature grouping,
+importance-stability, aggregate-privacy, and governance contracts. The
+complete automated suite now contains 105 tests.
 
 ## End-to-End Integration
 
@@ -264,7 +266,7 @@ The quality workflow does not prove analytical correctness by itself.
 
 It complements, but does not replace:
 
-- The 96 automated tests
+- The 105 automated tests
 - Dataset validation checkpoints
 - Temporal leakage audits
 - Model calibration and out-of-time evaluation

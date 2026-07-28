@@ -328,6 +328,10 @@ Invoke-PythonScript `
     "src\analyze_workforce_stability.py"
 
 Invoke-PythonScript `
+    "Explain retention model and test stability" `
+    "src\analyze_retention_explanations.py"
+
+Invoke-PythonScript `
     "Validate curated portfolio notebooks" `
     "src\validate_portfolio_notebooks.py"
 

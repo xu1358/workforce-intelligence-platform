@@ -102,6 +102,13 @@ horizon, it uses repeated stratified cross-validation rather than temporal
 testing. Its metrics are not directly comparable with the primary model's
 reserved future-time test.
 
+Checkpoint 54 adds
+`notebooks/32_retention_explanation_stability.ipynb` as a second optional
+supporting extension. It presents aggregate current-model drivers, exact
+linear-SHAP additivity, employee-grouped importance stability, and noncausal
+interpretation limits. It does not expose employee-level explanations or
+change the curated four-notebook sequence.
+
 ## Automated validation
 
 `src/validate_portfolio_notebooks.py` checks:
@@ -140,3 +147,6 @@ Checkpoint 51 does not:
 
 The IBM benchmark is implemented separately in Checkpoint 53 and does not
 change any of the four curated notebooks.
+
+The explanation extension is implemented separately in Checkpoint 54 and also
+leaves the four curated notebooks unchanged.

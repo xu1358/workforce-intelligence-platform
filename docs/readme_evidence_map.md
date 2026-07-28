@@ -26,7 +26,9 @@ measurements from a real employer.
 | IBM benchmark contains 1,470 rows and 237 positive cases | `data/processed/ibm_benchmark/ibm_benchmark_data_profile.csv` | 53 | Notebook 31 and `docs/ibm_external_benchmark.md` |
 | IBM repeated out-of-fold PR-AUC 0.6094, ROC-AUC 0.8277, and Brier 0.0975 | `data/processed/ibm_benchmark/ibm_benchmark_metrics.csv` | 53 | Notebook 31 and `docs/ibm_external_benchmark.md` |
 | IBM top-decile precision 69.39%, capture 43.04%, and lift 4.30 | `data/processed/ibm_benchmark/ibm_benchmark_metrics.csv` | 53 | Notebook 31 |
-| Automated test count | pytest collection during `scripts/run_checkpoint53.ps1` | 53 | GitHub Actions and local terminal output |
+| Explanation minimum rank correlation 0.8857 and median 0.9299 | `data/processed/retention_explanations/retention_explanation_pairwise_stability.csv` | 54 | Notebook 32 and `docs/model_explanations_and_stability.md` |
+| Explanation minimum top-10 overlap 0.6667 | `data/processed/retention_explanations/retention_explanation_pairwise_stability.csv` | 54 | Notebook 32 |
+| Automated test count | pytest collection during `scripts/run_checkpoint54.ps1` | 54 | GitHub Actions and local terminal output |
 
 Generated CSV files are intentionally excluded from Git. The executed curated
 notebooks preserve aggregate evidence so GitHub reviewers can inspect results
@@ -77,6 +79,18 @@ The source commit, checksum, schema, license, and isolation rules are committed
 in `config/ibm_attrition_benchmark.yaml`. No IBM row-level probability,
 ranking, or review list is saved.
 
+### Explanation evidence
+
+Checkpoint 54 explains the refitted current Logistic Regression on its native
+log-odds scale. The closed-form linear SHAP values exactly reconstruct the
+model decision function and are aggregated from encoded columns to 21 raw
+features.
+
+Five employee-grouped refits measure importance-rank correlation, top-10
+feature overlap, and highest-probability-quartile direction stability. Only
+aggregate tables and figures are saved. The evidence is noncausal, does not
+reopen the final test, and does not change the frozen policy.
+
 ## Validation Contract
 
 `config/readme_portfolio.yaml` records:
@@ -98,4 +112,11 @@ compilation, Ruff, formatting, and the complete pytest suite:
 
 ```powershell
 .\scripts\run_checkpoint53.ps1
+```
+
+Checkpoint 54 reproduces aggregate explanations, grouped stability evidence,
+and the complete pytest suite:
+
+```powershell
+.\scripts\run_checkpoint54.ps1
 ```

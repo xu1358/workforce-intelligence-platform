@@ -148,6 +148,25 @@ Checkpoint 53 adds tests that verify:
 These tests use in-memory data frames. They do not download the external CSV,
 fit the 50 benchmark folds, or require network access in GitHub Actions.
 
+### 9. Model-Explanation Contracts
+
+Checkpoint 54 adds tests that verify:
+
+- The explanation policy keeps Logistic Regression and sigmoid calibration
+  fixed.
+- Explanations use the base-model log-odds scale.
+- Employee-level explanation export and automatic action remain prohibited.
+- Exact linear SHAP values reconstruct the fitted decision function.
+- The historical background centers mean feature contributions.
+- Encoded one-hot contributions group back to the configured raw feature.
+- Importance ordering and top-k comparisons use deterministic tie-breaking.
+- Spearman rank correlation and Jaccard overlap helpers reconcile.
+- Aggregate importance shares sum to one.
+- Probability-quartile summaries contain no employee identifiers or targets.
+
+The unit tests fit only a tiny in-memory linear classifier. They do not refit
+the full current workforce model or load processed employee-level data.
+
 ## Test Isolation
 
 The suite uses small data frames created inside the tests.
@@ -253,9 +272,10 @@ Checkpoints 51 and 52 extend the suite beyond analytical calculations:
   local links, Markdown rendering, reproduction commands, governance language,
   and removal of stale Version 1 claims.
 
-The complete suite now contains 96 tests. The presentation and external-source
-contract tests do not recalculate the primary model; they make sure the
-committed portfolio tells the validated Version 2 story accurately.
+The complete suite now contains 105 tests. The presentation, external-source,
+and explanation contract tests do not recalculate the complete primary
+pipeline; they make sure the committed Version 2 story and its safeguards
+remain reproducible.
 
 ## Files Added or Updated
 
@@ -273,8 +293,10 @@ committed portfolio tells the validated Version 2 story accurately.
 | `tests/test_portfolio_notebooks.py` | Tests the curated notebook sequence |
 | `tests/test_readme_portfolio.py` | Tests README evidence and navigation contracts |
 | `tests/test_ibm_attrition_benchmark.py` | Tests source, schema, feature, metric, and isolation contracts |
+| `tests/test_model_explanations.py` | Tests exact linear explanations, grouping, stability, and governance |
 | `scripts/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
 | `scripts/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
+| `scripts/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
 | `scripts/run_end_to_end.ps1` | Runs tests before the complete pipeline |
 | `requirements.txt` | Adds pytest as a reproducible dependency |
 

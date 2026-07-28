@@ -8,6 +8,8 @@ The project contains two notebook layers:
    `01` through `30`, retained as technical evidence and an audit trail.
 3. **External benchmark** — Notebook `31`, which evaluates the same
    methodological discipline on a separate fictional IBM dataset.
+4. **Explanation extension** — Notebook `32`, which documents aggregate
+   current-model explanations and grouped-refit stability.
 
 ## Recommended reviewer sequence
 
@@ -58,6 +60,17 @@ comparable with the primary model's once-only out-of-time final test. It does
 not change the primary fitted model, frozen policy, dashboard, or current
 review plan.
 
+## Separate explanation extension
+
+[Notebook 32: Retention Explanation Stability](32_retention_explanation_stability.ipynb)
+documents exact aggregate linear-SHAP contributions, five employee-grouped
+stability refits, probability-quartile patterns, and interpretation limits.
+
+It is separate from the four-notebook primary story because it adds diagnostic
+transparency after the model and policy decisions are already frozen. It does
+not save employee-level explanations, reopen the final test, or alter the
+current human-review plan.
+
 ## Reproducibility
 
 The embedded outputs were produced from the deterministic Version 2 pipeline.
@@ -79,4 +92,10 @@ with:
 
 ```powershell
 .\scripts\run_checkpoint53.ps1
+```
+
+Run the primary explanation and stability extension with:
+
+```powershell
+.\scripts\run_checkpoint54.ps1
 ```
