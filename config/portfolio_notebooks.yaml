@@ -1,0 +1,65 @@
+version: "2.0"
+description: >
+  Reviewer-facing notebook sequence for the Version 2 Workforce Intelligence
+  Platform. Detailed checkpoint notebooks remain available as supporting
+  technical evidence.
+
+portfolio_directory: notebooks/portfolio
+index_file: notebooks/README.md
+expected_portfolio_notebooks: 4
+minimum_supporting_notebooks: 30
+maximum_notebook_size_bytes: 2000000
+minimum_code_outputs_per_notebook: 5
+
+notebooks:
+  - order: 1
+    file: 01_data_foundation_and_temporal_design.ipynb
+    title: Data Foundation and Temporal Design
+    purpose: >
+      Establish data quality, Version 2 improvements, temporal snapshots,
+      leakage controls, and the target-free feature policy.
+    required_headings:
+      - "## Executive summary"
+      - "## Version 2 data integrity"
+      - "## Temporal prediction design"
+      - "## Feature policy and leakage controls"
+      - "## Portfolio takeaways"
+
+  - order: 2
+    file: 02_model_development_and_final_evaluation.ipynb
+    title: Model Development and Final Evaluation
+    purpose: >
+      Compare candidate models, calibrate probabilities, evaluate ranking,
+      and report the once-only out-of-time test.
+    required_headings:
+      - "## Executive summary"
+      - "## Temporal model comparison"
+      - "## Probability calibration"
+      - "## Ranking performance"
+      - "## Once-only final test"
+
+  - order: 3
+    file: 03_fairness_economics_and_policy.ipynb
+    title: Fairness, Economics, and Retention Policy
+    purpose: >
+      Connect subgroup diagnostics, cost assumptions, and the frozen
+      budget-constrained human-review policy.
+    required_headings:
+      - "## Executive summary"
+      - "## Subgroup diagnostics"
+      - "## Economic assumptions"
+      - "## Policy comparison"
+      - "## Governance boundaries"
+
+  - order: 4
+    file: 04_current_workforce_stability_plan.ipynb
+    title: Current Manufacturing Workforce Stability Plan
+    purpose: >
+      Translate the tested policy into current department-level and
+      Manufacturing backfill-planning scenarios.
+    required_headings:
+      - "## Executive summary"
+      - "## Current planning population"
+      - "## Department stability outlook"
+      - "## Manufacturing role plan"
+      - "## Decision boundaries and limitations"

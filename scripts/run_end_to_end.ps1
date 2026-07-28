@@ -326,6 +326,10 @@ Invoke-PythonScript `
     "Analyze manufacturing workforce stability" `
     "src\analyze_workforce_stability.py"
 
+Invoke-PythonScript `
+    "Validate curated portfolio notebooks" `
+    "src\validate_portfolio_notebooks.py"
+
 # ---------------------------------------------------------
 # Completion
 # ---------------------------------------------------------
