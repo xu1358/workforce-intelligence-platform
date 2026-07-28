@@ -224,6 +224,21 @@ The two validation layers serve different purposes:
 - Automated tests provide fast, isolated regression detection.
 - The end-to-end pipeline validates complete system behavior.
 
+## Portfolio Presentation Contracts
+
+Checkpoints 51 and 52 extend the suite beyond analytical calculations:
+
+- `tests/test_portfolio_notebooks.py` protects the ordered four-notebook
+  reviewer path, execution state, navigation, portability, synthetic
+  disclosure, and aggregate-only presentation.
+- `tests/test_readme_portfolio.py` protects README sections, headline evidence,
+  local links, Markdown rendering, reproduction commands, governance language,
+  and removal of stale Version 1 claims.
+
+The complete suite now contains 88 tests. These presentation tests do not
+recalculate model results; they make sure the committed portfolio tells the
+validated Version 2 story accurately.
+
 ## Files Added or Updated
 
 | File | Purpose |
@@ -237,6 +252,8 @@ The two validation layers serve different purposes:
 | `tests/test_model_splits.py` | Tests chronological and grouped assignments |
 | `tests/test_economics_and_policy.py` | Tests economic and intervention formulas |
 | `tests/test_workforce_stability.py` | Tests current planning calculations |
+| `tests/test_portfolio_notebooks.py` | Tests the curated notebook sequence |
+| `tests/test_readme_portfolio.py` | Tests README evidence and navigation contracts |
 | `scripts/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
 | `scripts/run_end_to_end.ps1` | Runs tests before the complete pipeline |
 | `requirements.txt` | Adds pytest as a reproducible dependency |

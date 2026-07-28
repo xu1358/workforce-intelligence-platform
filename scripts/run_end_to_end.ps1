@@ -330,6 +330,10 @@ Invoke-PythonScript `
     "Validate curated portfolio notebooks" `
     "src\validate_portfolio_notebooks.py"
 
+Invoke-PythonScript `
+    "Validate recruiter-facing README" `
+    "src\validate_readme_portfolio.py"
+
 # ---------------------------------------------------------
 # Completion
 # ---------------------------------------------------------

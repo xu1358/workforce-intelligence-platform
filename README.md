@@ -1,633 +1,484 @@
 # Workforce Intelligence and Retention Decision Platform
 
-An end-to-end workforce analytics and employee retention portfolio project built with Python, PostgreSQL, SQL, scikit-learn, and Streamlit.
+[![Python quality](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml/badge.svg?branch=revision-v2)](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml)
 
-The platform integrates synthetic data from multiple fictional HR systems into a centralized PostgreSQL database, provides workforce and recruiting analytics, builds an employee attrition classification model, and presents decision-support insights through an interactive dashboard.
+An end-to-end people-analytics portfolio project that converts six fragmented
+synthetic HR systems into a leakage-aware retention model, a budget-constrained
+human-review policy, and a current manufacturing workforce-stability plan.
 
-> This project uses entirely synthetic employee and recruiting data. It is designed for educational and portfolio purposes.
+> **Synthetic-data and responsible-use notice:** every employee, candidate,
+> outcome, salary, and business result in this repository is fictional. The
+> project demonstrates analytics engineering and decision-support methods. It
+> does not describe a real employer, estimate a real intervention effect, or
+> authorize automated employment action.
 
----
+## Start Here
 
-## Project Overview
+For a concise review, use these entry points:
 
-Organizations often store workforce information across separate systems for:
+1. [Read the four-notebook portfolio](notebooks/README.md).
+2. [Open the Streamlit dashboard locally](#run-the-dashboard).
+3. [Review the analytical design](#analytical-design).
+4. [Inspect the evidence behind the headline claims](docs/readme_evidence_map.md).
+5. [Run the automated quality checks](#fast-local-validation).
 
-- Employee records
-- Recruiting
-- Compensation
-- Performance management
-- Learning and development
-- Employee events
+## Business Decision
 
-This project simulates that environment and builds a complete analytics workflow that transforms fragmented synthetic HR data into a workforce intelligence platform.
+The project is organized around one operational question:
 
-The project includes:
+> Given a limited intervention budget, which active, model-eligible employees
+> should be routed for supportive human review, and what workforce-stability
+> and financial value might that plan create under explicit assumptions?
 
-- Synthetic workforce data generation
-- PostgreSQL relational data warehouse
-- SQL workforce analytics
-- Recruiting funnel analysis
-- Compensation and performance analytics
-- Employee retention modeling
-- Classification model comparison
-- Model interpretation
-- Classification threshold analysis
-- Employee risk segmentation
-- Dashboard-ready data pipelines
-- Interactive Streamlit dashboard
+The answer is not a generic probability threshold. The final policy:
 
----
+- uses a calibrated Logistic Regression model;
+- estimates value under transparent replacement-cost, intervention-cost, and
+  effectiveness scenarios;
+- limits the review population to 700 employees and $1.75 million;
+- is frozen before the once-only out-of-time test is opened;
+- requires human review; and
+- prohibits automatic employment action.
 
-## Business Questions
+## Headline Results
 
-The platform is designed to support questions such as:
+All figures below are deterministic outputs from the synthetic Version 2
+pipeline.
 
-- How many employees are currently active?
-- How is headcount distributed across departments and locations?
-- What is the annual employee turnover rate?
-- Which recruiting sources generate the most applications and hires?
-- How long do job requisitions remain open?
-- Which employees receive higher attrition-risk scores?
-- Which workforce characteristics are associated with model-predicted attrition risk?
-- How do Logistic Regression, Random Forest, and Gradient Boosting compare?
-- How does changing the classification threshold affect precision and recall?
+| Area | Validated result | Interpretation |
+| --- | ---: | --- |
+| Current workforce | 7,409 active employees | Current synthetic population as of 2026-06-30 |
+| Current scoring coverage | 7,305 model-eligible employees | Individual contributors and team managers only |
+| Final out-of-time model | PR-AUC 0.1710; ROC-AUC 0.6061; Brier 0.1048 | Modest but useful ranking on the reserved 2025 snapshot |
+| Top-decile ranking | 19.85% precision; 1.64 lift | Compared with a 12.09% final-test attrition rate |
+| Frozen intervention plan | 700 human reviews; $1.75M budget | Capacity- and budget-constrained expected-value policy |
+| Final-test policy | 17.06% capture; $2.03M outcome-aligned net value | Once-only evaluation with no post-test retuning |
+| Current planning projection | 35.0 expected prevented departures; $2.40M expected net value | Scenario projection, not an observed outcome |
+| Manufacturing plan | 229.7 expected departures; 221.3 residual backfills | Probability-weighted 12-month planning estimates |
 
----
+The final-test model is better than random ranking, but it is not strong enough
+to justify automatic individual decisions. Its appropriate role is to support
+structured review, scenario analysis, and workforce-capacity planning.
+
+## Why This Project Is More Than a Classifier
+
+The repository demonstrates a complete analytical decision system:
+
+- reproducible synthetic data generation across six fictional source systems;
+- a normalized 12-table PostgreSQL schema and validated ingestion pipeline;
+- historical, point-in-time feature construction;
+- three non-overlapping 12-month prediction windows;
+- explicit feature-redundancy and multicollinearity controls;
+- temporal model development with a reserved final test;
+- employee-grouped robustness checks and bootstrap uncertainty;
+- sigmoid probability calibration;
+- ranking, subgroup, fairness, and sensitivity analysis;
+- an explicit retention cost model;
+- a frozen budget-constrained intervention policy;
+- a current-state Streamlit dashboard; and
+- automated tests, Ruff checks, and GitHub Actions.
+
+## Analytical Design
+
+```mermaid
+flowchart TD
+    A["Six synthetic HR systems"] --> B["Validated PostgreSQL and CSV layers"]
+    B --> C["Point-in-time employee snapshots"]
+    C --> D["Feature policy and temporal model development"]
+    D --> E["Calibration, ranking, and subgroup diagnostics"]
+    E --> F["Frozen expected-value review policy"]
+    F --> G["Once-only final test and current workforce plan"]
+```
+
+### Temporal evaluation
+
+Each row represents an employee who was active on a snapshot date. Features
+use only information available on or before that date, and the target records
+attrition during the following 12 months.
+
+| Role | Snapshot | Prediction window ends | Eligible rows | Positive cases | Use |
+| --- | --- | --- | ---: | ---: | --- |
+| Train | 2023-06-30 | 2024-06-30 | 4,206 | 414 | Fit candidate models |
+| Validation | 2024-06-30 | 2025-06-30 | 5,521 | 586 | Select model, calibration, and policy |
+| Final test | 2025-06-30 | 2026-06-30 | 6,641 | 803 | Once-only out-of-time evaluation |
+| Current scoring | 2026-06-30 | Future outcomes unknown | 7,305 | Unknown | Human-review and capacity planning |
+
+The final-test target is masked during development. Repeated employees are
+kept together in grouped robustness folds, and current scores are never
+presented as new performance evidence.
+
+### Leakage controls
+
+- Termination status, termination date, and future event information are
+  excluded from model features.
+- Compensation, performance, training, transfer, promotion, manager-change,
+  and leave records are cut off at each snapshot.
+- Historical locations are reconstructed from hire and transfer events.
+- Train, validation, and final-test prediction windows do not overlap.
+- Feature selection uses only the 2023 and 2024 development snapshots.
+- The intervention policy is selected and hashed before final-test access.
+
+See the [temporal dataset design](docs/temporal_dataset_design.md),
+[feature policy](docs/feature_interpretation.md), and
+[validation strategy](docs/model_validation_strategy.md).
+
+## Model Development and Final Evaluation
+
+### Candidate comparison
+
+Logistic Regression, Gradient Boosting, and Random Forest receive the same 21
+raw features. PR-AUC is the primary ranking metric because attrition is the
+minority outcome.
+
+| Model | 2024 validation PR-AUC | ROC-AUC | Mean grouped PR-AUC |
+| --- | ---: | ---: | ---: |
+| Logistic Regression | 0.1638 | 0.6211 | 0.1665 |
+| Gradient Boosting | 0.1615 | 0.6293 | 0.1664 |
+| Random Forest | 0.1523 | 0.6233 | 0.1554 |
+
+Logistic Regression is selected because it has the highest observed
+validation PR-AUC, competitive grouped robustness, and the lowest complexity.
+Paired bootstrap intervals do not establish that it is definitively better
+than Gradient Boosting, so the decision deliberately favors simplicity rather
+than claiming a conclusive winner.
+
+### Probability calibration
+
+The original Logistic Regression scores substantially overpredict attrition.
+Sigmoid calibration reduces validation Brier score from 0.2403 to 0.0932 while
+preserving ranking performance. The dashboard therefore labels the calibrated
+score **Estimated 12-month attrition probability**.
+
+### Reserved final test
+
+After all development choices are frozen, the selected model is fitted on the
+2023 and 2024 histories and evaluated once on the 2025 snapshot:
+
+| Metric | Final-test result |
+| --- | ---: |
+| Rows | 6,641 |
+| Attrition cases | 803 |
+| Attrition rate | 12.09% |
+| PR-AUC | 0.1710 |
+| ROC-AUC | 0.6061 |
+| Brier score | 0.1048 |
+| Top-decile precision | 19.85% |
+| Top-decile capture | 16.44% |
+| Top-decile lift | 1.64 |
+
+Read the full [model comparison](docs/model_comparison_v2.md),
+[calibration analysis](docs/calibration_analysis.md), and
+[ranking analysis](docs/ranking_analysis.md).
+
+## From Scores to a Retention Policy
+
+### Economic assumptions
+
+The policy is evaluated across 27 combinations:
+
+- replacement impact: 50%, 100%, or 150% of salary;
+- intervention cost: $1,000, $2,500, or $5,000 per selected employee; and
+- intervention effectiveness: 10%, 25%, or 40%.
+
+The reference scenario uses 100% of salary, $2,500 per employee, and 25%
+effectiveness. These are transparent synthetic assumptions, not measured
+causal effects or estimates from a real company.
+
+### Selected policy
+
+Six policies are compared, including no intervention, the legacy 0.50
+threshold, top 10%, top 700, and cost-based rules. The selected
+**Budget-constrained expected value** policy ranks positive expected value
+while enforcing:
+
+- maximum capacity: 700 employees;
+- maximum budget: $1,750,000; and
+- supportive human review only.
+
+On the reserved final test, the frozen policy selected 700 employees, captured
+137 of 803 attrition cases, and produced $2.03 million of outcome-aligned net
+value under the reference assumptions. The employee selection was not changed
+after the test.
+
+After evaluation, the model is refitted on all historical snapshots and scores
+the current population. The resulting current scenario projects approximately
+35.0 prevented departures and $2.40 million expected net value. Those values
+depend on model probabilities and assumed intervention effectiveness; they are
+not realized savings.
+
+See the [cost model](docs/retention_cost_model.md) and
+[policy analysis](docs/retention_policy_analysis.md).
+
+## Manufacturing Workforce Stability
+
+Manufacturing is the largest current synthetic department, so the final
+planning view translates retention scores into probability-weighted backfill
+and operational demand.
+
+| Manufacturing measure | Current scenario |
+| --- | ---: |
+| Active employees | 1,832 |
+| Model-eligible employees | 1,808 |
+| Expected departures over 12 months | 229.7 |
+| Selected for human review | 162 |
+| Expected prevented departures | 8.4 |
+| Residual expected backfills | 221.3 |
+| Planned intervention spend | $405,000 |
+| Expected net value | $492,919 |
+
+Backfill exposure is concentrated in Production Technicians, Manufacturing
+Engineers, and Production Supervisors. Vacancy days, training hours, coverage
+hours, and time-to-productivity are reported separately so operational units
+are not silently double counted as dollars.
+
+Read the [manufacturing workforce-stability analysis](docs/manufacturing_workforce_stability.md).
+
+## Fairness, Ethics, and Governance
+
+The project reports descriptive subgroup differences for age band, education,
+region, employment type, department, job level, and organizational level.
+Several dimensions trigger screening-review flags. Removing age and education
+does not eliminate the broader differences, which can arise through correlated
+features, simulated organizational structure, and different base rates.
+
+Important boundaries:
+
+- subgroup gaps are diagnostics, not a binary declaration that a model is
+  fair or unfair;
+- a financial ranking is not a measure of employee value;
+- predictions do not prove that an employee intends to leave;
+- an intervention's effect is assumed, not causally estimated;
+- selected employees require supportive human review; and
+- scores must never drive termination, compensation, promotion, or other
+  automatic employment actions.
+
+The synthetic schema does not contain gender, and the project does not invent
+it. See [fairness and ethics](docs/fairness_and_ethics.md) for the complete
+audit and limitations.
+
+## Dashboard
+
+The Streamlit application separates current planning from historical model
+evidence and contains six tabs:
+
+1. Overview
+2. Workforce
+3. Workforce Stability
+4. Recruiting
+5. Retention Risk
+6. Model Performance
+
+The current view contains 7,409 active synthetic employees, including 7,305
+model-eligible scored employees and 104 protected-level employees who remain
+in workforce totals but are excluded from risk rows. Names are not included in
+the human-review table.
+
+### Run the dashboard
+
+After generating the required data:
+
+```powershell
+python -m streamlit run dashboard\app.py
+```
+
+Streamlit normally opens `http://localhost:8501`.
+
+The dashboard is a local portfolio application; it is not currently a public
+production deployment. See the
+[current-state dashboard documentation](docs/dashboard_current_state.md).
+
+## Curated Notebook Portfolio
+
+The four executed notebooks are the recommended reviewer path. Their outputs
+are embedded, so they can be read on GitHub without rerunning the pipeline.
+
+| Order | Notebook | Question answered |
+| --- | --- | --- |
+| 1 | [Data Foundation and Temporal Design](notebooks/portfolio/01_data_foundation_and_temporal_design.ipynb) | Are the data temporally valid and leakage controlled? |
+| 2 | [Model Development and Final Evaluation](notebooks/portfolio/02_model_development_and_final_evaluation.ipynb) | How was the model selected, calibrated, and tested? |
+| 3 | [Fairness, Economics, and Policy](notebooks/portfolio/03_fairness_economics_and_policy.ipynb) | How do subgroup risk, costs, capacity, and governance affect the decision? |
+| 4 | [Current Workforce Stability Plan](notebooks/portfolio/04_current_workforce_stability_plan.ipynb) | How does the frozen policy support current manufacturing planning? |
+
+The original 30 checkpoint notebooks remain in `notebooks/` as detailed
+technical evidence and an audit trail.
 
 ## Technology Stack
 
-| Area | Technologies |
-|---|---|
-| Programming | Python |
-| Data Processing | pandas, NumPy |
-| Synthetic Data | Faker |
-| Database | PostgreSQL |
-| Database Connectivity | psycopg2 |
-| Analytics | SQL |
-| Machine Learning | scikit-learn |
-| Model Persistence | joblib |
-| Visualization | Plotly |
-| Dashboard | Streamlit |
-| Development | VS Code, Jupyter Notebook |
-| Version Control | Git |
-
----
-
-## Project Architecture
-
-```text
-Synthetic Source Systems
-        │
-        ├── HRIS
-        ├── Recruiting
-        ├── Compensation
-        ├── Performance
-        ├── Learning & Training
-        └── Employee Events
-        │
-        ▼
-Python Data Generation
-        │
-        ▼
-Raw CSV Data
-        │
-        ▼
-PostgreSQL
-        │
-        ├── Workforce Analytics
-        ├── Recruiting Analytics
-        └── Historical Employee Data
-        │
-        ▼
-Retention Modeling Dataset
-        │
-        ▼
-Machine Learning Pipeline
-        │
-        ├── Logistic Regression
-        ├── Random Forest
-        └── Gradient Boosting
-        │
-        ▼
-Model Evaluation & Interpretation
-        │
-        ├── PR-AUC / ROC-AUC
-        ├── Precision / Recall
-        ├── Feature Importance
-        └── Threshold Analysis
-        │
-        ▼
-Retention Risk Segmentation
-        │
-        ▼
-Dashboard Data Layer
-        │
-        ▼
-Interactive Streamlit Dashboard
-```
-
-Detailed architecture documentation is available in:
-
-`docs/architecture.md`
-
----
-
-## Synthetic Data Environment
-
-The project simulates a fictional company with approximately:
-
-- 10,000 employees
-- 40,000 job candidates
-- 8 departments
-- 5 locations
-- 20 job roles
-- Multiple years of historical workforce activity
-
-The PostgreSQL database contains 12 main tables:
-
-```text
-departments
-locations
-job_roles
-employees
-candidates
-job_requisitions
-applications
-compensation_history
-performance_reviews
-training_programs
-training_records
-employee_events
-```
-
-The data represents six fictional source systems:
-
-1. Human Resources Information System
-2. Recruiting System
-3. Compensation System
-4. Performance Review System
-5. Learning and Training System
-6. Employee Event System
-
----
-## Portfolio Highlights
-
-- Generated approximately 10,000 employees and 40,000 candidates across six synthetic HR source systems.
-- Designed and populated a 12-table PostgreSQL relational database.
-- Built automated data-generation, database-loading, modeling, dashboard, and validation pipelines.
-- Developed SQL analytics for workforce, turnover, recruiting, compensation, performance, and training.
-- Compared Logistic Regression, Random Forest, and Gradient Boosting for employee attrition classification.
-- Achieved 71.2% recall, 0.6968 ROC-AUC, and 0.1709 PR-AUC with the selected Logistic Regression model.
-- Created Low-, Medium-, and High-Risk groups with increasing observed attrition rates.
-- Built an interactive five-section Streamlit dashboard with workforce, recruiting, retention-risk, and model-performance views.
-
-## Data Engineering Pipeline
-
-Python scripts generate synthetic data for:
-
-- Organizational structure
-- Employee demographics
-- Reporting hierarchies
-- Compensation history
-- Performance reviews
-- Training activity
-- Employee events
-- Job candidates
-- Job requisitions
-- Job applications
-
-The generated CSV files are loaded into PostgreSQL using a Python ingestion pipeline.
-
-The database schema includes:
-
-- Primary keys
-- Foreign keys
-- Data validation constraints
-- Relational integrity checks
-- Supporting indexes
-
-The project validates that CSV record counts and PostgreSQL table counts match after loading.
-
----
-
-## SQL Analytics
-
-The PostgreSQL analytics layer supports:
-
-- Active headcount by department
-- Active headcount by location
-- Workforce distribution by job family
-- Annual turnover analysis
-- Recruiting funnel analysis
-- Requisition duration analysis
-- Compensation analysis
-- Performance analysis
-- Training participation analysis
-- Combined employee analytics
-
-SQL analysis is documented in:
-
-`docs/analytics.md`
-
----
-
-## Employee Retention Modeling
-
-A historical employee snapshot is used to create a supervised classification dataset.
-
-The model predicts:
-
-```text
-attrition_next_12m
-```
-
-where:
-
-```text
-1 = Employee terminates during the following 12 months
-0 = Employee does not terminate during the following 12 months
-```
-
-The modeling workflow uses historical information available at the snapshot date to reduce target leakage.
-
-Feature groups include:
-
-- Employee characteristics
-- Hiring context
-- Compensation
-- Compensation changes
-- Performance
-- Training
-- Promotions
-- Transfers
-- Manager changes
-- Leave activity
-
-Direct leakage variables such as future termination information are excluded from model features.
-
----
-
-## Model Comparison
-
-Three classification approaches were evaluated:
-
-- Logistic Regression
-- Random Forest
-- Gradient Boosting
-
-The selected model was:
-
-```text
-Logistic Regression
-```
-
-Selected-model test performance:
-
-| Metric | Result |
-|---|---:|
-| Accuracy | 0.5981 |
-| Precision | 0.1376 |
-| Recall | 0.7120 |
-| F1 Score | 0.2306 |
-| ROC-AUC | 0.6968 |
-| PR-AUC | 0.1709 |
-
-PR-AUC was used as the primary model-selection metric because attrition represents the minority class.
-
-The model is intended primarily as a portfolio demonstration of an end-to-end classification workflow rather than a production employee decision system.
-
----
-
-## Threshold Analysis
-
-The default classification threshold of `0.50` was evaluated against thresholds ranging from `0.10` to `0.90`.
-
-The project threshold-selection rule is:
-
-```text
-Maintain recall of at least 60%
-        ↓
-Among eligible thresholds,
-select the threshold with the highest precision
-```
-
-The resulting recommended threshold was:
-
-```text
-0.50
-```
-
-This is a project-level decision rule rather than a universal business rule.
-
----
-
-## Retention Risk Segmentation
-
-Employees are ranked using model-generated attrition-risk scores.
-
-The dashboard groups employees into:
-
-```text
-High Risk    → Top 10% of model scores
-Medium Risk  → Next 20%
-Low Risk     → Remaining 70%
-```
-
-In the held-out test population, observed attrition rates were approximately:
-
-| Risk Segment | Observed Attrition Rate |
-|---|---:|
-| Low | 5.71% |
-| Medium | 13.18% |
-| High | 18.24% |
-
-The increasing attrition rate across risk groups indicates that the model provides useful relative risk ranking within the synthetic test population.
-
-Model probabilities are not calibrated and should not be interpreted as exact real-world probabilities of employee departure.
-
----
-
-## Dashboard Preview
-
-### Executive Workforce Overview
-
-The Overview dashboard presents high-level workforce, recruiting, and retention-risk KPIs.
-
-### Employee Retention Risk
-
-The Retention Risk dashboard provides model-based employee risk rankings and interactive department, region, and risk-segment filters.
-
-### Model Performance
-
-The Model Performance dashboard compares Logistic Regression, Random Forest, and Gradient Boosting and presents the selected model's evaluation metrics.
-
-## Interactive Dashboard
-
-The Streamlit dashboard contains five main sections.
-
-### Overview
-
-Displays:
-
-- Active headcount
-- Turnover rate
-- Open requisitions
-- Total applications
-- Hired applications
-- High-risk employee counts
-- Department headcount
-- Retention-risk distribution
-
-### Workforce
-
-Analyzes:
-
-- Headcount by department
-- Headcount by location
-- Workforce distribution
-
-### Recruiting
-
-Analyzes:
-
-- Recruiting outcomes by source
-- Hire rates
-- Requisition counts
-- Target headcount
-- Average days open
-
-### Retention Risk
-
-Provides:
-
-- Employee risk rankings
-- Low-, Medium-, and High-risk segments
-- Risk-score distributions
-- Department filters
-- Region filters
-- Risk-segment filters
-
-### Model Performance
-
-Compares:
-
-- Logistic Regression
-- Random Forest
-- Gradient Boosting
-
-and displays:
-
-- Precision
-- Recall
-- F1
-- ROC-AUC
-- PR-AUC
-- Classification threshold
-- Risk-segmentation thresholds
-
----
-
-## Project Structure
+| Layer | Technologies |
+| --- | --- |
+| Language and data | Python 3.12, pandas, NumPy |
+| Synthetic generation | Faker |
+| Database and analytics | PostgreSQL, SQL, psycopg2 |
+| Modeling | scikit-learn, joblib |
+| Visualization | Plotly, Matplotlib |
+| Application | Streamlit |
+| Development | Jupyter, VS Code, PowerShell |
+| Quality | pytest, Ruff, GitHub Actions |
+
+## Repository Structure
 
 ```text
 workforce-intelligence-platform/
-│
-├── dashboard/
-│   └── app.py
-│
-├── data/
-│   ├── interim/
-│   ├── processed/
-│   └── raw/
-│
-├── docs/
-│   ├── analytics.md
-│   ├── architecture.md
-│   ├── dashboard.md
-│   ├── dashboard_data.md
-│   ├── database_setup.md
-│   └── retention_modeling.md
-│
-├── models/
-│
+├── .github/workflows/     # Continuous-integration quality checks
+├── config/                # Versioned analytical and governance contracts
+├── dashboard/             # Streamlit application
+├── data/                  # Generated raw, interim, and processed artifacts
+├── docs/                  # Methods, decisions, evidence, and limitations
+├── models/                # Generated model artifacts
 ├── notebooks/
-│
-├── sql/
-│   ├── create_tables.sql
-│   ├── retention_modeling_dataset.sql
-│   ├── validate_loaded_data.sql
-│   └── workforce_analytics.sql
-│
-├── src/
-│   ├── build_dashboard_data.py
-│   ├── build_retention_dataset.py
-│   ├── compare_retention_models.py
-│   ├── create_database_schema.py
-│   ├── load_postgresql_data.py
-│   ├── train_baseline_retention_model.py
-│   └── analyze_retention_model.py
-│
-├── .env.example
-├── .gitignore
-└── README.md
+│   ├── portfolio/         # Four reviewer-facing executed notebooks
+│   └── 01_...30_...       # Detailed supporting notebook history
+├── scripts/               # Checkpoint and end-to-end PowerShell runners
+├── sql/                   # Schema, validation, and analytical SQL
+├── src/                   # Generation, modeling, policy, and dashboard code
+├── tests/                 # Automated regression and contract tests
+├── pyproject.toml         # Ruff configuration
+├── pytest.ini             # pytest configuration
+└── requirements.txt       # Python dependencies
 ```
 
-Additional data-generation and validation scripts are located in `src/` and `notebooks/`.
+Generated data and model files are intentionally excluded from Git. The
+executed portfolio notebooks retain aggregate evidence without publishing
+employee-level review lists.
 
----
+## Setup
 
-## Installation
+### Prerequisites
 
-Clone the repository and create a Python virtual environment.
+- Python 3.12
+- PostgreSQL
+- Git
+- Windows PowerShell for the supplied checkpoint runners
 
-On Windows PowerShell:
+### Installation
 
 ```powershell
+git clone https://github.com/xu1358/workforce-intelligence-platform.git
+cd workforce-intelligence-platform
+git checkout revision-v2
+
 python -m venv .venv
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 
-## Running the Project
-
-### 1. Activate the virtual environment
-
-On Windows PowerShell:
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-### 2. Configure PostgreSQL
+Create the local environment file and replace the placeholder values with your
+own PostgreSQL settings:
 
-Create a `.env` file using `.env.example` as a template.
-
-Example:
+```powershell
+Copy-Item .env.example .env
+```
 
 ```text
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=workforce_intelligence
 DB_USER=postgres
-DB_PASSWORD=your_password
+DB_PASSWORD=your_postgresql_password
 ```
 
-The real `.env` file is excluded from Git.
+The real `.env` file is ignored by Git.
 
-### 3. Build the database schema
+## Reproduce the Project
 
-```powershell
-python src\create_database_schema.py
-```
-
-### 4. Load generated data
-
-```powershell
-python src\load_postgresql_data.py
-```
-
-### 5. Build the retention dataset
-
-```powershell
-python src\build_retention_dataset.py
-```
-
-### 6. Train the baseline model
-
-```powershell
-python src\train_baseline_retention_model.py
-```
-
-### 7. Compare retention models
-
-```powershell
-python src\compare_retention_models.py
-```
-
-### 8. Analyze the selected model
-
-```powershell
-python src\analyze_retention_model.py
-```
-
-### 9. Build dashboard datasets
-
-```powershell
-python src\build_dashboard_data.py
-```
-
-### 10. Start the dashboard
-
-```powershell
-python -m streamlit run dashboard\app.py
-```
-
-The dashboard will normally be available locally at:
-
-```text
-http://localhost:8501
-```
-
-## End-to-End Validation
-
-The complete project pipeline can be validated with:
+The complete pipeline generates the synthetic data, validates Version 2,
+loads PostgreSQL, fits and evaluates the models, freezes and tests the policy,
+builds the current dashboard layer, and validates the portfolio notebooks and
+README.
 
 ```powershell
 .\scripts\run_end_to_end.ps1
+```
 
----
+The full run requires a configured local PostgreSQL database. To reuse
+existing generated CSV files:
 
-## Project Documentation
+```powershell
+.\scripts\run_end_to_end.ps1 -SkipDataGeneration
+```
 
-Detailed documentation is available under `docs/`:
+The legacy Version 1 modeling path is disabled by default to protect the
+Version 2 analytical boundary.
 
-| Document | Purpose |
-|---|---|
-| `database_setup.md` | PostgreSQL setup and data loading |
-| `analytics.md` | SQL workforce analytics |
-| `retention_modeling.md` | Retention dataset and machine-learning workflow |
-| `dashboard_data.md` | Dashboard data preparation |
-| `dashboard.md` | Interactive dashboard |
-| `architecture.md` | End-to-end system architecture |
+## Fast Local Validation
 
----
+Checkpoint 52 validates documentation and code without regenerating the
+10,000-employee workforce or connecting to PostgreSQL:
+
+```powershell
+.\scripts\run_checkpoint52.ps1
+```
+
+The command is implemented in the
+[Checkpoint 52 runner](scripts/run_checkpoint52.ps1). The complete reproducible
+workflow is defined in the
+[end-to-end runner](scripts/run_end_to_end.ps1).
+
+It performs:
+
+1. Python compilation;
+2. Ruff lint checks;
+3. test-format checks;
+4. README structure, evidence, link, and stale-claim validation; and
+5. the complete 88-test automated suite.
+
+The same compile, lint, formatting, and pytest gates run automatically in
+[GitHub Actions](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml).
+
+## Documentation Guide
+
+| Topic | Document |
+| --- | --- |
+| Architecture | [System architecture](docs/architecture.md) |
+| PostgreSQL | [Database setup](docs/database_setup.md) |
+| SQL metrics | [Analytics definitions](docs/analytics.md) |
+| Version 2 data | [V1 versus V2 comparison](docs/v1_v2_data_comparison.md) |
+| Temporal features | [Temporal dataset design](docs/temporal_dataset_design.md) |
+| Validation splits | [Model validation strategy](docs/model_validation_strategy.md) |
+| Feature policy | [Feature interpretation](docs/feature_interpretation.md) |
+| Model selection | [Version 2 model comparison](docs/model_comparison_v2.md) |
+| Calibration | [Calibration analysis](docs/calibration_analysis.md) |
+| Ranking | [Ranking analysis](docs/ranking_analysis.md) |
+| Fairness | [Fairness and ethics](docs/fairness_and_ethics.md) |
+| Economics | [Retention cost model](docs/retention_cost_model.md) |
+| Policy | [Retention policy analysis](docs/retention_policy_analysis.md) |
+| Current dashboard | [Dashboard timeline and safety](docs/dashboard_current_state.md) |
+| Manufacturing plan | [Workforce-stability analysis](docs/manufacturing_workforce_stability.md) |
+| Testing | [Testing strategy](docs/testing_strategy.md) |
+| Code quality | [Code quality and CI](docs/code_quality_and_ci.md) |
+| README evidence | [README evidence map](docs/readme_evidence_map.md) |
 
 ## Limitations
 
-This project has several important limitations:
+- All records, outcomes, salaries, and economic values are synthetic.
+- The attrition hazard intentionally creates learnable signal; external
+  validity has not yet been established.
+- The final model has modest discrimination and only one reserved temporal
+  test period.
+- Calibration on synthetic data does not guarantee calibration elsewhere.
+- Subgroup sample sizes and simulator structure affect fairness diagnostics.
+- Cost and effectiveness values are scenario assumptions.
+- No retention intervention was performed, so causal impact is unknown.
+- Current workforce values are projections with unknown future outcomes.
+- The dashboard is local and has no authentication or role-based access.
+- Real deployment would require privacy, security, legal, fairness, monitoring,
+  stakeholder approval, and experimental measurement.
 
-- All employee and recruiting data is synthetic.
-- Model relationships should not be interpreted as causal.
-- Attrition probabilities are not calibrated.
-- Hyperparameter tuning is limited.
-- Model comparison uses a fixed held-out test set.
-- The system is not designed for automated employment decisions.
-- A production HR analytics system would require additional security, privacy, fairness, governance, monitoring, and human oversight.
+Checkpoint 53 is planned as a separate IBM HR Analytics benchmark. It will not
+be merged into the primary temporal model and will not convert fictional data
+into real employee evidence.
 
----
+## Version History
 
-## Future Improvements
-
-Potential future improvements include:
-
-- Model hyperparameter optimization
-- Cross-validation
-- Probability calibration
-- SHAP-based model interpretation
-- Fairness and bias analysis
-- Role-based dashboard access
-- Automated pipeline orchestration
-- Containerization with Docker
-- Cloud database deployment
-- Cloud dashboard deployment
-- Automated model monitoring
-
----
+- `v1.0-portfolio` preserves the completed Version 1 baseline.
+- `revision-v2` contains the temporal modeling, calibration, fairness,
+  economics, policy, current-state dashboard, testing, CI, and curated
+  portfolio revisions.
 
 ## Disclaimer
 
-This project is a synthetic portfolio demonstration.
-
-No real employee, candidate, compensation, performance, or recruiting information is used.
-
-The retention model and dashboard are intended to demonstrate data engineering, analytics, machine learning, and visualization skills and should not be used to make real employment decisions.
+This repository is an educational portfolio demonstration. It must not be used
+to make decisions about real employees or candidates.

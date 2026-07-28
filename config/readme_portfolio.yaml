@@ -1,0 +1,83 @@
+version: "2.0"
+description: >-
+  Contract for the recruiter-facing README. Headline claims are tied to
+  deterministic Version 2 outputs and must remain clearly synthetic.
+
+readme_path: "README.md"
+evidence_map_path: "docs/readme_evidence_map.md"
+
+line_limits:
+  minimum: 300
+  maximum: 650
+
+required_headings:
+  - "## Business Decision"
+  - "## Headline Results"
+  - "## Analytical Design"
+  - "## Model Development and Final Evaluation"
+  - "## From Scores to a Retention Policy"
+  - "## Manufacturing Workforce Stability"
+  - "## Fairness, Ethics, and Governance"
+  - "## Dashboard"
+  - "## Curated Notebook Portfolio"
+  - "## Setup"
+  - "## Reproduce the Project"
+  - "## Fast Local Validation"
+  - "## Limitations"
+  - "## Disclaimer"
+
+required_phrases:
+  - "every employee, candidate, outcome, salary, and business result in this repository is fictional"
+  - "requires human review"
+  - "prohibits automatic employment action"
+  - "once-only out-of-time test"
+  - "Estimated 12-month attrition probability"
+
+headline_metrics:
+  current_active_employees: "7,409"
+  current_model_eligible_employees: "7,305"
+  final_test_rows: "6,641"
+  final_test_positive_cases: "803"
+  final_test_pr_auc: "0.1710"
+  final_test_roc_auc: "0.6061"
+  final_test_brier: "0.1048"
+  final_test_top_decile_lift: "1.64"
+  review_capacity: "700"
+  review_budget: "$1.75M"
+  current_expected_net_value: "$2.40M"
+  manufacturing_active_employees: "1,832"
+  manufacturing_expected_departures: "229.7"
+  manufacturing_residual_backfills: "221.3"
+
+required_links:
+  - "notebooks/README.md"
+  - "notebooks/portfolio/01_data_foundation_and_temporal_design.ipynb"
+  - "notebooks/portfolio/02_model_development_and_final_evaluation.ipynb"
+  - "notebooks/portfolio/03_fairness_economics_and_policy.ipynb"
+  - "notebooks/portfolio/04_current_workforce_stability_plan.ipynb"
+  - "docs/readme_evidence_map.md"
+  - "docs/temporal_dataset_design.md"
+  - "docs/model_validation_strategy.md"
+  - "docs/model_comparison_v2.md"
+  - "docs/calibration_analysis.md"
+  - "docs/ranking_analysis.md"
+  - "docs/fairness_and_ethics.md"
+  - "docs/retention_cost_model.md"
+  - "docs/retention_policy_analysis.md"
+  - "docs/dashboard_current_state.md"
+  - "docs/manufacturing_workforce_stability.md"
+  - "scripts/run_checkpoint52.ps1"
+  - "scripts/run_end_to_end.ps1"
+
+forbidden_stale_claims:
+  - "Achieved 71.2% recall"
+  - "Model probabilities are not calibrated"
+  - "The resulting recommended threshold was"
+  - "High Risk    → Top 10% of model scores"
+  - "Selected-model test performance:"
+
+required_commands:
+  - "python -m pip install -r requirements.txt"
+  - "python -m streamlit run dashboard\\app.py"
+  - ".\\scripts\\run_checkpoint52.ps1"
+  - ".\\scripts\\run_end_to_end.ps1"

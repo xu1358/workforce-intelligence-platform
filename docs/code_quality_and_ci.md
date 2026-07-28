@@ -223,7 +223,9 @@ Checkpoint 50 adds configuration tests that verify:
 - Local and remote workflows run the same four quality gates.
 - Both pytest and Ruff remain declared dependencies.
 
-The complete automated suite now contains 76 tests.
+Checkpoints 51 and 52 extend the same suite with curated-notebook and
+recruiter-facing README contracts. The complete automated suite now contains
+88 tests.
 
 ## End-to-End Integration
 
@@ -261,7 +263,7 @@ The quality workflow does not prove analytical correctness by itself.
 
 It complements, but does not replace:
 
-- The 76 automated tests
+- The 88 automated tests
 - Dataset validation checkpoints
 - Temporal leakage audits
 - Model calibration and out-of-time evaluation
