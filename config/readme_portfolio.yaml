@@ -15,6 +15,7 @@ required_headings:
   - "## Headline Results"
   - "## Analytical Design"
   - "## Model Development and Final Evaluation"
+  - "## External Methodological Benchmark"
   - "## From Scores to a Retention Policy"
   - "## Manufacturing Workforce Stability"
   - "## Fairness, Ethics, and Governance"
@@ -32,6 +33,7 @@ required_phrases:
   - "prohibits automatic employment action"
   - "once-only out-of-time test"
   - "Estimated 12-month attrition probability"
+  - "not directly comparable"
 
 headline_metrics:
   current_active_employees: "7,409"
@@ -48,6 +50,12 @@ headline_metrics:
   manufacturing_active_employees: "1,832"
   manufacturing_expected_departures: "229.7"
   manufacturing_residual_backfills: "221.3"
+  ibm_benchmark_rows: "1,470"
+  ibm_benchmark_positive_cases: "237"
+  ibm_benchmark_pr_auc: "0.6094"
+  ibm_benchmark_roc_auc: "0.8277"
+  ibm_benchmark_brier: "0.0975"
+  ibm_benchmark_top_decile_lift: "4.30"
 
 required_links:
   - "notebooks/README.md"
@@ -66,7 +74,10 @@ required_links:
   - "docs/retention_policy_analysis.md"
   - "docs/dashboard_current_state.md"
   - "docs/manufacturing_workforce_stability.md"
+  - "docs/ibm_external_benchmark.md"
+  - "notebooks/31_ibm_external_benchmark.ipynb"
   - "scripts/run_checkpoint52.ps1"
+  - "scripts/run_checkpoint53.ps1"
   - "scripts/run_end_to_end.ps1"
 
 forbidden_stale_claims:
@@ -80,4 +91,5 @@ required_commands:
   - "python -m pip install -r requirements.txt"
   - "python -m streamlit run dashboard\\app.py"
   - ".\\scripts\\run_checkpoint52.ps1"
+  - ".\\scripts\\run_checkpoint53.ps1"
   - ".\\scripts\\run_end_to_end.ps1"

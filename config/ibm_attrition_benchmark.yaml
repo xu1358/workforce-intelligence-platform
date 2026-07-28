@@ -1,0 +1,218 @@
+version: "1.0"
+description: >-
+  Isolated methodological benchmark using the fictional IBM HR Analytics
+  Employee Attrition dataset. It does not alter the primary Version 2 model,
+  policy, final test, dashboard scores, or current workforce plan.
+
+source:
+  dataset_name: "IBM HR Analytics Employee Attrition & Performance"
+  fictional_data: true
+  repository_url: "https://github.com/IBM/employee-attrition-aif360"
+  source_commit: "13287d5f717dc978eda249aef4665e04c7cec8b0"
+  raw_url: >-
+    https://raw.githubusercontent.com/IBM/employee-attrition-aif360/13287d5f717dc978eda249aef4665e04c7cec8b0/data/emp_attrition.csv
+  local_path: "data/external/ibm_emp_attrition.csv"
+  sha256: "a5c31e38bd7fafc9bc333884eb181b06b41b8e5e488e8f7ccb27199fb3be7659"
+  license_name: "Open Database License (ODbL) + Database Content License (DbCL)"
+  license_url: "https://github.com/IBM/employee-attrition-aif360#dataset-license-details"
+  repository_archived_on: "2024-07-18"
+
+schema:
+  expected_rows: 1470
+  expected_columns: 35
+  target_column: "Attrition"
+  positive_label: "Yes"
+  negative_label: "No"
+  expected_positive_cases: 237
+  expected_negative_cases: 1233
+  identifier_column: "EmployeeNumber"
+  constant_columns:
+    EmployeeCount: 1
+    Over18: "Y"
+    StandardHours: 80
+  expected_columns_in_order:
+    - "Age"
+    - "Attrition"
+    - "BusinessTravel"
+    - "DailyRate"
+    - "Department"
+    - "DistanceFromHome"
+    - "Education"
+    - "EducationField"
+    - "EmployeeCount"
+    - "EmployeeNumber"
+    - "EnvironmentSatisfaction"
+    - "Gender"
+    - "HourlyRate"
+    - "JobInvolvement"
+    - "JobLevel"
+    - "JobRole"
+    - "JobSatisfaction"
+    - "MaritalStatus"
+    - "MonthlyIncome"
+    - "MonthlyRate"
+    - "NumCompaniesWorked"
+    - "Over18"
+    - "OverTime"
+    - "PercentSalaryHike"
+    - "PerformanceRating"
+    - "RelationshipSatisfaction"
+    - "StandardHours"
+    - "StockOptionLevel"
+    - "TotalWorkingYears"
+    - "TrainingTimesLastYear"
+    - "WorkLifeBalance"
+    - "YearsAtCompany"
+    - "YearsInCurrentRole"
+    - "YearsSinceLastPromotion"
+    - "YearsWithCurrManager"
+
+feature_policy:
+  numerical_features:
+    - "Age"
+    - "DistanceFromHome"
+    - "Education"
+    - "EnvironmentSatisfaction"
+    - "JobInvolvement"
+    - "JobLevel"
+    - "JobSatisfaction"
+    - "MonthlyIncome"
+    - "NumCompaniesWorked"
+    - "PercentSalaryHike"
+    - "PerformanceRating"
+    - "RelationshipSatisfaction"
+    - "StockOptionLevel"
+    - "TotalWorkingYears"
+    - "TrainingTimesLastYear"
+    - "WorkLifeBalance"
+    - "YearsAtCompany"
+    - "YearsInCurrentRole"
+    - "YearsSinceLastPromotion"
+    - "YearsWithCurrManager"
+  categorical_features:
+    - "BusinessTravel"
+    - "Department"
+    - "EducationField"
+    - "JobRole"
+    - "MaritalStatus"
+    - "OverTime"
+  excluded_features:
+    Attrition: "Target, never a predictor."
+    EmployeeNumber: "Identifier, not a workforce characteristic."
+    EmployeeCount: "Constant column."
+    Over18: "Constant column."
+    StandardHours: "Constant column."
+    DailyRate: "Opaque synthetic rate with no comparable business definition."
+    HourlyRate: "Opaque synthetic rate with no comparable business definition."
+    MonthlyRate: "Opaque synthetic rate with no comparable business definition."
+    Gender: >-
+      Held out of model fitting and used only for descriptive subgroup
+      diagnostics.
+
+model:
+  name: "Sigmoid-calibrated Logistic Regression"
+  parameters:
+    C: 1.0
+    class_weight: "balanced"
+    max_iter: 2000
+    solver: "liblinear"
+    random_state: 42
+  calibration_method: "sigmoid"
+  inner_calibration_folds: 3
+
+evaluation:
+  design: "Repeated stratified cross-validation"
+  outer_folds: 5
+  repeats: 10
+  random_seed: 42
+  top_fraction: 0.10
+  bootstrap_iterations: 500
+  confidence_level: 0.95
+  bootstrap_seed: 42
+  no_temporal_claim_permitted: true
+
+subgroups:
+  descriptive_only: true
+  attributes:
+    - "Gender"
+    - "AgeBand"
+    - "Department"
+  age_bands:
+    - label: "Under 30"
+      minimum: 0
+      maximum: 29
+    - label: "30-39"
+      minimum: 30
+      maximum: 39
+    - label: "40-49"
+      minimum: 40
+      maximum: 49
+    - label: "50+"
+      minimum: 50
+      maximum: 200
+
+primary_reference:
+  dataset: "Primary Version 2 synthetic temporal panel"
+  evaluation_design: "Once-only 2025 out-of-time final test"
+  rows: 6641
+  positive_rate: 0.120916
+  pr_auc: 0.171047
+  roc_auc: 0.606113
+  brier_score: 0.104848
+  top_decile_lift: 1.641611
+
+feature_mapping:
+  - ibm_feature: "Age"
+    primary_concept: "approx_age"
+    comparability: "Close conceptual match"
+  - ibm_feature: "Education"
+    primary_concept: "education_level"
+    comparability: "Ordinal code versus named categories"
+  - ibm_feature: "Department"
+    primary_concept: "department_name"
+    comparability: "Same concept, different organizations and categories"
+  - ibm_feature: "JobLevel"
+    primary_concept: "job_level"
+    comparability: "Close conceptual match, different scale"
+  - ibm_feature: "MonthlyIncome"
+    primary_concept: "salary_position_percent"
+    comparability: "Absolute monthly pay versus peer-relative annual pay"
+  - ibm_feature: "PerformanceRating"
+    primary_concept: "performance_rating"
+    comparability: "Same label, different synthetic generating process"
+  - ibm_feature: "TrainingTimesLastYear"
+    primary_concept: "completed_training_hours_12m"
+    comparability: "Training count versus completed hours"
+  - ibm_feature: "YearsAtCompany"
+    primary_concept: "tenure_years"
+    comparability: "Close conceptual match"
+  - ibm_feature: "YearsSinceLastPromotion"
+    primary_concept: "months_since_promotion"
+    comparability: "Years versus months; IBM lacks no-prior-promotion flag"
+  - ibm_feature: "Attrition"
+    primary_concept: "attrition_next_12m"
+    comparability: "Static label with unknown horizon versus explicit 12-month target"
+
+isolation:
+  merge_with_primary_data: false
+  reuse_primary_model_artifact: false
+  access_primary_final_test_rows: false
+  select_intervention_policy: false
+  create_employee_review_list: false
+  modify_dashboard: false
+
+artifacts:
+  supporting_notebook: "notebooks/31_ibm_external_benchmark.ipynb"
+  output_directory: "data/processed/ibm_benchmark"
+  expected_figures:
+    - "ibm_benchmark_ranking_curves.png"
+    - "ibm_benchmark_calibration.png"
+    - "ibm_benchmark_subgroup_selection.png"
+
+validation:
+  minimum_pr_auc_lift_over_baseline: 1.25
+  minimum_roc_auc: 0.60
+  minimum_top_decile_lift: 1.25
+  require_calibrated_brier_improvement: true
+  probability_minimum: 0.0
+  probability_maximum: 1.0

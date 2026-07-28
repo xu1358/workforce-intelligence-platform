@@ -21,6 +21,7 @@ For a concise review, use these entry points:
 3. [Review the analytical design](#analytical-design).
 4. [Inspect the evidence behind the headline claims](docs/readme_evidence_map.md).
 5. [Run the automated quality checks](#fast-local-validation).
+6. [Review the isolated IBM benchmark](#external-methodological-benchmark).
 
 ## Business Decision
 
@@ -75,7 +76,8 @@ The repository demonstrates a complete analytical decision system:
 - ranking, subgroup, fairness, and sensitivity analysis;
 - an explicit retention cost model;
 - a frozen budget-constrained intervention policy;
-- a current-state Streamlit dashboard; and
+- a current-state Streamlit dashboard;
+- an isolated external-dataset methodological benchmark; and
 - automated tests, Ruff checks, and GitHub Actions.
 
 ## Analytical Design
@@ -169,6 +171,36 @@ After all development choices are frozen, the selected model is fitted on the
 Read the full [model comparison](docs/model_comparison_v2.md),
 [calibration analysis](docs/calibration_analysis.md), and
 [ranking analysis](docs/ranking_analysis.md).
+
+## External Methodological Benchmark
+
+Checkpoint 53 reproduces the modeling discipline on IBM's fictional HR
+Analytics Employee Attrition dataset. The source is pinned to one archived
+IBM repository commit and verified by SHA-256 before use.
+
+The static dataset contains 1,470 fictional employees and 237 attrition cases.
+It has no dates and no stated prediction horizon, so the benchmark uses 5-fold
+stratified cross-validation repeated 10 times—not temporal validation.
+Sigmoid calibration is learned inside each outer training fold.
+
+| IBM benchmark metric | Repeated out-of-fold result |
+| --- | ---: |
+| PR-AUC | 0.6094 |
+| ROC-AUC | 0.8277 |
+| Brier score | 0.0975 |
+| Top-decile precision | 69.39% |
+| Top-decile capture | 43.04% |
+| Top-decile lift | 4.30 |
+
+These numbers are stronger than the primary model's once-only temporal-test
+results, but they are **not directly comparable**. The datasets have different
+features, synthetic relationships, targets, sample sizes, and evaluation
+designs. The IBM benchmark does not replace the primary model, change the
+frozen policy, alter the dashboard, or establish performance on real
+employees.
+
+Read the [external-benchmark methodology](docs/ibm_external_benchmark.md) and
+the executed [supporting notebook](notebooks/31_ibm_external_benchmark.ipynb).
 
 ## From Scores to a Retention Policy
 
@@ -300,7 +332,8 @@ are embedded, so they can be read on GitHub without rerunning the pipeline.
 | 4 | [Current Workforce Stability Plan](notebooks/portfolio/04_current_workforce_stability_plan.ipynb) | How does the frozen policy support current manufacturing planning? |
 
 The original 30 checkpoint notebooks remain in `notebooks/` as detailed
-technical evidence and an audit trail.
+technical evidence and an audit trail. Notebook 31 separately documents the
+IBM external benchmark and is not part of the four-notebook primary narrative.
 
 ## Technology Stack
 
@@ -327,7 +360,7 @@ workforce-intelligence-platform/
 ├── models/                # Generated model artifacts
 ├── notebooks/
 │   ├── portfolio/         # Four reviewer-facing executed notebooks
-│   └── 01_...30_...       # Detailed supporting notebook history
+│   └── 01_...31_...       # Detailed supporting and benchmark notebooks
 ├── scripts/               # Checkpoint and end-to-end PowerShell runners
 ├── sql/                   # Schema, validation, and analytical SQL
 ├── src/                   # Generation, modeling, policy, and dashboard code
@@ -387,7 +420,7 @@ The real `.env` file is ignored by Git.
 The complete pipeline generates the synthetic data, validates Version 2,
 loads PostgreSQL, fits and evaluates the models, freezes and tests the policy,
 builds the current dashboard layer, and validates the portfolio notebooks and
-README.
+README. It also downloads, verifies, and runs the isolated IBM benchmark.
 
 ```powershell
 .\scripts\run_end_to_end.ps1
@@ -423,10 +456,22 @@ It performs:
 2. Ruff lint checks;
 3. test-format checks;
 4. README structure, evidence, link, and stale-claim validation; and
-5. the complete 88-test automated suite.
+5. the complete 96-test automated suite.
 
 The same compile, lint, formatting, and pytest gates run automatically in
 [GitHub Actions](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml).
+
+Checkpoint 53 adds the external source verification and complete benchmark:
+
+```powershell
+.\scripts\run_checkpoint53.ps1
+```
+
+It downloads only the pinned fictional IBM CSV, checks its checksum and
+schema, runs the repeated out-of-fold benchmark, saves aggregate evidence, and
+runs the complete 96-test suite. It does not connect to PostgreSQL or
+regenerate the primary workforce. The exact workflow is committed in the
+[Checkpoint 53 runner](scripts/run_checkpoint53.ps1).
 
 ## Documentation Guide
 
@@ -447,6 +492,7 @@ The same compile, lint, formatting, and pytest gates run automatically in
 | Policy | [Retention policy analysis](docs/retention_policy_analysis.md) |
 | Current dashboard | [Dashboard timeline and safety](docs/dashboard_current_state.md) |
 | Manufacturing plan | [Workforce-stability analysis](docs/manufacturing_workforce_stability.md) |
+| External benchmark | [IBM HR Analytics benchmark](docs/ibm_external_benchmark.md) |
 | Testing | [Testing strategy](docs/testing_strategy.md) |
 | Code quality | [Code quality and CI](docs/code_quality_and_ci.md) |
 | README evidence | [README evidence map](docs/readme_evidence_map.md) |
@@ -454,8 +500,9 @@ The same compile, lint, formatting, and pytest gates run automatically in
 ## Limitations
 
 - All records, outcomes, salaries, and economic values are synthetic.
-- The attrition hazard intentionally creates learnable signal; external
-  validity has not yet been established.
+- The attrition hazard intentionally creates learnable signal.
+- The separate IBM benchmark is also fictional and methodologically different;
+  it does not establish external validity for real employees.
 - The final model has modest discrimination and only one reserved temporal
   test period.
 - Calibration on synthetic data does not guarantee calibration elsewhere.
@@ -467,16 +514,16 @@ The same compile, lint, formatting, and pytest gates run automatically in
 - Real deployment would require privacy, security, legal, fairness, monitoring,
   stakeholder approval, and experimental measurement.
 
-Checkpoint 53 is planned as a separate IBM HR Analytics benchmark. It will not
-be merged into the primary temporal model and will not convert fictional data
-into real employee evidence.
+Checkpoint 53 keeps the IBM HR Analytics benchmark separate from the primary
+temporal model and does not convert fictional data into real employee
+evidence.
 
 ## Version History
 
 - `v1.0-portfolio` preserves the completed Version 1 baseline.
 - `revision-v2` contains the temporal modeling, calibration, fairness,
   economics, policy, current-state dashboard, testing, CI, and curated
-  portfolio revisions.
+  portfolio revisions, plus the isolated IBM methodological benchmark.
 
 ## Disclaimer
 

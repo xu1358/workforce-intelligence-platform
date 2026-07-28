@@ -23,7 +23,10 @@ measurements from a real employer.
 | Final-test policy capture 17.06% and $2.03 million outcome-aligned net value | `data/processed/retention_policy_decision.csv` | 46 | Notebook 3 |
 | Current projection of 35.0 prevented departures and $2.40 million expected net value | `data/processed/current_retention_policy_summary.csv` | 46 | Notebooks 3–4 |
 | Manufacturing expected departures 229.7 and residual backfills 221.3 | `data/processed/manufacturing_stability_summary.csv` | 48 | Notebook 4 and `docs/manufacturing_workforce_stability.md` |
-| Automated test count | pytest collection during `scripts/run_checkpoint52.ps1` | 52 | GitHub Actions and local terminal output |
+| IBM benchmark contains 1,470 rows and 237 positive cases | `data/processed/ibm_benchmark/ibm_benchmark_data_profile.csv` | 53 | Notebook 31 and `docs/ibm_external_benchmark.md` |
+| IBM repeated out-of-fold PR-AUC 0.6094, ROC-AUC 0.8277, and Brier 0.0975 | `data/processed/ibm_benchmark/ibm_benchmark_metrics.csv` | 53 | Notebook 31 and `docs/ibm_external_benchmark.md` |
+| IBM top-decile precision 69.39%, capture 43.04%, and lift 4.30 | `data/processed/ibm_benchmark/ibm_benchmark_metrics.csv` | 53 | Notebook 31 |
+| Automated test count | pytest collection during `scripts/run_checkpoint53.ps1` | 53 | GitHub Actions and local terminal output |
 
 Generated CSV files are intentionally excluded from Git. The executed curated
 notebooks preserve aggregate evidence so GitHub reviewers can inspect results
@@ -62,6 +65,18 @@ employee is known to leave, and it must not trigger an automatic employment
 action. Financial value is a scenario-planning quantity, not a measure of a
 person's value.
 
+### External benchmark
+
+The IBM HR Analytics data is a second fictional dataset with no event dates or
+stated target horizon. Its repeated stratified cross-validation metrics are
+methodological evidence only. They are not directly comparable with the
+primary model's once-only future-time test and do not validate the primary
+model on another employer.
+
+The source commit, checksum, schema, license, and isolation rules are committed
+in `config/ibm_attrition_benchmark.yaml`. No IBM row-level probability,
+ranking, or review list is saved.
+
 ## Validation Contract
 
 `config/readme_portfolio.yaml` records:
@@ -78,9 +93,9 @@ Run the contract directly with:
 python src\validate_readme_portfolio.py
 ```
 
-Checkpoint 52 combines that validation with compilation, Ruff, formatting,
-and the complete pytest suite:
+Checkpoint 53 combines source verification, the isolated benchmark,
+compilation, Ruff, formatting, and the complete pytest suite:
 
 ```powershell
-.\scripts\run_checkpoint52.ps1
+.\scripts\run_checkpoint53.ps1
 ```

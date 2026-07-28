@@ -130,6 +130,24 @@ The workforce-stability tests verify:
 - Department and Manufacturing role summaries agree.
 - Scenario caveats remain available for the dashboard.
 
+### 8. External-Benchmark Contracts
+
+Checkpoint 53 adds tests that verify:
+
+- The IBM source is pinned to a 40-character commit and SHA-256 checksum.
+- The dataset is explicitly fictional and its ODbL/DbCL license is recorded.
+- The committed 1,470-row, 35-column schema and target counts are enforced.
+- Target, identifier, constant, opaque-rate, and gender fields remain outside
+  the benchmark model.
+- Top-decile tie-breaking and ranking formulas are deterministic.
+- Every configured age boundary receives one descriptive band.
+- Primary and IBM performance rows are always marked not directly comparable.
+- The benchmark cannot change the primary model, final test, policy,
+  dashboard, or employee review plan.
+
+These tests use in-memory data frames. They do not download the external CSV,
+fit the 50 benchmark folds, or require network access in GitHub Actions.
+
 ## Test Isolation
 
 The suite uses small data frames created inside the tests.
@@ -235,9 +253,9 @@ Checkpoints 51 and 52 extend the suite beyond analytical calculations:
   local links, Markdown rendering, reproduction commands, governance language,
   and removal of stale Version 1 claims.
 
-The complete suite now contains 88 tests. These presentation tests do not
-recalculate model results; they make sure the committed portfolio tells the
-validated Version 2 story accurately.
+The complete suite now contains 96 tests. The presentation and external-source
+contract tests do not recalculate the primary model; they make sure the
+committed portfolio tells the validated Version 2 story accurately.
 
 ## Files Added or Updated
 
@@ -254,7 +272,9 @@ validated Version 2 story accurately.
 | `tests/test_workforce_stability.py` | Tests current planning calculations |
 | `tests/test_portfolio_notebooks.py` | Tests the curated notebook sequence |
 | `tests/test_readme_portfolio.py` | Tests README evidence and navigation contracts |
+| `tests/test_ibm_attrition_benchmark.py` | Tests source, schema, feature, metric, and isolation contracts |
 | `scripts/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
+| `scripts/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
 | `scripts/run_end_to_end.ps1` | Runs tests before the complete pipeline |
 | `requirements.txt` | Adds pytest as a reproducible dependency |
 

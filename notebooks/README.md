@@ -6,6 +6,8 @@ The project contains two notebook layers:
    Version 2 analytical and business story.
 2. **Supporting checkpoint notebooks** — the original detailed notebooks
    `01` through `30`, retained as technical evidence and an audit trail.
+3. **External benchmark** — Notebook `31`, which evaluates the same
+   methodological discipline on a separate fictional IBM dataset.
 
 ## Recommended reviewer sequence
 
@@ -43,6 +45,19 @@ implementation detail:
 
 These supporting notebooks are not the recommended first reading path.
 
+## Separate external benchmark
+
+[Notebook 31: IBM HR Analytics External Benchmark](31_ibm_external_benchmark.ipynb)
+documents the pinned source, feature exclusions, repeated out-of-fold
+evaluation, calibration, ranking, coefficient stability, and descriptive
+subgroup checks.
+
+It is intentionally separate from the four-notebook primary story because the
+IBM table has no dates or stated outcome horizon. Its metrics are not directly
+comparable with the primary model's once-only out-of-time final test. It does
+not change the primary fitted model, frozen policy, dashboard, or current
+review plan.
+
 ## Reproducibility
 
 The embedded outputs were produced from the deterministic Version 2 pipeline.
@@ -58,3 +73,10 @@ python src\validate_portfolio_notebooks.py
 The validator checks the manifest, titles, headings, execution state, error
 outputs, navigation, aggregate-only presentation, synthetic-data notices, and
 file sizes.
+
+Run the external benchmark and reproduce Notebook 31's aggregate source data
+with:
+
+```powershell
+.\scripts\run_checkpoint53.ps1
+```

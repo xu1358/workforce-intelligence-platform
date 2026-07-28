@@ -61,7 +61,9 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 50:** Add code-quality tools and GitHub Actions.
 - **Checkpoint 51:** Consolidate the notebooks into a curated portfolio sequence.
 - **Checkpoint 52:** Rewrite the README around findings and operational decisions.
-- **Checkpoint 53:** Add the IBM employee-attrition external benchmark.
+- **Checkpoint 53:** Add the isolated IBM employee-attrition methodological
+  benchmark with pinned provenance, repeated out-of-fold evaluation,
+  calibration, subgroup diagnostics, and explicit non-comparability controls.
 
 ## Optional Advanced Extensions
 
@@ -80,7 +82,10 @@ The initial scenario will evaluate a capacity of 700 interventions and compare t
 
 The primary project will remain a synthetic, temporal workforce-intelligence platform.
 
-A separate benchmark track will use the employee-attrition dataset distributed through IBM's official `employee-attrition-aif360` repository. The benchmark will not be merged with the synthetic database or described as real IBM employee data.
+A separate benchmark track uses the fictional employee-attrition dataset
+distributed through IBM's archived `employee-attrition-aif360` repository.
+The source is pinned and checksum verified. The benchmark is not merged with
+the primary synthetic database or described as real IBM employee data.
 
 ## Version 2 Completion Standard
 

@@ -90,6 +90,18 @@ The supporting notebooks preserve:
 Keeping them avoids destroying development history. The new
 `notebooks/README.md` makes the four-notebook path the explicit entry point.
 
+## External benchmark notebook
+
+Checkpoint 53 adds
+`notebooks/31_ibm_external_benchmark.ipynb` as a separate supporting
+benchmark. It is not a fifth notebook in the primary portfolio sequence.
+
+Notebook 31 records aggregate evidence from a pinned fictional IBM HR
+Analytics dataset. Because that table has no dates or stated attrition
+horizon, it uses repeated stratified cross-validation rather than temporal
+testing. Its metrics are not directly comparable with the primary model's
+reserved future-time test.
+
 ## Automated validation
 
 `src/validate_portfolio_notebooks.py` checks:
@@ -126,4 +138,5 @@ Checkpoint 51 does not:
 - Delete the original notebooks
 - Add the IBM external benchmark
 
-The IBM benchmark remains planned for Checkpoint 53.
+The IBM benchmark is implemented separately in Checkpoint 53 and does not
+change any of the four curated notebooks.

@@ -1,6 +1,7 @@
 param(
     [switch]$SkipDataGeneration,
-    [switch]$RunLegacyV1Outputs
+    [switch]$RunLegacyV1Outputs,
+    [switch]$SkipExternalBenchmark
 )
 
 
@@ -333,6 +334,23 @@ Invoke-PythonScript `
 Invoke-PythonScript `
     "Validate recruiter-facing README" `
     "src\validate_readme_portfolio.py"
+
+if (-not $SkipExternalBenchmark) {
+
+    Invoke-PythonScript `
+        "Download and verify IBM benchmark data" `
+        "src\download_ibm_attrition_benchmark.py"
+
+    Invoke-PythonScript `
+        "Run isolated IBM attrition benchmark" `
+        "src\benchmark_ibm_attrition.py"
+}
+
+else {
+
+    Write-Host ""
+    Write-Host "The isolated IBM external benchmark was skipped."
+}
 
 # ---------------------------------------------------------
 # Completion
