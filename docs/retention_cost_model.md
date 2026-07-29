@@ -22,6 +22,31 @@ It does **not** answer:
 Those are policy questions. Checkpoint 46 will compare policies by combining
 the cost assumptions with validation-stage probabilities.
 
+## Results Snapshot
+
+The base replacement, standard intervention, and base effectiveness
+combination is the reference scenario used by the later policy analysis.
+
+| Result | 2024 validation | Current active workforce |
+|---|---:|---:|
+| Model-eligible employees | 5,521 | 7,305 |
+| Average base salary | $92,810 | $95,722 |
+| Median replacement cost | $86,400 | $90,900 |
+| Intervention cost per employee | $2,500 | $2,500 |
+| Assumed intervention effectiveness | 25% | 25% |
+| Median maximum avoidable cost | $21,600 | $22,725 |
+| Median break-even attrition probability | 11.57% | 11.00% |
+
+All **27 combinations** of replacement impact, intervention cost, and
+effectiveness were calculated for both populations. Under the current
+reference scenario, a median-salary employee must have an estimated
+attrition probability of about 11.00% for the modeled expected benefit to
+equal the $2,500 intervention cost.
+
+The cost model did not load model probabilities, choose a threshold, rank
+employees, or access reserved test outcomes. It established transparent
+economic inputs for Checkpoint 46.
+
 ## Scope and Data Boundary
 
 The calculation uses non-target features from two populations:
@@ -233,3 +258,15 @@ these economic assumptions to compare policies by:
 Only after those comparisons will an operating policy be proposed. The
 reserved 2025 test outcomes will remain protected until the planned final
 evaluation stage.
+
+## Evidence and Reproduction
+
+- Executed analysis:
+  [Notebook 27](../notebooks/27_retention_cost_model.ipynb)
+- Curated reviewer narrative:
+  [Fairness, Economics, and Retention Policy](../notebooks/portfolio/03_fairness_economics_and_policy.ipynb)
+- Implementation:
+  [calculate_retention_economics.py](../src/calculate_retention_economics.py)
+- Primary generated evidence: `data/processed/retention_cost_scenarios.csv`,
+  `data/processed/retention_cost_population_summary.csv`, and
+  `data/processed/retention_cost_validation.csv`

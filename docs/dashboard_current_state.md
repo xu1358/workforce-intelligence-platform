@@ -8,6 +8,29 @@ presenting the legacy Version 1 modeling snapshot as a current risk list.
 
 The dashboard is explicitly labeled **as of 2026-06-30**.
 
+## Results Snapshot
+
+| Current-state result | Value |
+|---|---:|
+| Active synthetic employees | 7,409 |
+| Model-eligible employees with scores | 7,305 |
+| Protected-level active employees excluded from scoring | 104 |
+| Calibrated probability range | 1.74%–42.59% |
+| Employees selected for human review | 700 |
+| Planned intervention spend | $1,750,000 |
+| Projected prevented departures | 35.03 |
+| Projected avoided cost | $4,146,216 |
+| Projected expected net value | $2,396,216 |
+| Inactive employees displayed as current risks | 0 |
+
+Every eligible active employee received exactly one current score. The
+frozen policy preserved the tested 700-person limit, and the dashboard
+contains no future outcome fields or direct personal names.
+
+The financial and prevented-departure values are planning projections based
+on calibrated probabilities and the synthetic reference cost scenario. They
+are not observed 2026 outcomes or guaranteed intervention effects.
+
 ## Authoritative inputs
 
 The current retention view reads:
@@ -132,3 +155,17 @@ After the checkpoint succeeds, start the Streamlit dashboard with:
 ```powershell
 streamlit run dashboard\app.py
 ```
+
+## Evidence and Reproduction
+
+- Executed validation:
+  [Notebook 29](../notebooks/29_dashboard_current_state_validation.ipynb)
+- Curated reviewer narrative:
+  [Current Manufacturing Workforce Stability Plan](../notebooks/portfolio/04_current_workforce_stability_plan.ipynb)
+- Data preparation:
+  [build_dashboard_current_state.py](../src/build_dashboard_current_state.py)
+- Dashboard application: [app.py](../dashboard/app.py)
+- Primary generated evidence:
+  `data/processed/dashboard/dashboard_metadata.csv`,
+  `data/processed/dashboard/current_policy_summary.csv`, and
+  `data/processed/dashboard_current_state_validation.csv`

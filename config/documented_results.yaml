@@ -1,0 +1,87 @@
+version: "1.0"
+description: >-
+  Reviewer-facing result contracts for documentation pages that combine
+  methodology, headline evidence, interpretation, and reproducibility.
+
+required_headings:
+  - "## Results Snapshot"
+  - "## Evidence and Reproduction"
+
+documents:
+  - path: docs/retention_policy_analysis.md
+    required_values:
+      - "Budget-constrained expected value"
+      - "700"
+      - "$1,750,000"
+      - "$1,390,488"
+      - "$2,033,700"
+      - "17.06%"
+    required_phrases:
+      - "not realized savings"
+      - "No intervention was performed"
+      - "Automatic employment action is prohibited"
+
+  - path: docs/retention_cost_model.md
+    required_values:
+      - "7,305"
+      - "$95,722"
+      - "$90,900"
+      - "$2,500"
+      - "25%"
+      - "11.00%"
+      - "27 combinations"
+    required_phrases:
+      - "did not load model probabilities"
+      - "did not"
+      - "synthetic"
+
+  - path: docs/dashboard_current_state.md
+    required_values:
+      - "7,409"
+      - "7,305"
+      - "104"
+      - "700"
+      - "$1,750,000"
+      - "$2,396,216"
+    required_phrases:
+      - "planning projections"
+      - "Human review is required"
+      - "Automatic employment action is prohibited"
+
+  - path: docs/exploratory_analysis.md
+    required_values:
+      - "7,386"
+      - "627"
+      - "8.49%"
+      - "24.44%"
+      - "10.46%"
+    required_phrases:
+      - "do not establish"
+      - "synthetic"
+      - "authoritative predictive analysis"
+
+  - path: docs/generator_audit.md
+    required_values:
+      - "10,000"
+      - "1,713"
+      - "1,710.25"
+      - "17.130%"
+      - "1,299"
+      - "414"
+    required_phrases:
+      - "random sampling"
+      - "not evidence"
+      - "synthetic"
+
+  - path: docs/department_history_bias.md
+    required_values:
+      - "10,000"
+      - "1,299"
+      - "1,249"
+      - "558"
+      - "4.91%"
+      - "0.00%"
+    required_phrases:
+      - "no department-history mismatch"
+      - "location-history attribution"
+      - "synthetic"

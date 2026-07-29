@@ -13,6 +13,37 @@ test period. The policy is selected and cryptographically hashed using the
 2024 validation period **before** the test target is accessed. After the test
 is evaluated once, the policy is not changed.
 
+## Results Snapshot
+
+The frozen policy selected by validation was **Budget-constrained expected
+value**. It ranked employees by estimated economic value while enforcing the
+committed 700-person capacity and $1.75 million budget.
+
+| Result | 2024 validation | 2025 final test |
+|---|---:|---:|
+| Population | 5,521 | 6,641 |
+| Observed attrition cases | 586 | 803 |
+| Employees selected | 700 | 700 |
+| Selected attrition cases | 85 | 137 |
+| Precision among selected employees | 12.14% | 19.57% |
+| Attrition cases captured | 14.51% | 17.06% |
+| Intervention spend | $1,750,000 | $1,750,000 |
+| Predicted expected net value | $840,974 | $1,390,488 |
+| Outcome-aligned net value | $512,125 | $2,033,700 |
+
+The final-test outcome-aligned net-value interval from 500 employee-level
+bootstrap resamples was **$1,450,673 to $2,587,584**. The corresponding
+capture-rate interval was **14.45% to 19.30%**.
+
+The selected policy identified 137 of the 803 employees who subsequently
+terminated while staying within the frozen capacity. Its 19.57% precision
+was higher than the final-test population attrition rate of 12.09%, producing
+a lift of approximately 1.62.
+
+These dollar values are scenario calculations, not realized savings. No
+intervention was performed. Outcome-aligned value uses observed departures
+with the assumed 25% effectiveness and salary-based replacement cost.
+
 ## Beginner Summary
 
 The model supplies an estimated twelve-month attrition probability.
@@ -213,6 +244,13 @@ Names are intentionally excluded.
 The plan is an anonymized synthetic portfolio output. Every selected row is
 marked for human review. Automatic employment action is prohibited.
 
+The current 2026 plan applies the unchanged policy to 7,305 eligible active
+employees. It selects 700 for human review, projects 35.03 prevented
+departures, $4.146 million of avoided cost, and $2.396 million of expected
+net value under the reference scenario. Because outcomes after 2026-06-30
+are unknown, these values are projections rather than another performance
+test.
+
 ## Fairness Boundary
 
 Checkpoint 44 found substantial descriptive differences across department,
@@ -298,3 +336,21 @@ data/processed/policy_figures/
 The correct portfolio claim is that the project demonstrates transparent,
 leakage-aware decision analysis under explicit assumptions—not that it proves
 a retention intervention will succeed in a real workforce.
+
+## Evidence and Reproduction
+
+- Executed analysis:
+  [Notebook 28](../notebooks/28_retention_policy_analysis.ipynb)
+- Curated reviewer narrative:
+  [Fairness, Economics, and Retention Policy](../notebooks/portfolio/03_fairness_economics_and_policy.ipynb)
+- Implementation:
+  [optimize_retention_policy.py](../src/optimize_retention_policy.py)
+- Primary generated evidence: `data/processed/retention_policy_decision.csv`,
+  `data/processed/retention_policy_comparison.csv`, and
+  `data/processed/retention_final_test_model_metrics.csv`
+
+Reproduce the policy analysis from the project root:
+
+```powershell
+.\scripts\run_checkpoint46.ps1
+```
