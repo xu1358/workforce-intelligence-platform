@@ -447,7 +447,8 @@ workforce-intelligence-platform/
 ├── tests/                 # Automated regression and contract tests
 ├── pyproject.toml         # Ruff configuration
 ├── pytest.ini             # pytest configuration
-└── requirements.txt       # Python dependencies
+├── requirements.txt       # Exactly pinned direct dependencies
+└── requirements-lock.txt  # Hashed direct and transitive dependency lock
 ```
 
 Generated data and model files are intentionally excluded from Git. The
@@ -474,8 +475,8 @@ python -m venv .venv
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install "pip==26.0.1" "setuptools==83.0.0" "wheel==0.47.0"
+python -m pip install --no-build-isolation --require-hashes -r requirements-lock.txt
 ```
 
 Create the local environment file and replace the placeholder values with your
@@ -593,6 +594,17 @@ sensitivity policies. It reads no outcome columns and does not change the
 frozen plan. See the
 [Checkpoint 56 runner](scripts/run_checkpoint56.ps1).
 
+Checkpoint 57 verifies the complete Python environment:
+
+```powershell
+.\scripts\run_checkpoint57.ps1
+```
+
+It checks 19 direct pins, 113 hashed locked distributions, file fingerprints,
+installed versions, `pip check`, CI enforcement, and the full test suite. See
+the [Checkpoint 57 runner](scripts/run_checkpoint57.ps1) and
+[dependency reproducibility guide](docs/dependency_reproducibility.md).
+
 ## Documentation Guide
 
 | Topic | Document |
@@ -618,6 +630,7 @@ frozen plan. See the
 | External benchmark | [IBM HR Analytics benchmark](docs/ibm_external_benchmark.md) |
 | Testing | [Testing strategy](docs/testing_strategy.md) |
 | Code quality | [Code quality and CI](docs/code_quality_and_ci.md) |
+| Dependencies | [Dependency reproducibility](docs/dependency_reproducibility.md) |
 | README evidence | [README evidence map](docs/readme_evidence_map.md) |
 
 ## Limitations
@@ -640,6 +653,8 @@ frozen plan. See the
 - No retention intervention was performed, so causal impact is unknown.
 - Current workforce values are projections with unknown future outcomes.
 - The dashboard is local and has no authentication or role-based access.
+- Reproduction targets the committed Python 3.12 dependency lock; intentional
+  upgrades require full regression and analytical review.
 - Real deployment would require privacy, security, legal, fairness, monitoring,
   stakeholder approval, and experimental measurement.
 
@@ -657,6 +672,9 @@ Checkpoint 56 shows that the salary-based expected-value policy is not
 equity-neutral, while keeping every alternative diagnostic and preserving the
 tested policy.
 
+Checkpoint 57 freezes direct and transitive Python dependencies with package
+hashes and validates the installed environment locally and in CI.
+
 ## Version History
 
 - `v1.0-portfolio` preserves the completed Version 1 baseline.
@@ -664,7 +682,7 @@ tested policy.
   economics, policy, current-state dashboard, testing, CI, and curated
   portfolio revisions, plus the isolated IBM methodological benchmark,
   aggregate explanation-stability and survival analyses, and a post-policy
-  salary-allocation equity audit.
+  salary-allocation equity audit with a hashed dependency lock.
 
 ## Disclaimer
 

@@ -274,7 +274,7 @@ ordering, reference encoding, numeric standardization, and isolation rules.
 Install the new survival dependency once:
 
 ```powershell
-python -m pip install -r requirements.txt
+python -m pip install --no-build-isolation --require-hashes -r requirements-lock.txt
 ```
 
 Run the checkpoint:
@@ -314,4 +314,3 @@ human governance.
 - [lifelines KaplanMeierFitter documentation](https://lifelines.readthedocs.io/en/latest/fitters/univariate/KaplanMeierFitter.html)
 - [lifelines CoxPHFitter documentation](https://lifelines.readthedocs.io/en/latest/fitters/regression/CoxPHFitter.html)
 - [lifelines proportional-hazard assumption documentation](https://lifelines.readthedocs.io/en/latest/jupyter_notebooks/Proportional%20hazard%20assumption.html)
-

@@ -226,7 +226,8 @@ This isolation keeps the suite fast and makes failures easier to diagnose.
 Install the updated requirements once:
 
 ```powershell
-python -m pip install -r requirements.txt
+python -m pip install "pip==26.0.1" "setuptools==83.0.0" "wheel==0.47.0"
+python -m pip install --no-build-isolation --require-hashes -r requirements-lock.txt
 ```
 
 Then run:
@@ -333,13 +334,36 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `tests/test_model_explanations.py` | Tests exact linear explanations, grouping, stability, and governance |
 | `tests/test_survival_analysis.py` | Tests censoring, hire reconstruction, Kaplan–Meier behavior, Cox encoding, and isolation |
 | `tests/test_retention_policy_equity.py` | Tests salary mechanisms, pay groups, sensitivity policies, and governance |
+| `tests/test_dependency_reproducibility.py` | Tests direct pins, transitive hashes, fingerprints, CI, and update documentation |
 | `scripts/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
 | `scripts/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
 | `scripts/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
 | `scripts/run_checkpoint55.ps1` | Runs censoring-aware survival analysis and complete validation |
 | `scripts/run_checkpoint56.ps1` | Runs the post-policy salary-allocation equity audit |
+| `scripts/run_checkpoint57.ps1` | Validates the complete locked dependency environment |
 | `scripts/run_end_to_end.ps1` | Runs tests before the complete pipeline |
-| `requirements.txt` | Declares pytest, Ruff, and lifelines as reproducible dependencies |
+| `requirements.txt` | Pins every direct dependency |
+| `requirements-lock.txt` | Pins and hashes every resolved distribution |
+
+## Dependency Reproducibility Contracts
+
+Checkpoint 57 makes the test environment itself testable. The suite verifies:
+
+- Python 3.12 and the exact GitHub Actions interpreter;
+- the exact pip bootstrap version;
+- 19 exact direct dependency pins;
+- 113 exact direct and transitive distributions;
+- SHA-256 hashes for every locked distribution;
+- SHA-256 fingerprints for both dependency files;
+- agreement between direct pins and the generated lock;
+- locked installation and `pip check` in GitHub Actions; and
+- fail-fast validation in the end-to-end pipeline.
+
+Run the complete local environment contract with:
+
+```powershell
+.\scripts\run_checkpoint57.ps1
+```
 
 ## Limitations
 

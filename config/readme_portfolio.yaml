@@ -87,6 +87,7 @@ required_links:
   - "docs/model_explanations_and_stability.md"
   - "docs/survival_analysis.md"
   - "docs/ibm_external_benchmark.md"
+  - "docs/dependency_reproducibility.md"
   - "notebooks/31_ibm_external_benchmark.ipynb"
   - "notebooks/32_retention_explanation_stability.ipynb"
   - "notebooks/33_survival_analysis.ipynb"
@@ -96,6 +97,7 @@ required_links:
   - "scripts/run_checkpoint54.ps1"
   - "scripts/run_checkpoint55.ps1"
   - "scripts/run_checkpoint56.ps1"
+  - "scripts/run_checkpoint57.ps1"
   - "scripts/run_end_to_end.ps1"
 
 forbidden_stale_claims:
@@ -106,11 +108,13 @@ forbidden_stale_claims:
   - "Selected-model test performance:"
 
 required_commands:
-  - "python -m pip install -r requirements.txt"
+  - "python -m pip install \"pip==26.0.1\" \"setuptools==83.0.0\" \"wheel==0.47.0\""
+  - "python -m pip install --no-build-isolation --require-hashes -r requirements-lock.txt"
   - "python -m streamlit run dashboard\\app.py"
   - ".\\scripts\\run_checkpoint52.ps1"
   - ".\\scripts\\run_checkpoint53.ps1"
   - ".\\scripts\\run_checkpoint54.ps1"
   - ".\\scripts\\run_checkpoint55.ps1"
   - ".\\scripts\\run_checkpoint56.ps1"
+  - ".\\scripts\\run_checkpoint57.ps1"
   - ".\\scripts\\run_end_to_end.ps1"

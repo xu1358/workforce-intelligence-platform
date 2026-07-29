@@ -31,7 +31,8 @@ measurements from a real employer.
 | Explanation minimum top-10 overlap 0.6667 | `data/processed/retention_explanations/retention_explanation_pairwise_stability.csv` | 54 | Notebook 32 |
 | Kaplan–Meier 12-month retention 89.53% and 60-month retention 57.51% | `data/processed/survival_analysis/survival_horizon_summary.csv` | 55 | Notebook 33 and `docs/survival_analysis.md` |
 | Cox five-fold mean concordance 0.5738 | `data/processed/survival_analysis/cox_cross_validation.csv` | 55 | Notebook 33 and `docs/survival_analysis.md` |
-| Automated test count | pytest collection during `scripts/run_checkpoint56.ps1` | 56 | GitHub Actions and local terminal output |
+| 19 direct pins and 113 hashed locked distributions | `data/processed/dependency_environment/dependency_reproducibility_validation.csv` | 57 | `docs/dependency_reproducibility.md` |
+| Automated test count | pytest collection during `scripts/run_checkpoint57.ps1` | 57 | GitHub Actions and local terminal output |
 
 Generated CSV files are intentionally excluded from Git. The executed curated
 notebooks preserve aggregate evidence so GitHub reviewers can inspect results
@@ -161,4 +162,12 @@ pytest suite:
 
 ```powershell
 .\scripts\run_checkpoint56.ps1
+```
+
+Checkpoint 57 verifies the pinned Python, pip, direct dependencies, transitive
+lock, package hashes, fingerprints, installed versions, CI contract, and
+complete pytest suite:
+
+```powershell
+.\scripts\run_checkpoint57.ps1
 ```

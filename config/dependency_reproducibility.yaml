@@ -1,0 +1,59 @@
+version: "2.0"
+description: >-
+  Reproducible Python environment contract for the Workforce Intelligence
+  Platform. Direct dependencies, transitive dependencies, package artifacts,
+  the CI interpreter, and the pip bootstrap version are intentionally pinned.
+
+python:
+  supported_major_minor: "3.12"
+  ci_version: "3.12.4"
+
+bootstrap:
+  pip_version: "26.0.1"
+  setuptools_version: "83.0.0"
+  wheel_version: "0.47.0"
+
+files:
+  direct_requirements: "requirements.txt"
+  lock_file: "requirements-lock.txt"
+  direct_requirements_sha256: "c04380f6d8435ecc20b938b9fa1e380e5bc89e873b888ef1db9f43e65dbe0771"
+  lock_file_sha256: "aaa6e316e31d65d121ccc6b3a3c3f3bf3bc114626ef416a1f237698b093401a8"
+
+expected_counts:
+  direct_dependencies: 19
+  locked_distributions: 113
+
+core_dependencies:
+  Faker: "40.36.0"
+  lifelines: "0.30.3"
+  matplotlib: "3.10.8"
+  numpy: "2.3.5"
+  pandas: "2.2.3"
+  plotly: "6.9.0"
+  pytest: "9.1.1"
+  PyYAML: "6.0.3"
+  ruff: "0.16.0"
+  scikit-learn: "1.8.0"
+  streamlit: "1.60.0"
+
+installation:
+  command: >-
+    python -m pip install --no-build-isolation --require-hashes
+    -r requirements-lock.txt
+  compatibility_check: "python -m pip check"
+  validation_command: "python src/validate_dependency_environment.py"
+
+governance:
+  floating_direct_dependencies_permitted: false
+  floating_transitive_dependencies_permitted: false
+  missing_artifact_hashes_permitted: false
+  automatic_dependency_updates_permitted: false
+  dependency_update_requires_full_test_suite: true
+  dependency_update_requires_lock_regeneration: true
+  dependency_update_requires_fingerprint_update: true
+
+outputs:
+  directory: "data/processed/dependency_environment"
+  expected_files:
+    - "dependency_environment.csv"
+    - "dependency_reproducibility_validation.csv"

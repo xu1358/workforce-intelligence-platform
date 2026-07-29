@@ -163,7 +163,9 @@ It runs automatically on:
 The job uses:
 
 - A GitHub-hosted Ubuntu runner
-- Python 3.12
+- Python 3.12.4
+- pip 26.0.1
+- A 113-distribution SHA-256-verified dependency lock
 - Cached pip dependencies
 - Read-only repository-content permission
 - A 15-minute timeout
@@ -177,12 +179,14 @@ executing, GitHub may cancel the outdated run and keep the newest one.
 The remote job performs:
 
 1. Repository checkout
-2. Python 3.12 setup
-3. Dependency installation
-4. Python compilation
-5. Ruff linting
-6. Ruff formatting verification
-7. Pytest execution
+2. Python 3.12.4 setup
+3. pip 26.0.1 installation
+4. Hashed dependency-lock installation
+5. `pip check` and installed-version validation
+6. Python compilation
+7. Ruff linting
+8. Ruff formatting verification
+9. Pytest execution
 
 The workflow does not:
 
@@ -233,7 +237,9 @@ importance-stability, aggregate-privacy, and governance contracts. The
 Checkpoint 55 adds censoring, hire-history reconstruction, Kaplan–Meier,
 Cox-encoding, and survival-isolation contracts. The complete automated suite
 also includes Checkpoint 56 salary-allocation, policy-sensitivity, and
-no-retuning governance contracts.
+no-retuning governance contracts. Checkpoint 57 adds direct-pin,
+transitive-lock, artifact-hash, fingerprint, installed-version, and CI
+environment contracts.
 
 ## End-to-End Integration
 
@@ -255,7 +261,12 @@ engineering rules are already broken.
 | --- | --- |
 | `.github/workflows/python-quality.yml` | Runs quality checks automatically on GitHub |
 | `pyproject.toml` | Stores Ruff lint and formatting configuration |
-| `requirements.txt` | Adds Ruff as a reproducible dependency |
+| `requirements.txt` | Pins every direct dependency exactly |
+| `requirements-lock.txt` | Pins and hashes the complete transitive environment |
+| `config/dependency_reproducibility.yaml` | Defines Python, pip, count, version, and fingerprint contracts |
+| `src/validate_dependency_environment.py` | Compares manifests, hashes, CI, and installed versions |
+| `scripts/run_checkpoint57.ps1` | Reproduces dependency and code-quality validation locally |
+| `tests/test_dependency_reproducibility.py` | Prevents dependency and CI drift |
 | `scripts/run_checkpoint50.ps1` | Reproduces all quality gates locally |
 | `scripts/run_end_to_end.ps1` | Adds fail-fast quality checks to the full pipeline |
 | `tests/test_quality_configuration.py` | Tests local and GitHub quality contracts |
@@ -272,7 +283,7 @@ The quality workflow does not prove analytical correctness by itself.
 
 It complements, but does not replace:
 
-- The 114 automated tests
+- The complete automated regression suite
 - Dataset validation checkpoints
 - Temporal leakage audits
 - Model calibration and out-of-time evaluation
@@ -283,3 +294,7 @@ It complements, but does not replace:
 The workflow also does not currently enforce repository-wide Ruff formatting.
 That is a deliberate scope decision to avoid a large cosmetic rewrite of
 validated analytical history.
+
+The dependency lock is intentionally conservative. Updates are reviewed,
+regenerated, fingerprinted, and tested rather than accepted automatically.
+See `docs/dependency_reproducibility.md`.

@@ -19,7 +19,7 @@ Set-Location $ProjectRoot
 if ($LASTEXITCODE -ne 0) {
     throw (
         "pytest is not installed. Run: " +
-        "python -m pip install -r requirements.txt"
+        "python -m pip install --no-build-isolation --require-hashes -r requirements-lock.txt"
     )
 }
 

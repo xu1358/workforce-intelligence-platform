@@ -2,25 +2,48 @@ $ErrorActionPreference = "Stop"
 
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 $Python = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
-$Tests = Join-Path $ProjectRoot "tests"
+$DependencyValidator = Join-Path `
+    $ProjectRoot `
+    "src\validate_dependency_environment.py"
+$LockFile = Join-Path $ProjectRoot "requirements-lock.txt"
 
 if (-not (Test-Path $Python)) {
     throw "Project virtual environment was not found: $Python"
 }
 
-if (-not (Test-Path $Tests)) {
-    throw "Automated test directory was not found: $Tests"
+if (-not (Test-Path $DependencyValidator)) {
+    throw "Dependency validator was not found: $DependencyValidator"
+}
+
+if (-not (Test-Path $LockFile)) {
+    throw "Dependency lock was not found: $LockFile"
 }
 
 Set-Location $ProjectRoot
 
-& $Python -m ruff --version
+Write-Host ""
+Write-Host "=================================================="
+Write-Host "Validate locked dependency environment"
+Write-Host "=================================================="
+
+& $Python $DependencyValidator
 
 if ($LASTEXITCODE -ne 0) {
     throw (
-        "Ruff is not installed. Run: " +
-        "python -m pip install --no-build-isolation --require-hashes -r requirements-lock.txt"
+        "The virtual environment does not match requirements-lock.txt. " +
+        "Install the committed lock before rerunning Checkpoint 57."
     )
+}
+
+Write-Host ""
+Write-Host "=================================================="
+Write-Host "Check dependency compatibility"
+Write-Host "=================================================="
+
+& $Python -m pip check
+
+if ($LASTEXITCODE -ne 0) {
+    throw "pip reported an incompatible or missing dependency."
 }
 
 Write-Host ""
@@ -64,10 +87,10 @@ Write-Host "=================================================="
 & $Python -m pytest -q
 
 if ($LASTEXITCODE -ne 0) {
-    throw "Checkpoint 50 automated tests failed."
+    throw "Checkpoint 57 automated tests failed."
 }
 
 Write-Host ""
 Write-Host "=================================================="
-Write-Host "CHECKPOINT 50 COMPLETED SUCCESSFULLY"
+Write-Host "CHECKPOINT 57 COMPLETED SUCCESSFULLY"
 Write-Host "=================================================="

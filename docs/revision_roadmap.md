@@ -74,10 +74,14 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 56:** Audit salary-driven allocation in the frozen expected-value
   policy, compare salary-neutral and salary-capped sensitivities, and preserve
   the no-post-test-retuning boundary.
+- **Checkpoint 57:** Pin Python and pip in CI, commit exact direct dependencies,
+  generate a SHA-256-verified transitive lock, and validate installed-version
+  drift locally and remotely.
 
 ## Optional Advanced Extensions
 
-- **Checkpoint 57:** Deploy a public demonstration dashboard.
+- **Checkpoint 58:** Deploy a public demonstration dashboard if a hosted demo
+  is later required.
 
 ## Primary Version 2 Decision Question
 

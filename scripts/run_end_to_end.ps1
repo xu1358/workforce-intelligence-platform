@@ -84,6 +84,26 @@ Write-Host $ProjectRoot
 
 
 # ---------------------------------------------------------
+# Dependency reproducibility
+# ---------------------------------------------------------
+
+Invoke-PythonScript `
+    "Validate locked dependency environment" `
+    "src\validate_dependency_environment.py"
+
+Write-Host ""
+Write-Host "=================================================="
+Write-Host "Check dependency compatibility"
+Write-Host "=================================================="
+
+& $Python -m pip check
+
+if ($LASTEXITCODE -ne 0) {
+    throw "pip reported an incompatible or missing dependency."
+}
+
+
+# ---------------------------------------------------------
 # Python syntax validation
 # ---------------------------------------------------------
 

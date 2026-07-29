@@ -595,9 +595,12 @@ This architecture demonstrates an end-to-end workflow spanning data engineering,
 
 ## 18. Reproducibility
 
-Python dependencies are documented in:
+Direct Python dependencies and the complete resolved environment are
+documented in:
 
 `requirements.txt`
+
+`requirements-lock.txt`
 
 Database environment variables are documented using:
 
