@@ -3,6 +3,7 @@ ipykernel
 joblib
 lifelines>=0.30,<0.31
 matplotlib
+nbconvert>=7.16,<8.0
 numpy
 pandas
 plotly

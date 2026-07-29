@@ -47,6 +47,15 @@ implementation detail:
 
 These supporting notebooks are not the recommended first reading path.
 
+The reviewer-visible Version 2 notebooks `20`–`30` are committed with saved
+tables and figures. Their execution state, error outputs, portability, and file
+sizes are enforced by the portfolio validator and automated tests. Regenerate
+them after refreshing the processed pipeline artifacts with:
+
+```powershell
+.\scripts\execute_supporting_notebooks.ps1
+```
+
 ## Separate external benchmark
 
 [Notebook 31: IBM HR Analytics External Benchmark](31_ibm_external_benchmark.ipynb)

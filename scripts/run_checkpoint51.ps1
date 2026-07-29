@@ -44,7 +44,7 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host ""
 Write-Host "=================================================="
-Write-Host "Validate curated portfolio notebooks"
+Write-Host "Validate portfolio notebooks"
 Write-Host "=================================================="
 
 & $Python (
@@ -52,7 +52,7 @@ Write-Host "=================================================="
 )
 
 if ($LASTEXITCODE -ne 0) {
-    throw "Curated portfolio notebook validation failed."
+    throw "Portfolio notebook validation failed."
 }
 
 Write-Host ""

@@ -267,10 +267,7 @@ def validate_portfolio(
             "A portfolio notebook cannot display a failed execution.",
         )
 
-        output_count = sum(
-            len(cell.get("outputs", []))
-            for cell in cells
-        )
+        output_count = sum(len(cell.get("outputs", [])) for cell in cells)
         append_check(
             checks,
             f"{label} embeds sufficient outputs",
@@ -391,6 +388,155 @@ def validate_portfolio(
         "Curation must not destroy the detailed checkpoint audit trail.",
     )
 
+    supporting_directory = project_root / "notebooks"
+    executed_supporting_files = [
+        str(filename)
+        for filename in manifest["executed_supporting_notebooks"]
+    ]
+    supporting_minimum_outputs = int(
+        manifest["minimum_supporting_code_outputs_per_notebook"]
+    )
+    supporting_paths = [
+        supporting_directory / filename
+        for filename in executed_supporting_files
+    ]
+    missing_supporting = [
+        path.name
+        for path in supporting_paths
+        if not path.is_file()
+    ]
+    append_check(
+        checks,
+        "Reviewer-visible supporting notebooks exist",
+        not missing_supporting,
+        missing_supporting,
+        "No missing notebooks",
+        "Version 2 technical evidence must remain directly reviewable.",
+    )
+
+    loaded_supporting: dict[str, dict[str, Any]] = {}
+    invalid_supporting: dict[str, str] = {}
+    for path in supporting_paths:
+        if not path.is_file():
+            continue
+
+        try:
+            loaded_supporting[path.name] = load_notebook(path)
+        except (json.JSONDecodeError, ValueError) as exc:
+            invalid_supporting[path.name] = type(exc).__name__
+
+    append_check(
+        checks,
+        "Reviewer-visible supporting notebook JSON is valid",
+        not invalid_supporting,
+        invalid_supporting,
+        "No invalid notebook JSON",
+        "Notebook evidence must remain readable by GitHub and Jupyter.",
+    )
+
+    unexecuted_supporting: dict[str, list[int]] = {}
+    insufficient_supporting_outputs: dict[str, int] = {}
+    supporting_errors: dict[str, list[str]] = {}
+    nonportable_supporting: dict[str, list[str]] = {}
+    nonportable_supporting_kernels: dict[str, Any] = {}
+    oversized_supporting: dict[str, int] = {}
+
+    for filename, notebook in loaded_supporting.items():
+        cells = code_cells(notebook)
+        unexecuted = [
+            index
+            for index, cell in enumerate(cells, start=1)
+            if cell.get("execution_count") is None
+        ]
+        if not cells or unexecuted:
+            unexecuted_supporting[filename] = unexecuted
+
+        output_count = sum(
+            len(cell.get("outputs", []))
+            for cell in cells
+        )
+        if output_count < supporting_minimum_outputs:
+            insufficient_supporting_outputs[filename] = output_count
+
+        errors = [
+            str(output.get("ename", "Unknown error"))
+            for cell in cells
+            for output in cell.get("outputs", [])
+            if output.get("output_type") == "error"
+        ]
+        if errors:
+            supporting_errors[filename] = errors
+
+        lower_text = notebook_text(notebook).lower()
+        machine_paths = [
+            marker
+            for marker in ["c:\\users\\", "/workspace/", "/home/"]
+            if marker in lower_text
+        ]
+        if machine_paths:
+            nonportable_supporting[filename] = machine_paths
+
+        kernel_name = (
+            notebook.get("metadata", {})
+            .get("kernelspec", {})
+            .get("name")
+        )
+        if kernel_name != "python3":
+            nonportable_supporting_kernels[filename] = kernel_name
+
+        size = (supporting_directory / filename).stat().st_size
+        if size > maximum_size:
+            oversized_supporting[filename] = size
+
+    append_check(
+        checks,
+        "Reviewer-visible supporting code cells are executed",
+        not unexecuted_supporting,
+        unexecuted_supporting,
+        "No unexecuted code cells",
+        "GitHub reviewers must see the saved Version 2 evidence.",
+    )
+    append_check(
+        checks,
+        "Reviewer-visible supporting outputs are embedded",
+        not insufficient_supporting_outputs,
+        insufficient_supporting_outputs,
+        f">= {supporting_minimum_outputs} output per notebook",
+        "Supporting notebooks must be useful without local execution.",
+    )
+    append_check(
+        checks,
+        "Reviewer-visible supporting outputs contain no errors",
+        not supporting_errors,
+        supporting_errors,
+        "No error outputs",
+        "Committed technical evidence cannot display failed execution.",
+    )
+    append_check(
+        checks,
+        "Reviewer-visible supporting notebooks are portable",
+        not nonportable_supporting,
+        nonportable_supporting,
+        "No absolute development paths",
+        "Saved sources and outputs must not disclose a development machine.",
+    )
+    append_check(
+        checks,
+        "Reviewer-visible supporting kernels are portable",
+        not nonportable_supporting_kernels,
+        nonportable_supporting_kernels,
+        "All kernels named python3",
+        "Generic kernel metadata keeps notebooks usable across machines.",
+    )
+    append_check(
+        checks,
+        "Reviewer-visible supporting notebooks stay within size limits",
+        not oversized_supporting,
+        oversized_supporting,
+        f"All <= {maximum_size}",
+        "Executed supporting notebooks should load reliably on GitHub.",
+    )
+
     return checks
 
 
@@ -436,7 +582,7 @@ def print_checks(checks: list[dict[str, str]]) -> None:
 
 
 def main() -> None:
-    """Validate the complete curated notebook sequence."""
+    """Validate the curated sequence and reviewer-visible supporting evidence."""
 
     checks = validate_portfolio()
     write_checks(checks)
@@ -456,7 +602,7 @@ def main() -> None:
         )
 
     print(f"\nSaved validation: {OUTPUT_PATH}")
-    print("\nCURATED PORTFOLIO NOTEBOOKS VALIDATED SUCCESSFULLY")
+    print("\nPORTFOLIO NOTEBOOKS VALIDATED SUCCESSFULLY")
 
 
 if __name__ == "__main__":

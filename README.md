@@ -386,6 +386,10 @@ IBM external benchmark, Notebook 32 documents aggregate explanation
 stability, and Notebook 33 documents survival analysis. None is part of the
 four-notebook primary narrative.
 
+Reviewer-visible Version 2 supporting Notebooks `20`–`30` also include saved
+tables and figures. Automated validation prevents them from returning to blank
+notebook templates.
+
 ## Technology Stack
 
 | Layer | Technologies |

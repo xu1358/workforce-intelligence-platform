@@ -10,6 +10,20 @@ expected_portfolio_notebooks: 4
 minimum_supporting_notebooks: 33
 maximum_notebook_size_bytes: 2000000
 minimum_code_outputs_per_notebook: 5
+minimum_supporting_code_outputs_per_notebook: 1
+
+executed_supporting_notebooks:
+  - 20_v2_data_validation.ipynb
+  - 21_temporal_dataset_validation.ipynb
+  - 22_feature_diagnostics.ipynb
+  - 23_model_comparison_v2.ipynb
+  - 24_calibration_analysis.ipynb
+  - 25_ranking_analysis.ipynb
+  - 26_fairness_analysis.ipynb
+  - 27_retention_cost_model.ipynb
+  - 28_retention_policy_analysis.ipynb
+  - 29_dashboard_current_state_validation.ipynb
+  - 30_manufacturing_workforce_stability.ipynb
 
 notebooks:
   - order: 1

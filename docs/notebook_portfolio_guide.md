@@ -90,6 +90,11 @@ The supporting notebooks preserve:
 Keeping them avoids destroying development history. The new
 `notebooks/README.md` makes the four-notebook path the explicit entry point.
 
+The reviewer-visible Version 2 notebooks `20` through `30` also retain their
+executed tables and figures. A dedicated execution script and validation
+contract prevent these technical notebooks from being committed as blank
+templates while leaving the four-notebook reviewer sequence concise.
+
 ## External benchmark notebook
 
 Checkpoint 53 adds
@@ -132,6 +137,9 @@ the frozen review policy.
 - Absence of employee identifiers and machine-specific absolute paths
 - File-size limits
 - Index links and the supporting-notebook inventory
+- Saved execution counts and outputs for supporting Notebooks `20`–`30`
+- Absence of error outputs and machine-specific paths in those notebooks
+- Portable kernels and GitHub-safe file sizes for those notebooks
 
 The validation produces:
 
