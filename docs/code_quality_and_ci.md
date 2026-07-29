@@ -183,10 +183,11 @@ The remote job performs:
 3. pip 26.0.1 installation
 4. Hashed dependency-lock installation
 5. `pip check` and installed-version validation
-6. Python compilation
-7. Ruff linting
-8. Ruff formatting verification
-9. Pytest execution
+6. Markdown and Mermaid rendering validation
+7. Python compilation
+8. Ruff linting
+9. Ruff formatting verification
+10. Pytest execution
 
 The workflow does not:
 
@@ -239,7 +240,9 @@ Cox-encoding, and survival-isolation contracts. The complete automated suite
 also includes Checkpoint 56 salary-allocation, policy-sensitivity, and
 no-retuning governance contracts. Checkpoint 57 adds direct-pin,
 transitive-lock, artifact-hash, fingerprint, installed-version, and CI
-environment contracts.
+environment contracts. Checkpoint 58 adds repository-wide CommonMark fence
+validation and a specific rendering contract for the data-model Mermaid ER
+diagram.
 
 ## End-to-End Integration
 
@@ -267,6 +270,10 @@ engineering rules are already broken.
 | `src/validate_dependency_environment.py` | Compares manifests, hashes, CI, and installed versions |
 | `scripts/run_checkpoint57.ps1` | Reproduces dependency and code-quality validation locally |
 | `tests/test_dependency_reproducibility.py` | Prevents dependency and CI drift |
+| `config/markdown_integrity.yaml` | Defines Markdown scope and Mermaid relationships |
+| `src/validate_markdown_docs.py` | Detects unclosed fences and validates the ER diagram |
+| `scripts/run_checkpoint58.ps1` | Runs Markdown rendering and regression validation |
+| `tests/test_markdown_integrity.py` | Prevents broken Markdown and Mermaid rendering |
 | `scripts/run_checkpoint50.ps1` | Reproduces all quality gates locally |
 | `scripts/run_end_to_end.ps1` | Adds fail-fast quality checks to the full pipeline |
 | `tests/test_quality_configuration.py` | Tests local and GitHub quality contracts |

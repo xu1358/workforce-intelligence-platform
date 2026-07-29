@@ -24,3 +24,4 @@ Run the complete pipeline from the project root:
 
 ```powershell
 .\scripts\run_end_to_end.ps1
+```

@@ -77,10 +77,12 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 57:** Pin Python and pip in CI, commit exact direct dependencies,
   generate a SHA-256-verified transitive lock, and validate installed-version
   drift locally and remotely.
+- **Checkpoint 58:** Repair reviewer-facing Markdown fences, restore GitHub
+  Mermaid rendering, and add local and CI regression validation.
 
 ## Optional Advanced Extensions
 
-- **Checkpoint 58:** Deploy a public demonstration dashboard if a hosted demo
+- **Checkpoint 59:** Deploy a public demonstration dashboard if a hosted demo
   is later required.
 
 ## Primary Version 2 Decision Question

@@ -47,6 +47,9 @@ jobs:
           python -m pip check
           python src/validate_dependency_environment.py
 
+      - name: Validate Markdown and Mermaid rendering
+        run: python src/validate_markdown_docs.py
+
       - name: Compile Python
         run: python -m compileall src dashboard tests
 

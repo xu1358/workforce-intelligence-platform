@@ -1,0 +1,44 @@
+version: "1.0"
+description: >
+  Reviewer-facing Markdown rendering contract. All configured Markdown files
+  must contain balanced CommonMark fenced code blocks, and the data-model
+  Mermaid entity-relationship diagram must remain complete and renderable.
+
+scan_targets:
+  - README.md
+  - docs
+  - notebooks/README.md
+
+minimum_markdown_files: 40
+
+regression_documents:
+  - docs/attrition_hazard_design.md
+  - docs/data_model.md
+  - docs/department_history_bias.md
+  - docs/end_to_end_validation.md
+  - docs/exploratory_analysis.md
+  - docs/generator_audit.md
+  - docs/portfolio_presentation.md
+
+mermaid_contract:
+  file: docs/data_model.md
+  language: mermaid
+  diagram_type: erDiagram
+  required_relationships:
+    - DEPARTMENTS ||--o{ EMPLOYEES
+    - LOCATIONS ||--o{ EMPLOYEES
+    - JOB_ROLES ||--o{ EMPLOYEES
+    - EMPLOYEES ||--o{ COMPENSATION_HISTORY
+    - EMPLOYEES ||--o{ PERFORMANCE_REVIEWS
+    - EMPLOYEES ||--o{ TRAINING_RECORDS
+    - EMPLOYEES ||--o{ EMPLOYEE_EVENTS
+    - CANDIDATES ||--o{ APPLICATIONS
+    - JOB_REQUISITIONS ||--o{ APPLICATIONS
+
+output_directory: data/processed/markdown_integrity
+
+governance:
+  changes_model_results: false
+  changes_frozen_policy: false
+  changes_dashboard_data: false
+  documentation_only: true

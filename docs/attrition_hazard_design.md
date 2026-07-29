@@ -45,3 +45,4 @@ If risk remained constant for 12 months, the approximate annual probability woul
 
 ```text
 1 - (0.9913 ** 12) ≈ 9.96%
+```

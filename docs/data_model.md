@@ -429,3 +429,4 @@ erDiagram
     JOB_REQUISITIONS ||--o{ APPLICATIONS : receives
 
     TRAINING_PROGRAMS ||--o{ TRAINING_RECORDS : includes
+```

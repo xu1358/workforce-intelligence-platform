@@ -102,6 +102,10 @@ if ($LASTEXITCODE -ne 0) {
     throw "pip reported an incompatible or missing dependency."
 }
 
+Invoke-PythonScript `
+    "Validate Markdown and Mermaid rendering" `
+    "src\validate_markdown_docs.py"
+
 
 # ---------------------------------------------------------
 # Python syntax validation

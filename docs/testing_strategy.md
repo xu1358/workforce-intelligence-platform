@@ -335,12 +335,14 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `tests/test_survival_analysis.py` | Tests censoring, hire reconstruction, Kaplan–Meier behavior, Cox encoding, and isolation |
 | `tests/test_retention_policy_equity.py` | Tests salary mechanisms, pay groups, sensitivity policies, and governance |
 | `tests/test_dependency_reproducibility.py` | Tests direct pins, transitive hashes, fingerprints, CI, and update documentation |
+| `tests/test_markdown_integrity.py` | Tests CommonMark fence balance and Mermaid ER rendering |
 | `scripts/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
 | `scripts/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
 | `scripts/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
 | `scripts/run_checkpoint55.ps1` | Runs censoring-aware survival analysis and complete validation |
 | `scripts/run_checkpoint56.ps1` | Runs the post-policy salary-allocation equity audit |
 | `scripts/run_checkpoint57.ps1` | Validates the complete locked dependency environment |
+| `scripts/run_checkpoint58.ps1` | Validates reviewer-facing Markdown rendering |
 | `scripts/run_end_to_end.ps1` | Runs tests before the complete pipeline |
 | `requirements.txt` | Pins every direct dependency |
 | `requirements-lock.txt` | Pins and hashes every resolved distribution |
@@ -363,6 +365,22 @@ Run the complete local environment contract with:
 
 ```powershell
 .\scripts\run_checkpoint57.ps1
+```
+
+## Markdown Rendering Contracts
+
+Checkpoint 58 audits every reviewer-facing Markdown file under the root,
+`docs/`, and the notebook index. It detects unfinished backtick or tilde
+fences using CommonMark-compatible closing rules.
+
+The suite also checks that `docs/data_model.md` contains one closed Mermaid
+`erDiagram` with the committed core relationships. GitHub Actions and the
+end-to-end runner execute the same validation.
+
+Run the complete local rendering contract with:
+
+```powershell
+.\scripts\run_checkpoint58.ps1
 ```
 
 ## Limitations
