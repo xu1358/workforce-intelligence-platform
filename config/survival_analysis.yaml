@@ -1,0 +1,81 @@
+version: "2.0"
+description: >-
+  Separate time-to-event analysis of the synthetic workforce. Kaplan-Meier
+  estimates describe retention over tenure, while a penalized Cox model
+  examines baseline-at-hire associations. This extension does not replace or
+  retune the primary 12-month classifier or intervention policy.
+
+cohort:
+  as_of_date: "2026-06-30"
+  duration_unit: "months"
+  days_per_month: 30.4375
+  inclusive_tenure_days: true
+  outcome_eligible_levels:
+    - "Individual Contributor"
+    - "Team Manager"
+  protected_levels:
+    - "Department Head"
+    - "Senior Manager"
+  minimum_rows: 9000
+  minimum_events: 2000
+  minimum_censored: 6000
+
+kaplan_meier:
+  horizons_months:
+    - 6
+    - 12
+    - 24
+    - 36
+    - 48
+    - 60
+  group_features:
+    - "employment_type"
+    - "hire_department_name"
+    - "hire_job_level"
+    - "hire_region"
+  minimum_group_size: 100
+  confidence_level: 0.95
+
+cox_model:
+  numeric_features:
+    - "age_at_hire"
+    - "salary_position_at_hire"
+  categorical_features:
+    - "employment_type"
+    - "education_level"
+    - "hire_department_name"
+    - "hire_job_level"
+  reference_categories:
+    employment_type: "Hourly"
+    education_level: "Associate"
+    hire_department_name: "Customer Support"
+    hire_job_level: "1"
+  penalizer: 0.05
+  l1_ratio: 0.0
+  cross_validation_folds: 5
+  random_seed: 42
+  minimum_mean_concordance: 0.55
+  maximum_mean_concordance: 0.70
+  proportional_hazards_flag_p_value: 0.01
+
+governance:
+  synthetic_data_only: true
+  baseline_at_hire_features_only: true
+  associations_are_not_causes: true
+  individual_survival_export_permitted: false
+  modifies_primary_classifier: false
+  accesses_reserved_test_target: false
+  modifies_frozen_policy: false
+  modifies_dashboard: false
+  human_review_required: true
+  automatic_employment_action_permitted: false
+
+figures:
+  format: "png"
+  dpi: 160
+  expected_files:
+    - "overall_survival_curve.png"
+    - "survival_by_employment_type.png"
+    - "survival_by_hire_department.png"
+    - "cox_hazard_ratios.png"
+

@@ -64,10 +64,12 @@ large cosmetic rewrite.
 
 ### Intentional E402 Exceptions
 
-Three plotting scripts set environment variables or the noninteractive
+Five plotting scripts set environment variables or the noninteractive
 Matplotlib backend before importing plotting modules:
 
+- `src/analyze_employee_survival.py`
 - `src/analyze_model_fairness.py`
+- `src/analyze_retention_explanations.py`
 - `src/evaluate_retention_ranking.py`
 - `src/optimize_retention_policy.py`
 
@@ -228,7 +230,9 @@ recruiter-facing README contracts. Checkpoint 53 adds isolated
 external-benchmark source, schema, feature, metric, and governance contracts.
 Checkpoint 54 adds exact linear-explanation, raw-feature grouping,
 importance-stability, aggregate-privacy, and governance contracts. The
-complete automated suite now contains 105 tests.
+Checkpoint 55 adds censoring, hire-history reconstruction, Kaplan–Meier,
+Cox-encoding, and survival-isolation contracts. The complete automated suite
+now contains 114 tests.
 
 ## End-to-End Integration
 
@@ -266,7 +270,7 @@ The quality workflow does not prove analytical correctness by itself.
 
 It complements, but does not replace:
 
-- The 105 automated tests
+- The 114 automated tests
 - Dataset validation checkpoints
 - Temporal leakage audits
 - Model calibration and out-of-time evaluation

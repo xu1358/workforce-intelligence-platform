@@ -167,6 +167,25 @@ Checkpoint 54 adds tests that verify:
 The unit tests fit only a tiny in-memory linear classifier. They do not refit
 the full current workforce model or load processed employee-level data.
 
+### 10. Survival-Analysis Contracts
+
+Checkpoint 55 adds tests that verify:
+
+- The survival extension stays isolated from the classifier, final test,
+  policy, dashboard, and automatic action.
+- Hire-event notes reconstruct original department, location, and role IDs.
+- Malformed hire notes fail instead of falling back to current organization
+  fields.
+- Known terminations become events and active employees are right-censored.
+- Inclusive tenure durations remain positive and reconcile to calendar dates.
+- Salary position uses the original hire salary and hire-role band.
+- Kaplan–Meier survival stays bounded and nonincreasing.
+- Configured horizon summaries remain ordered and bounded.
+- Cox reference categories are omitted and numeric features are standardized.
+
+The tests use three small in-memory employee histories. They do not read the
+generated 10,000-employee cohort or fit the full survival model.
+
 ## Test Isolation
 
 The suite uses small data frames created inside the tests.
@@ -272,10 +291,10 @@ Checkpoints 51 and 52 extend the suite beyond analytical calculations:
   local links, Markdown rendering, reproduction commands, governance language,
   and removal of stale Version 1 claims.
 
-The complete suite now contains 105 tests. The presentation, external-source,
-and explanation contract tests do not recalculate the complete primary
-pipeline; they make sure the committed Version 2 story and its safeguards
-remain reproducible.
+The complete suite now contains 114 tests. The presentation, external-source,
+explanation, and survival contract tests do not recalculate the complete
+primary pipeline; they make sure the committed Version 2 story and its
+safeguards remain reproducible.
 
 ## Files Added or Updated
 
@@ -294,11 +313,13 @@ remain reproducible.
 | `tests/test_readme_portfolio.py` | Tests README evidence and navigation contracts |
 | `tests/test_ibm_attrition_benchmark.py` | Tests source, schema, feature, metric, and isolation contracts |
 | `tests/test_model_explanations.py` | Tests exact linear explanations, grouping, stability, and governance |
+| `tests/test_survival_analysis.py` | Tests censoring, hire reconstruction, Kaplan–Meier behavior, Cox encoding, and isolation |
 | `scripts/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
 | `scripts/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
 | `scripts/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
+| `scripts/run_checkpoint55.ps1` | Runs censoring-aware survival analysis and complete validation |
 | `scripts/run_end_to_end.ps1` | Runs tests before the complete pipeline |
-| `requirements.txt` | Adds pytest as a reproducible dependency |
+| `requirements.txt` | Declares pytest, Ruff, and lifelines as reproducible dependencies |
 
 ## Limitations
 

@@ -22,6 +22,7 @@ For a concise review, use these entry points:
 4. [Inspect the evidence behind the headline claims](docs/readme_evidence_map.md).
 5. [Run the automated quality checks](#fast-local-validation).
 6. [Review the isolated IBM benchmark](#external-methodological-benchmark).
+7. [Review retention over employee tenure](#employee-survival-extension).
 
 ## Business Decision
 
@@ -57,6 +58,7 @@ pipeline.
 | Current planning projection | 35.0 expected prevented departures; $2.40M expected net value | Scenario projection, not an observed outcome |
 | Manufacturing plan | 229.7 expected departures; 221.3 residual backfills | Probability-weighted 12-month planning estimates |
 | Explanation stability | Minimum rank correlation 0.8857; minimum top-10 overlap 0.6667 | Aggregate model drivers remain broadly stable across grouped refits |
+| Survival extension | 89.53% retained at 12 months; 57.51% at 60 months | Censoring-aware synthetic retention estimates |
 
 The final-test model is better than random ranking, but it is not strong enough
 to justify automatic individual decisions. Its appropriate role is to support
@@ -74,6 +76,7 @@ The repository demonstrates a complete analytical decision system:
 - temporal model development with a reserved final test;
 - employee-grouped robustness checks and bootstrap uncertainty;
 - exact aggregate linear-SHAP explanations and grouped-refit stability checks;
+- Kaplan–Meier and Cox time-to-exit diagnostics with right-censoring;
 - sigmoid probability calibration;
 - ranking, subgroup, fairness, and sensitivity analysis;
 - an explicit retention cost model;
@@ -196,6 +199,27 @@ Read the full
 [explanation and stability methodology](docs/model_explanations_and_stability.md)
 and the executed
 [supporting notebook](notebooks/32_retention_explanation_stability.ipynb).
+
+### Employee survival extension
+
+Checkpoint 55 adds a separate view of retention over time. It treats 2,591
+known terminations as observed events and 7,305 active model-eligible
+employees as right-censored at 2026-06-30. The Kaplan–Meier estimate is 89.53%
+retained at 12 months and 57.51% retained at 60 months; median retention is
+not reached within the supported history.
+
+A penalized Cox model uses only reconstructed baseline-at-hire fields. Its
+five-fold mean concordance is 0.5738, showing modest ordering signal.
+Salary position at hire triggers one proportional-hazards review flag, so its
+single hazard ratio is interpreted as an average association over tenure.
+
+This extension answers a time-to-exit question. It does not replace the
+next-12-month classifier, reopen the final test, alter the frozen policy,
+change the dashboard, or save employee-level survival rows. Hazard ratios and
+group differences are synthetic associations, not causal effects.
+
+Read the [survival methodology](docs/survival_analysis.md) and the executed
+[supporting notebook](notebooks/33_survival_analysis.ipynb).
 
 ## External Methodological Benchmark
 
@@ -356,10 +380,11 @@ are embedded, so they can be read on GitHub without rerunning the pipeline.
 | 3 | [Fairness, Economics, and Policy](notebooks/portfolio/03_fairness_economics_and_policy.ipynb) | How do subgroup risk, costs, capacity, and governance affect the decision? |
 | 4 | [Current Workforce Stability Plan](notebooks/portfolio/04_current_workforce_stability_plan.ipynb) | How does the frozen policy support current manufacturing planning? |
 
-The original 30 checkpoint notebooks remain in `notebooks/` as detailed
+The 33 numbered checkpoint notebooks remain in `notebooks/` as detailed
 technical evidence and an audit trail. Notebook 31 separately documents the
-IBM external benchmark, and Notebook 32 documents aggregate explanation
-stability. Neither is part of the four-notebook primary narrative.
+IBM external benchmark, Notebook 32 documents aggregate explanation
+stability, and Notebook 33 documents survival analysis. None is part of the
+four-notebook primary narrative.
 
 ## Technology Stack
 
@@ -368,7 +393,7 @@ stability. Neither is part of the four-notebook primary narrative.
 | Language and data | Python 3.12, pandas, NumPy |
 | Synthetic generation | Faker |
 | Database and analytics | PostgreSQL, SQL, psycopg2 |
-| Modeling | scikit-learn, joblib |
+| Modeling | scikit-learn, lifelines, joblib |
 | Visualization | Plotly, Matplotlib |
 | Application | Streamlit |
 | Development | Jupyter, VS Code, PowerShell |
@@ -386,7 +411,7 @@ workforce-intelligence-platform/
 ├── models/                # Generated model artifacts
 ├── notebooks/
 │   ├── portfolio/         # Four reviewer-facing executed notebooks
-│   └── 01_...32_...       # Detailed supporting and extension notebooks
+│   └── 01_...33_...       # Detailed supporting and extension notebooks
 ├── scripts/               # Checkpoint and end-to-end PowerShell runners
 ├── sql/                   # Schema, validation, and analytical SQL
 ├── src/                   # Generation, modeling, policy, and dashboard code
@@ -447,7 +472,8 @@ The complete pipeline generates the synthetic data, validates Version 2,
 loads PostgreSQL, fits and evaluates the models, freezes and tests the policy,
 builds the current dashboard layer, and validates the portfolio notebooks and
 README. It also explains the current model, checks explanation stability, and
-downloads, verifies, and runs the isolated IBM benchmark.
+analyzes censoring-aware employee survival. It also downloads, verifies, and
+runs the isolated IBM benchmark.
 
 ```powershell
 .\scripts\run_end_to_end.ps1
@@ -483,7 +509,7 @@ It performs:
 2. Ruff lint checks;
 3. test-format checks;
 4. README structure, evidence, link, and stale-claim validation; and
-5. the complete 105-test automated suite.
+5. the complete 114-test automated suite.
 
 The same compile, lint, formatting, and pytest gates run automatically in
 [GitHub Actions](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml).
@@ -510,8 +536,21 @@ stability evidence:
 It reconciles current calibrated scores to Checkpoint 46, calculates exact
 linear SHAP values, performs five employee-grouped stability refits, validates
 aggregate-only governance, generates three figures, and runs the complete
-105-test suite. It does not reopen the final test or alter the policy. See the
+114-test suite. It does not reopen the final test or alter the policy. See the
 [Checkpoint 54 runner](scripts/run_checkpoint54.ps1).
+
+Checkpoint 55 reproduces aggregate Kaplan–Meier and Cox survival evidence:
+
+```powershell
+.\scripts\run_checkpoint55.ps1
+```
+
+It reconstructs baseline-at-hire fields, encodes active employees as
+right-censored, generates retention curves and adjusted hazard ratios, runs
+five held-out concordance folds, reports proportional-hazards diagnostics,
+and executes the complete 114-test suite. It does not change the primary
+classifier, final test, frozen policy, dashboard, or review list. See the
+[Checkpoint 55 runner](scripts/run_checkpoint55.ps1).
 
 ## Documentation Guide
 
@@ -533,6 +572,7 @@ aggregate-only governance, generates three figures, and runs the complete
 | Current dashboard | [Dashboard timeline and safety](docs/dashboard_current_state.md) |
 | Manufacturing plan | [Workforce-stability analysis](docs/manufacturing_workforce_stability.md) |
 | Model explanations | [Explanation and stability analysis](docs/model_explanations_and_stability.md) |
+| Employee survival | [Censoring-aware survival analysis](docs/survival_analysis.md) |
 | External benchmark | [IBM HR Analytics benchmark](docs/ibm_external_benchmark.md) |
 | Testing | [Testing strategy](docs/testing_strategy.md) |
 | Code quality | [Code quality and CI](docs/code_quality_and_ci.md) |
@@ -549,6 +589,8 @@ aggregate-only governance, generates three figures, and runs the complete
 - Calibration on synthetic data does not guarantee calibration elsewhere.
 - Model explanations are log-odds associations, not causal intervention
   effects or calibrated probability changes.
+- Survival hazard ratios are baseline associations, and one feature triggers
+  a proportional-hazards review flag.
 - Subgroup sample sizes and simulator structure affect fairness diagnostics.
 - Cost and effectiveness values are scenario assumptions.
 - No retention intervention was performed, so causal impact is unknown.
@@ -564,13 +606,16 @@ evidence.
 Checkpoint 54 keeps aggregate explanation evidence separate from employee
 review decisions and does not interpret feature importance as causation.
 
+Checkpoint 55 keeps the time-to-exit extension separate from the primary
+classifier and frozen intervention policy.
+
 ## Version History
 
 - `v1.0-portfolio` preserves the completed Version 1 baseline.
 - `revision-v2` contains the temporal modeling, calibration, fairness,
   economics, policy, current-state dashboard, testing, CI, and curated
   portfolio revisions, plus the isolated IBM methodological benchmark and
-  aggregate explanation-stability analysis.
+  aggregate explanation-stability and survival analyses.
 
 ## Disclaimer
 

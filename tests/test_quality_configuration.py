@@ -30,6 +30,7 @@ def test_ruff_configuration_has_committed_scope(
     assert ruff["target-version"] == "py312"
     assert set(lint["select"]) == {"E4", "E7", "E9", "F"}
     assert set(lint["per-file-ignores"]) == {
+        "src/analyze_employee_survival.py",
         "src/analyze_model_fairness.py",
         "src/analyze_retention_explanations.py",
         "src/evaluate_retention_ranking.py",

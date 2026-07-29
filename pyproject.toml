@@ -17,6 +17,7 @@ select = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"src/analyze_employee_survival.py" = ["E402"]
 "src/analyze_retention_explanations.py" = ["E402"]
 "src/analyze_model_fairness.py" = ["E402"]
 "src/evaluate_retention_ranking.py" = ["E402"]

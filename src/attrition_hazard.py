@@ -420,7 +420,10 @@ def _random_event_date(
     )
 
     available_days = int((event_end - event_start).days)
-    return event_start + pd.Timedelta(days=rng.randint(0, available_days))
+    return event_start + pd.to_timedelta(
+        int(rng.randint(0, available_days)),
+        unit="D",
+    )
 
 
 def simulate_attrition(

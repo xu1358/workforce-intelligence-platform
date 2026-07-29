@@ -332,6 +332,10 @@ Invoke-PythonScript `
     "src\analyze_retention_explanations.py"
 
 Invoke-PythonScript `
+    "Analyze employee survival and time to exit" `
+    "src\analyze_employee_survival.py"
+
+Invoke-PythonScript `
     "Validate curated portfolio notebooks" `
     "src\validate_portfolio_notebooks.py"
 

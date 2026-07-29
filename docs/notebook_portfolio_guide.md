@@ -6,7 +6,7 @@ Checkpoint 51 changes how the analytical work is presented without changing
 the data generator, model, calibration, policy, dashboard, or workforce
 planning calculations.
 
-Thirty checkpoint notebooks document the construction history in detail. That
+Thirty-three checkpoint notebooks document the construction history in detail. That
 history is valuable for auditing, but it is too long to serve as the primary
 portfolio narrative. The curated layer reduces the reviewer-facing path to
 four executed notebooks while retaining all supporting notebooks.
@@ -108,6 +108,14 @@ supporting extension. It presents aggregate current-model drivers, exact
 linear-SHAP additivity, employee-grouped importance stability, and noncausal
 interpretation limits. It does not expose employee-level explanations or
 change the curated four-notebook sequence.
+
+Checkpoint 55 adds
+`notebooks/33_survival_analysis.ipynb` as a third optional supporting
+extension. It presents right-censored Kaplan–Meier retention curves,
+baseline-at-hire Cox hazard ratios, held-out concordance, and
+proportional-hazards diagnostics. It answers a time-to-exit question and does
+not replace the primary 12-month classifier, reopen the final test, or change
+the frozen review policy.
 
 ## Automated validation
 

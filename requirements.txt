@@ -1,6 +1,7 @@
 Faker
 ipykernel
 joblib
+lifelines>=0.30,<0.31
 matplotlib
 numpy
 pandas

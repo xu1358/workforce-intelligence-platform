@@ -67,10 +67,13 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 54:** Add exact aggregate linear-SHAP explanations and
   employee-grouped explanation-stability checks without changing the final
   test or frozen policy.
+- **Checkpoint 55:** Add censoring-aware Kaplan–Meier retention curves,
+  baseline-at-hire Cox hazard associations, proportional-hazards diagnostics,
+  and held-out concordance checks without changing the primary model or
+  policy.
 
 ## Optional Advanced Extensions
 
-- **Checkpoint 55:** Add survival-analysis methods.
 - **Checkpoint 56:** Add formal budget-constrained allocation.
 - **Checkpoint 57:** Deploy a public demonstration dashboard.
 

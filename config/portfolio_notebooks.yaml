@@ -7,7 +7,7 @@ description: >
 portfolio_directory: notebooks/portfolio
 index_file: notebooks/README.md
 expected_portfolio_notebooks: 4
-minimum_supporting_notebooks: 30
+minimum_supporting_notebooks: 33
 maximum_notebook_size_bytes: 2000000
 minimum_code_outputs_per_notebook: 5
 

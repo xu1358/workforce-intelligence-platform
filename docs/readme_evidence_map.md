@@ -28,7 +28,9 @@ measurements from a real employer.
 | IBM top-decile precision 69.39%, capture 43.04%, and lift 4.30 | `data/processed/ibm_benchmark/ibm_benchmark_metrics.csv` | 53 | Notebook 31 |
 | Explanation minimum rank correlation 0.8857 and median 0.9299 | `data/processed/retention_explanations/retention_explanation_pairwise_stability.csv` | 54 | Notebook 32 and `docs/model_explanations_and_stability.md` |
 | Explanation minimum top-10 overlap 0.6667 | `data/processed/retention_explanations/retention_explanation_pairwise_stability.csv` | 54 | Notebook 32 |
-| Automated test count | pytest collection during `scripts/run_checkpoint54.ps1` | 54 | GitHub Actions and local terminal output |
+| Kaplan–Meier 12-month retention 89.53% and 60-month retention 57.51% | `data/processed/survival_analysis/survival_horizon_summary.csv` | 55 | Notebook 33 and `docs/survival_analysis.md` |
+| Cox five-fold mean concordance 0.5738 | `data/processed/survival_analysis/cox_cross_validation.csv` | 55 | Notebook 33 and `docs/survival_analysis.md` |
+| Automated test count | pytest collection during `scripts/run_checkpoint55.ps1` | 55 | GitHub Actions and local terminal output |
 
 Generated CSV files are intentionally excluded from Git. The executed curated
 notebooks preserve aggregate evidence so GitHub reviewers can inspect results
@@ -91,6 +93,19 @@ feature overlap, and highest-probability-quartile direction stability. Only
 aggregate tables and figures are saved. The evidence is noncausal, does not
 reopen the final test, and does not change the frozen policy.
 
+### Survival evidence
+
+Checkpoint 55 uses one record per synthetic employee from hire until a known
+termination or right-censoring at 2026-06-30. Kaplan–Meier estimates therefore
+use active employees' observed tenure without inventing future exits.
+
+The Cox model uses only reconstructed baseline-at-hire fields. Its hazard
+ratios are adjusted synthetic associations, not causal effects. Five-fold
+concordance is a robustness diagnostic for this separate extension and is not
+directly comparable with the primary classifier's PR-AUC or ROC-AUC. No
+employee-level survival rows are saved, and the primary model, final test,
+policy, dashboard, and review list remain unchanged.
+
 ## Validation Contract
 
 `config/readme_portfolio.yaml` records:
@@ -119,4 +134,11 @@ and the complete pytest suite:
 
 ```powershell
 .\scripts\run_checkpoint54.ps1
+```
+
+Checkpoint 55 reproduces the censoring-aware survival extension and complete
+pytest suite:
+
+```powershell
+.\scripts\run_checkpoint55.ps1
 ```

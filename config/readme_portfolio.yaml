@@ -59,6 +59,9 @@ headline_metrics:
   explanation_minimum_spearman: "0.8857"
   explanation_median_spearman: "0.9299"
   explanation_minimum_top_10_jaccard: "0.6667"
+  survival_12_month_retention: "89.53%"
+  survival_60_month_retention: "57.51%"
+  survival_cox_mean_concordance: "0.5738"
 
 required_links:
   - "notebooks/README.md"
@@ -78,12 +81,15 @@ required_links:
   - "docs/dashboard_current_state.md"
   - "docs/manufacturing_workforce_stability.md"
   - "docs/model_explanations_and_stability.md"
+  - "docs/survival_analysis.md"
   - "docs/ibm_external_benchmark.md"
   - "notebooks/31_ibm_external_benchmark.ipynb"
   - "notebooks/32_retention_explanation_stability.ipynb"
+  - "notebooks/33_survival_analysis.ipynb"
   - "scripts/run_checkpoint52.ps1"
   - "scripts/run_checkpoint53.ps1"
   - "scripts/run_checkpoint54.ps1"
+  - "scripts/run_checkpoint55.ps1"
   - "scripts/run_end_to_end.ps1"
 
 forbidden_stale_claims:
@@ -99,4 +105,5 @@ required_commands:
   - ".\\scripts\\run_checkpoint52.ps1"
   - ".\\scripts\\run_checkpoint53.ps1"
   - ".\\scripts\\run_checkpoint54.ps1"
+  - ".\\scripts\\run_checkpoint55.ps1"
   - ".\\scripts\\run_end_to_end.ps1"
