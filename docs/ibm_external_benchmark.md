@@ -218,7 +218,7 @@ the datasets or applying one fitted model to the other.
 Run the complete external benchmark with:
 
 ```powershell
-.\scripts\run_checkpoint53.ps1
+.\scripts\checkpoints\run_checkpoint53.ps1
 ```
 
 The runner:

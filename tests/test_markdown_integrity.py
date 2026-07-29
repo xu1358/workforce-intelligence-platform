@@ -115,9 +115,9 @@ def test_github_workflow_runs_markdown_validator(project_root: Path) -> None:
 def test_checkpoint_runner_reproduces_markdown_gate(project_root: Path) -> None:
     """The local checkpoint must execute the same validator."""
 
-    runner = (project_root / "scripts" / "run_checkpoint58.ps1").read_text(
-        encoding="utf-8"
-    )
+    runner = (
+        project_root / "scripts" / "checkpoints" / "run_checkpoint58.ps1"
+    ).read_text(encoding="utf-8")
 
     assert "src\\validate_markdown_docs.py" in runner
     assert "pytest -q" in runner

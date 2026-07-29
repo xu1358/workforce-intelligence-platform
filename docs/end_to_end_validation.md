@@ -22,6 +22,9 @@ The validated workflow includes:
 
 Run the complete pipeline from the project root:
 
-```powershell
-.\scripts\run_end_to_end.ps1
+```bash
+python scripts/run_project.py pipeline
 ```
+
+This canonical command works on Windows, macOS, and Linux. The PowerShell
+wrapper remains available for backwards compatibility.

@@ -154,5 +154,5 @@ Dashboard copies are written under `data/processed/dashboard/`.
 Generated data remains excluded from Git and can be recreated with:
 
 ```powershell
-.\scripts\run_checkpoint48.ps1
+.\scripts\checkpoints\run_checkpoint48.ps1
 ```

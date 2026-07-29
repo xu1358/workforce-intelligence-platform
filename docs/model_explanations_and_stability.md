@@ -302,7 +302,7 @@ They cannot answer:
 From the project root in PowerShell:
 
 ```powershell
-.\scripts\run_checkpoint54.ps1
+.\scripts\checkpoints\run_checkpoint54.ps1
 ```
 
 The runner:

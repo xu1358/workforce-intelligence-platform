@@ -264,7 +264,7 @@ data/processed/policy_equity/figures/
 Run from the project root:
 
 ```powershell
-.\scripts\run_checkpoint56.ps1
+.\scripts\checkpoints\run_checkpoint56.ps1
 ```
 
 The implementation is

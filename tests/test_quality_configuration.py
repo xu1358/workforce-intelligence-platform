@@ -99,9 +99,9 @@ def test_local_runner_matches_github_quality_gates(
 ) -> None:
     """The developer command should reproduce the GitHub checks."""
 
-    runner = (project_root / "scripts" / "run_checkpoint50.ps1").read_text(
-        encoding="utf-8"
-    )
+    runner = (
+        project_root / "scripts" / "checkpoints" / "run_checkpoint50.ps1"
+    ).read_text(encoding="utf-8")
 
     assert "compileall src dashboard tests" in runner
     assert "ruff check src dashboard tests" in runner

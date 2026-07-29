@@ -371,7 +371,7 @@ discipline, termination, promotion denial, or surveillance.
 Run:
 
 ```powershell
-.\scripts\run_checkpoint44.ps1
+.\scripts\checkpoints\run_checkpoint44.ps1
 ```
 
 The script rebuilds Checkpoint 42 only when required inputs are missing or when

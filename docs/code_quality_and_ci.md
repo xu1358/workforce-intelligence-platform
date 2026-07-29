@@ -115,7 +115,7 @@ or model calculation.
 Run the complete local quality gate with:
 
 ```powershell
-.\scripts\run_checkpoint50.ps1
+.\scripts\checkpoints\run_checkpoint50.ps1
 ```
 
 The runner:
@@ -242,11 +242,13 @@ no-retuning governance contracts. Checkpoint 57 adds direct-pin,
 transitive-lock, artifact-hash, fingerprint, installed-version, and CI
 environment contracts. Checkpoint 58 adds repository-wide CommonMark fence
 validation and a specific rendering contract for the data-model Mermaid ER
-diagram.
+diagram. Checkpoint 59 adds a cross-platform pipeline-resolution smoke test
+and verifies that the Windows wrapper delegates to the canonical Python
+runner.
 
 ## End-to-End Integration
 
-`scripts/run_end_to_end.ps1` now performs:
+`scripts/run_project.py pipeline` performs:
 
 1. Compilation
 2. Ruff linting
@@ -256,7 +258,8 @@ diagram.
 before entering expensive data-generation and analytical stages.
 
 This creates a fail-fast boundary: the full pipeline stops early when basic
-engineering rules are already broken.
+engineering rules are already broken. `scripts/run_end_to_end.ps1` remains a
+thin Windows wrapper around this canonical Python command.
 
 ## Files Added or Updated
 
@@ -268,14 +271,18 @@ engineering rules are already broken.
 | `requirements-lock.txt` | Pins and hashes the complete transitive environment |
 | `config/dependency_reproducibility.yaml` | Defines Python, pip, count, version, and fingerprint contracts |
 | `src/validate_dependency_environment.py` | Compares manifests, hashes, CI, and installed versions |
-| `scripts/run_checkpoint57.ps1` | Reproduces dependency and code-quality validation locally |
+| `scripts/checkpoints/run_checkpoint57.ps1` | Reproduces dependency and code-quality validation locally |
 | `tests/test_dependency_reproducibility.py` | Prevents dependency and CI drift |
 | `config/markdown_integrity.yaml` | Defines Markdown scope and Mermaid relationships |
 | `src/validate_markdown_docs.py` | Detects unclosed fences and validates the ER diagram |
-| `scripts/run_checkpoint58.ps1` | Runs Markdown rendering and regression validation |
+| `scripts/checkpoints/run_checkpoint58.ps1` | Runs Markdown rendering and regression validation |
 | `tests/test_markdown_integrity.py` | Prevents broken Markdown and Mermaid rendering |
-| `scripts/run_checkpoint50.ps1` | Reproduces all quality gates locally |
-| `scripts/run_end_to_end.ps1` | Adds fail-fast quality checks to the full pipeline |
+| `config/cross_platform_runner.yaml` | Defines portable commands, stages, and archive layout |
+| `scripts/run_project.py` | Runs quality, validation, pipeline, dashboard, and notebooks across platforms |
+| `src/validate_cross_platform_runner.py` | Reports command, stage, path, CI, and governance checks |
+| `tests/test_cross_platform_runner.py` | Tests stage parity, skip flags, paths, and script organization |
+| `scripts/checkpoints/run_checkpoint50.ps1` | Reproduces all quality gates locally |
+| `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `tests/test_quality_configuration.py` | Tests local and GitHub quality contracts |
 | `tests/test_retention_policy_equity.py` | Tests pay-band allocation and sensitivity contracts |
 | `tests/*.py` | Applies consistent Ruff formatting to the test suite |

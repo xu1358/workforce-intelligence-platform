@@ -126,9 +126,9 @@ def test_ci_installs_and_validates_hashed_lock(project_root: Path) -> None:
 def test_checkpoint57_runner_enforces_environment(project_root: Path) -> None:
     """The local checkpoint must perform the same dependency checks as CI."""
 
-    runner = (project_root / "scripts" / "run_checkpoint57.ps1").read_text(
-        encoding="utf-8"
-    )
+    runner = (
+        project_root / "scripts" / "checkpoints" / "run_checkpoint57.ps1"
+    ).read_text(encoding="utf-8")
 
     assert "validate_dependency_environment.py" in runner
     assert "-m pip check" in runner
@@ -141,9 +141,7 @@ def test_end_to_end_pipeline_fails_fast_on_dependency_drift(
 ) -> None:
     """The full pipeline should validate dependencies before expensive work."""
 
-    runner = (project_root / "scripts" / "run_end_to_end.ps1").read_text(
-        encoding="utf-8"
-    )
+    runner = (project_root / "scripts" / "run_project.py").read_text(encoding="utf-8")
 
     dependency_position = runner.index("validate_dependency_environment.py")
     generation_position = runner.index("generate_reference_data.py")

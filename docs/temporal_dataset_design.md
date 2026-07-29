@@ -159,7 +159,7 @@ reproduced from the committed code and configuration.
 config/temporal_snapshots.yaml
 src/build_multi_snapshot_retention_dataset.py
 sql/retention_modeling_multi_snapshot.sql
-scripts/run_checkpoint38.ps1
+scripts/checkpoints/run_checkpoint38.ps1
 notebooks/21_temporal_dataset_validation.ipynb
 ```
 

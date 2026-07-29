@@ -55,7 +55,7 @@ sizes are enforced by the portfolio validator and automated tests. Regenerate
 them after refreshing the processed pipeline artifacts with:
 
 ```powershell
-.\scripts\execute_supporting_notebooks.ps1
+python scripts/run_project.py notebooks
 ```
 
 ## Separate external benchmark
@@ -97,7 +97,7 @@ final test, change the frozen policy, or export employee-level survival rows.
 Run the survival extension with:
 
 ```powershell
-.\scripts\run_checkpoint55.ps1
+.\scripts\checkpoints\run_checkpoint55.ps1
 ```
 
 ## Separate policy allocation-equity extension
@@ -114,7 +114,7 @@ analysis only.
 Run it with:
 
 ```powershell
-.\scripts\run_checkpoint56.ps1
+.\scripts\checkpoints\run_checkpoint56.ps1
 ```
 
 ## Reproducibility
@@ -137,11 +137,11 @@ Run the external benchmark and reproduce Notebook 31's aggregate source data
 with:
 
 ```powershell
-.\scripts\run_checkpoint53.ps1
+.\scripts\checkpoints\run_checkpoint53.ps1
 ```
 
 Run the primary explanation and stability extension with:
 
 ```powershell
-.\scripts\run_checkpoint54.ps1
+.\scripts\checkpoints\run_checkpoint54.ps1
 ```

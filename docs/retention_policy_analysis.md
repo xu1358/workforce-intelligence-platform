@@ -319,7 +319,7 @@ data/processed/policy_figures/
 ## Run Command
 
 ```powershell
-.\scripts\run_checkpoint46.ps1
+.\scripts\checkpoints\run_checkpoint46.ps1
 ```
 
 ## Limitations
@@ -378,5 +378,5 @@ Read the complete
 Reproduce the policy analysis from the project root:
 
 ```powershell
-.\scripts\run_checkpoint46.ps1
+.\scripts\checkpoints\run_checkpoint46.ps1
 ```

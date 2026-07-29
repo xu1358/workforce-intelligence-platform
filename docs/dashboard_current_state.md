@@ -140,14 +140,14 @@ Generated CSV outputs are reproducible and remain excluded from Git.
 From the project root:
 
 ```powershell
-.\scripts\run_checkpoint47.ps1
+.\scripts\checkpoints\run_checkpoint47.ps1
 ```
 
 Use `-RebuildInputs` only when the Checkpoint 46 outputs need to be
 regenerated:
 
 ```powershell
-.\scripts\run_checkpoint47.ps1 -RebuildInputs
+.\scripts\checkpoints\run_checkpoint47.ps1 -RebuildInputs
 ```
 
 After the checkpoint succeeds, start the Streamlit dashboard with:

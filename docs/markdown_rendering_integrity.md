@@ -69,7 +69,7 @@ The validator saves aggregate evidence to
 Run the complete checkpoint:
 
 ```powershell
-.\scripts\run_checkpoint58.ps1
+.\scripts\checkpoints\run_checkpoint58.ps1
 ```
 
 Run only the Markdown validator:

@@ -26,7 +26,7 @@ The project uses entirely synthetic employee and candidate data.
 - Selected the final model primarily using PR-AUC.
 - Evaluated classification thresholds and retention-risk segments.
 - Built a five-section interactive Streamlit dashboard.
-- Added end-to-end pipeline validation using PowerShell and Python.
+- Added one cross-platform Python pipeline with a thin PowerShell wrapper.
 
 ---
 

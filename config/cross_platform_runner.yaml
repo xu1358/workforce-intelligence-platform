@@ -1,0 +1,55 @@
+version: "1.0"
+description: >
+  Cross-platform execution contract for the reviewer-facing project runner and
+  the archived checkpoint history.
+
+canonical_runner: scripts/run_project.py
+windows_wrapper: scripts/run_end_to_end.ps1
+checkpoint_archive: scripts/checkpoints
+scripts_guide: scripts/README.md
+
+commands:
+  - quality
+  - validate
+  - pipeline
+  - dashboard
+  - notebooks
+  - organize-checkpoints
+
+pipeline_options:
+  - --skip-quality
+  - --skip-data-generation
+  - --skip-postgres
+  - --include-legacy-v1
+  - --skip-external-benchmark
+
+quality_gates:
+  - src/validate_dependency_environment.py
+  - pip check
+  - src/validate_markdown_docs.py
+  - src/validate_cross_platform_runner.py
+  - compileall
+  - ruff check
+  - ruff format --check
+  - pytest
+
+checkpoint_history:
+  first: 36
+  last: 59
+  expected_count: 24
+
+expected_supporting_notebooks: 12
+
+root_script_files:
+  - README.md
+  - run_end_to_end.ps1
+  - run_project.py
+
+governance:
+  changes_analytical_scripts: false
+  changes_model_results: false
+  changes_frozen_policy: false
+  changes_dashboard_data: false
+  orchestration_only: true
+
+output_directory: data/processed/cross_platform_runner

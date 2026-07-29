@@ -280,7 +280,7 @@ python -m pip install --no-build-isolation --require-hashes -r requirements-lock
 Run the checkpoint:
 
 ```powershell
-.\scripts\run_checkpoint55.ps1
+.\scripts\checkpoints\run_checkpoint55.ps1
 ```
 
 The runner compiles source and tests, runs Ruff, checks test formatting,

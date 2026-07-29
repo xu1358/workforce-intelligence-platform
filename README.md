@@ -381,8 +381,8 @@ the human-review table.
 
 After generating the required data:
 
-```powershell
-python -m streamlit run dashboard\app.py
+```bash
+python scripts/run_project.py dashboard
 ```
 
 Streamlit normally opens `http://localhost:8501`.
@@ -425,7 +425,7 @@ notebook templates.
 | Modeling | scikit-learn, lifelines, joblib |
 | Visualization | Plotly, Matplotlib |
 | Application | Streamlit |
-| Development | Jupyter, VS Code, PowerShell |
+| Development | Jupyter, VS Code, Git, cross-platform Python CLI |
 | Quality | pytest, Ruff, GitHub Actions |
 
 ## Repository Structure
@@ -441,7 +441,7 @@ workforce-intelligence-platform/
 ├── notebooks/
 │   ├── portfolio/         # Four reviewer-facing executed notebooks
 │   └── 01_...34_...       # Detailed supporting and extension notebooks
-├── scripts/               # Checkpoint and end-to-end PowerShell runners
+├── scripts/               # Cross-platform runner and archived checkpoint history
 ├── sql/                   # Schema, validation, and analytical SQL
 ├── src/                   # Generation, modeling, policy, and dashboard code
 ├── tests/                 # Automated regression and contract tests
@@ -462,19 +462,33 @@ employee-level review lists.
 - Python 3.12
 - PostgreSQL
 - Git
-- Windows PowerShell for the supplied checkpoint runners
+- A terminal on Windows, macOS, or Linux
 
 ### Installation
 
-```powershell
+```bash
 git clone https://github.com/xu1358/workforce-intelligence-platform.git
 cd workforce-intelligence-platform
 git checkout revision-v2
 
 python -m venv .venv
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\.venv\Scripts\Activate.ps1
+```
 
+Activate the environment on Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Activate it on macOS or Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+Install the same verified dependency lock on every platform:
+
+```bash
 python -m pip install "pip==26.0.1" "setuptools==83.0.0" "wheel==0.47.0"
 python -m pip install --no-build-isolation --require-hashes -r requirements-lock.txt
 ```
@@ -482,8 +496,8 @@ python -m pip install --no-build-isolation --require-hashes -r requirements-lock
 Create the local environment file and replace the placeholder values with your
 own PostgreSQL settings:
 
-```powershell
-Copy-Item .env.example .env
+```bash
+cp .env.example .env
 ```
 
 ```text
@@ -505,105 +519,51 @@ README. It also explains the current model, checks explanation stability, and
 analyzes censoring-aware employee survival. It also downloads, verifies, and
 runs the isolated IBM benchmark.
 
-```powershell
-.\scripts\run_end_to_end.ps1
+```bash
+python scripts/run_project.py pipeline
 ```
 
 The full run requires a configured local PostgreSQL database. To reuse
 existing generated CSV files:
 
-```powershell
-.\scripts\run_end_to_end.ps1 -SkipDataGeneration
+```bash
+python scripts/run_project.py pipeline --skip-data-generation
 ```
 
 The legacy Version 1 modeling path is disabled by default to protect the
-Version 2 analytical boundary.
+Version 2 analytical boundary. A reviewer without PostgreSQL can inspect the
+file-based analytical path with `--skip-postgres`. See the
+[cross-platform execution guide](docs/cross_platform_execution.md) for all
+commands and options.
 
 ## Fast Local Validation
 
-Checkpoint 52 validates documentation and code without regenerating the
-10,000-employee workforce or connecting to PostgreSQL:
+Run the same engineering gates on Windows, macOS, or Linux:
 
-```powershell
-.\scripts\run_checkpoint52.ps1
+```bash
+python scripts/run_project.py quality
 ```
 
-The command is implemented in the
-[Checkpoint 52 runner](scripts/run_checkpoint52.ps1). The complete reproducible
-workflow is defined in the
-[end-to-end runner](scripts/run_end_to_end.ps1).
+Add portfolio notebook and README validation:
 
-It performs:
-
-1. Python compilation;
-2. Ruff lint checks;
-3. test-format checks;
-4. README structure, evidence, link, and stale-claim validation; and
-5. the complete automated test suite.
-
-The same compile, lint, formatting, and pytest gates run automatically in
-[GitHub Actions](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml).
-
-Checkpoint 53 adds the external source verification and complete benchmark:
-
-```powershell
-.\scripts\run_checkpoint53.ps1
+```bash
+python scripts/run_project.py validate
 ```
 
-It downloads only the pinned fictional IBM CSV, checks its checksum and
-schema, runs the repeated out-of-fold benchmark, saves aggregate evidence, and
-runs the complete test suite. It does not connect to PostgreSQL or
-regenerate the primary workforce. The exact workflow is committed in the
-[Checkpoint 53 runner](scripts/run_checkpoint53.ps1).
+Preview the complete pipeline without executing it:
 
-Checkpoint 54 reproduces aggregate current-model explanations and grouped
-stability evidence:
-
-```powershell
-.\scripts\run_checkpoint54.ps1
+```bash
+python scripts/run_project.py --dry-run pipeline
 ```
 
-It reconciles current calibrated scores to Checkpoint 46, calculates exact
-linear SHAP values, performs five employee-grouped stability refits, validates
-aggregate-only governance, generates three figures, and runs the complete
-automated suite. It does not reopen the final test or alter the policy. See the
-[Checkpoint 54 runner](scripts/run_checkpoint54.ps1).
+These commands compile Python, validate dependencies and Markdown, run Ruff,
+execute pytest, and verify the reviewer-facing artifacts. The same gates run
+in [GitHub Actions](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml).
 
-Checkpoint 55 reproduces aggregate Kaplan–Meier and Cox survival evidence:
-
-```powershell
-.\scripts\run_checkpoint55.ps1
-```
-
-It reconstructs baseline-at-hire fields, encodes active employees as
-right-censored, generates retention curves and adjusted hazard ratios, runs
-five held-out concordance folds, reports proportional-hazards diagnostics,
-and executes the complete automated suite. It does not change the primary
-classifier, final test, frozen policy, dashboard, or review list. See the
-[Checkpoint 55 runner](scripts/run_checkpoint55.ps1).
-
-Checkpoint 56 audits salary allocation in the frozen policy:
-
-```powershell
-.\scripts\run_checkpoint56.ps1
-```
-
-It compares direct salary bands, salary quintiles, within-job-level pay,
-within-risk salary selection, and three salary-neutral or salary-capped
-sensitivity policies. It reads no outcome columns and does not change the
-frozen plan. See the
-[Checkpoint 56 runner](scripts/run_checkpoint56.ps1).
-
-Checkpoint 57 verifies the complete Python environment:
-
-```powershell
-.\scripts\run_checkpoint57.ps1
-```
-
-It checks 19 direct pins, 113 hashed locked distributions, file fingerprints,
-installed versions, `pip check`, CI enforcement, and the full test suite. See
-the [Checkpoint 57 runner](scripts/run_checkpoint57.ps1) and
-[dependency reproducibility guide](docs/dependency_reproducibility.md).
+The Windows checkpoint-specific runners are preserved under
+[`scripts/checkpoints/`](scripts/checkpoints/README.md) as development history.
+They are no longer the primary project interface. See
+[`scripts/README.md`](scripts/README.md) for the finished runner surface.
 
 ## Documentation Guide
 
@@ -631,6 +591,7 @@ the [Checkpoint 57 runner](scripts/run_checkpoint57.ps1) and
 | Testing | [Testing strategy](docs/testing_strategy.md) |
 | Code quality | [Code quality and CI](docs/code_quality_and_ci.md) |
 | Dependencies | [Dependency reproducibility](docs/dependency_reproducibility.md) |
+| Project runner | [Cross-platform execution](docs/cross_platform_execution.md) |
 | README evidence | [README evidence map](docs/readme_evidence_map.md) |
 
 ## Limitations

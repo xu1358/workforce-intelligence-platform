@@ -233,7 +233,7 @@ python -m pip install --no-build-isolation --require-hashes -r requirements-lock
 Then run:
 
 ```powershell
-.\scripts\run_checkpoint49.ps1
+.\scripts\checkpoints\run_checkpoint49.ps1
 ```
 
 The runner:
@@ -281,8 +281,9 @@ The checkpoint runner will not print its success message after a failed test.
 
 ## End-to-End Integration
 
-`scripts/run_end_to_end.ps1` now compiles the test directory and runs the test
-suite before expensive data generation or model work.
+`scripts/run_project.py pipeline` now compiles the test directory and runs the
+test suite before expensive data generation or model work. The Windows
+PowerShell wrapper delegates to that same command.
 
 This provides an early stop if a core contract has already been broken.
 
@@ -336,14 +337,18 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `tests/test_retention_policy_equity.py` | Tests salary mechanisms, pay groups, sensitivity policies, and governance |
 | `tests/test_dependency_reproducibility.py` | Tests direct pins, transitive hashes, fingerprints, CI, and update documentation |
 | `tests/test_markdown_integrity.py` | Tests CommonMark fence balance and Mermaid ER rendering |
-| `scripts/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
-| `scripts/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
-| `scripts/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
-| `scripts/run_checkpoint55.ps1` | Runs censoring-aware survival analysis and complete validation |
-| `scripts/run_checkpoint56.ps1` | Runs the post-policy salary-allocation equity audit |
-| `scripts/run_checkpoint57.ps1` | Validates the complete locked dependency environment |
-| `scripts/run_checkpoint58.ps1` | Validates reviewer-facing Markdown rendering |
-| `scripts/run_end_to_end.ps1` | Runs tests before the complete pipeline |
+| `tests/test_cross_platform_runner.py` | Tests portable commands, stage parity, archive layout, and wrapper delegation |
+| `scripts/checkpoints/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
+| `scripts/checkpoints/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
+| `scripts/checkpoints/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
+| `scripts/checkpoints/run_checkpoint55.ps1` | Runs censoring-aware survival analysis and complete validation |
+| `scripts/checkpoints/run_checkpoint56.ps1` | Runs the post-policy salary-allocation equity audit |
+| `scripts/checkpoints/run_checkpoint57.ps1` | Validates the complete locked dependency environment |
+| `scripts/checkpoints/run_checkpoint58.ps1` | Validates reviewer-facing Markdown rendering |
+| `scripts/run_project.py` | Provides the canonical cross-platform execution interface |
+| `src/validate_cross_platform_runner.py` | Saves aggregate runner and repository-layout validation |
+| `scripts/checkpoints/run_checkpoint59.ps1` | Applies and validates the runner reorganization on Windows |
+| `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `requirements.txt` | Pins every direct dependency |
 | `requirements-lock.txt` | Pins and hashes every resolved distribution |
 
@@ -364,7 +369,7 @@ Checkpoint 57 makes the test environment itself testable. The suite verifies:
 Run the complete local environment contract with:
 
 ```powershell
-.\scripts\run_checkpoint57.ps1
+.\scripts\checkpoints\run_checkpoint57.ps1
 ```
 
 ## Markdown Rendering Contracts
@@ -380,7 +385,22 @@ end-to-end runner execute the same validation.
 Run the complete local rendering contract with:
 
 ```powershell
-.\scripts\run_checkpoint58.ps1
+.\scripts\checkpoints\run_checkpoint58.ps1
+```
+
+## Cross-Platform Runner Contracts
+
+Checkpoint 59 verifies that the finished project exposes one Python command
+surface on Windows, macOS, and Linux. Tests compare the default pipeline stage
+sequence with the committed Version 2 workflow, exercise skip-option
+composition, reject shell-specific command construction, validate portable
+notebook execution, and require checkpoint journals to remain archived outside
+the scripts root.
+
+Run the primary engineering contract with:
+
+```bash
+python scripts/run_project.py quality
 ```
 
 ## Limitations

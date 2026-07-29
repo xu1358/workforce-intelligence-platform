@@ -205,7 +205,7 @@ The program creates:
 All files are written to `data/processed/` and can be reproduced by running:
 
 ```powershell
-.\scripts\run_checkpoint45.ps1
+.\scripts\checkpoints\run_checkpoint45.ps1
 ```
 
 ## Interpretation Rules

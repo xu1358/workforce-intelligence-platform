@@ -144,7 +144,7 @@ python src\validate_dependency_environment.py
 Run the complete local checkpoint:
 
 ```powershell
-.\scripts\run_checkpoint57.ps1
+.\scripts\checkpoints\run_checkpoint57.ps1
 ```
 
 ## GitHub Actions Enforcement
