@@ -186,6 +186,25 @@ Checkpoint 55 adds tests that verify:
 The tests use three small in-memory employee histories. They do not read the
 generated 10,000-employee cohort or fit the full survival model.
 
+### 11. Policy Allocation-Equity Contracts
+
+Checkpoint 56 adds tests that verify:
+
+- Direct salary bands and within-job-level salary quintiles are configured.
+- Equal probabilities mechanically produce higher expected value when
+  replacement cost is salary based.
+- Ranking ties use employee ID deterministically.
+- Every sensitivity policy respects the same capacity and budget.
+- Salary-dependent and salary-neutral rankings can produce different
+  selections.
+- Every employee receives absolute, relative, within-level, and risk groups.
+- Outcome access, post-test retuning, and automatic action remain prohibited.
+- Notebook 34 contains executed aggregate outputs.
+- The policy-equity document reports the committed salary findings.
+
+The unit tests use a five-row in-memory population. They do not load employee
+outcomes or recalculate the complete current allocation.
+
 ## Test Isolation
 
 The suite uses small data frames created inside the tests.
@@ -291,10 +310,9 @@ Checkpoints 51 and 52 extend the suite beyond analytical calculations:
   local links, Markdown rendering, reproduction commands, governance language,
   and removal of stale Version 1 claims.
 
-The complete suite now contains 114 tests. The presentation, external-source,
-explanation, and survival contract tests do not recalculate the complete
-primary pipeline; they make sure the committed Version 2 story and its
-safeguards remain reproducible.
+The presentation, external-source, explanation, survival, and allocation-equity
+contract tests do not recalculate the complete primary pipeline; they make sure
+the committed Version 2 story and its safeguards remain reproducible.
 
 ## Files Added or Updated
 
@@ -314,10 +332,12 @@ safeguards remain reproducible.
 | `tests/test_ibm_attrition_benchmark.py` | Tests source, schema, feature, metric, and isolation contracts |
 | `tests/test_model_explanations.py` | Tests exact linear explanations, grouping, stability, and governance |
 | `tests/test_survival_analysis.py` | Tests censoring, hire reconstruction, Kaplan–Meier behavior, Cox encoding, and isolation |
+| `tests/test_retention_policy_equity.py` | Tests salary mechanisms, pay groups, sensitivity policies, and governance |
 | `scripts/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
 | `scripts/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
 | `scripts/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
 | `scripts/run_checkpoint55.ps1` | Runs censoring-aware survival analysis and complete validation |
+| `scripts/run_checkpoint56.ps1` | Runs the post-policy salary-allocation equity audit |
 | `scripts/run_end_to_end.ps1` | Runs tests before the complete pipeline |
 | `requirements.txt` | Declares pytest, Ruff, and lifelines as reproducible dependencies |
 

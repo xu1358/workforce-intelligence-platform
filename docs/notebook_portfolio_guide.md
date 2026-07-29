@@ -122,6 +122,12 @@ proportional-hazards diagnostics. It answers a time-to-exit question and does
 not replace the primary 12-month classifier, reopen the final test, or change
 the frozen review policy.
 
+Checkpoint 56 adds
+`notebooks/34_retention_policy_equity.ipynb` as a fourth optional supporting
+extension. It audits salary allocation after economic optimization, compares
+salary-neutral and salary-capped sensitivities, and preserves the frozen
+policy and outcome-access boundaries.
+
 ## Automated validation
 
 `src/validate_portfolio_notebooks.py` checks:
@@ -137,7 +143,7 @@ the frozen review policy.
 - Absence of employee identifiers and machine-specific absolute paths
 - File-size limits
 - Index links and the supporting-notebook inventory
-- Saved execution counts and outputs for supporting Notebooks `20`–`30`
+- Saved execution counts and outputs for configured supporting notebooks
 - Absence of error outputs and machine-specific paths in those notebooks
 - Portable kernels and GitHub-safe file sizes for those notebooks
 

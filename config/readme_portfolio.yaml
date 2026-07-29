@@ -8,7 +8,7 @@ evidence_map_path: "docs/readme_evidence_map.md"
 
 line_limits:
   minimum: 300
-  maximum: 650
+  maximum: 700
 
 required_headings:
   - "## Business Decision"
@@ -62,6 +62,9 @@ headline_metrics:
   survival_12_month_retention: "89.53%"
   survival_60_month_retention: "57.51%"
   survival_cox_mean_concordance: "0.5738"
+  policy_equity_selected_mean_salary: "$125,670"
+  policy_equity_population_mean_salary: "$95,722"
+  policy_equity_pay_quintile_selection_ratio: "25.83"
 
 required_links:
   - "notebooks/README.md"
@@ -78,6 +81,7 @@ required_links:
   - "docs/fairness_and_ethics.md"
   - "docs/retention_cost_model.md"
   - "docs/retention_policy_analysis.md"
+  - "docs/retention_policy_equity.md"
   - "docs/dashboard_current_state.md"
   - "docs/manufacturing_workforce_stability.md"
   - "docs/model_explanations_and_stability.md"
@@ -86,10 +90,12 @@ required_links:
   - "notebooks/31_ibm_external_benchmark.ipynb"
   - "notebooks/32_retention_explanation_stability.ipynb"
   - "notebooks/33_survival_analysis.ipynb"
+  - "notebooks/34_retention_policy_equity.ipynb"
   - "scripts/run_checkpoint52.ps1"
   - "scripts/run_checkpoint53.ps1"
   - "scripts/run_checkpoint54.ps1"
   - "scripts/run_checkpoint55.ps1"
+  - "scripts/run_checkpoint56.ps1"
   - "scripts/run_end_to_end.ps1"
 
 forbidden_stale_claims:
@@ -106,4 +112,5 @@ required_commands:
   - ".\\scripts\\run_checkpoint53.ps1"
   - ".\\scripts\\run_checkpoint54.ps1"
   - ".\\scripts\\run_checkpoint55.ps1"
+  - ".\\scripts\\run_checkpoint56.ps1"
   - ".\\scripts\\run_end_to_end.ps1"

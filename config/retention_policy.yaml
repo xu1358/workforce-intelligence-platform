@@ -47,6 +47,14 @@ policy_selection:
   freeze_before_test_access: true
   prohibit_post_test_policy_changes: true
 
+post_policy_equity_audit:
+  enabled: true
+  config: "config/retention_policy_equity.yaml"
+  acknowledge_salary_mechanism: true
+  original_policy_remains_frozen: true
+  alternatives_are_sensitivity_only: true
+  replacement_policy_requires_new_evaluation: true
+
 final_model:
   grouped_calibration_folds: 5
   random_seed: 42

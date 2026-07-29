@@ -232,7 +232,8 @@ Checkpoint 54 adds exact linear-explanation, raw-feature grouping,
 importance-stability, aggregate-privacy, and governance contracts. The
 Checkpoint 55 adds censoring, hire-history reconstruction, Kaplan–Meier,
 Cox-encoding, and survival-isolation contracts. The complete automated suite
-now contains 114 tests.
+also includes Checkpoint 56 salary-allocation, policy-sensitivity, and
+no-retuning governance contracts.
 
 ## End-to-End Integration
 
@@ -258,6 +259,7 @@ engineering rules are already broken.
 | `scripts/run_checkpoint50.ps1` | Reproduces all quality gates locally |
 | `scripts/run_end_to_end.ps1` | Adds fail-fast quality checks to the full pipeline |
 | `tests/test_quality_configuration.py` | Tests local and GitHub quality contracts |
+| `tests/test_retention_policy_equity.py` | Tests pay-band allocation and sensitivity contracts |
 | `tests/*.py` | Applies consistent Ruff formatting to the test suite |
 | `src/attrition_hazard.py` | Removes one unused import |
 | `src/validate_v2_attrition_data.py` | Removes one unused local variable |

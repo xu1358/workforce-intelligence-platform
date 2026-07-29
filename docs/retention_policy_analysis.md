@@ -337,6 +337,32 @@ The correct portfolio claim is that the project demonstrates transparent,
 leakage-aware decision analysis under explicit assumptions—not that it proves
 a retention intervention will succeed in a real workforce.
 
+## Post-Policy Salary-Allocation Audit
+
+The salary-based replacement-cost formula structurally increases expected
+value for higher-paid employees. Checkpoint 56 therefore audits the final
+allocation separately from Checkpoint 44's model fairness analysis.
+
+For the current population:
+
+- Eligible mean salary is $95,722.
+- Frozen-policy selected mean salary is $125,670.
+- Highest salary-quintile selection is 21.22%.
+- Lowest salary-quintile selection is 0.82%.
+- Only 321 of 700 selections overlap top-700 probability selection.
+
+The result is explicit: the expected-value policy is financially optimized,
+not equity-neutral. Probability-only, salary-capped, and constant-cost
+alternatives are reported as sensitivity analyses.
+
+Checkpoint 56 does not access outcome columns and does not change the frozen
+policy. Selecting a replacement policy after viewing the final test would
+violate the no-post-test-retuning rule. Any new policy requires a new holdout
+or prospective evaluation.
+
+Read the complete
+[salary-allocation equity audit](retention_policy_equity.md).
+
 ## Evidence and Reproduction
 
 - Executed analysis:

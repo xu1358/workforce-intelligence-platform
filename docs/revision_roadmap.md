@@ -71,10 +71,12 @@ so the roadmap matches the implemented Git history.
   baseline-at-hire Cox hazard associations, proportional-hazards diagnostics,
   and held-out concordance checks without changing the primary model or
   policy.
+- **Checkpoint 56:** Audit salary-driven allocation in the frozen expected-value
+  policy, compare salary-neutral and salary-capped sensitivities, and preserve
+  the no-post-test-retuning boundary.
 
 ## Optional Advanced Extensions
 
-- **Checkpoint 56:** Add formal budget-constrained allocation.
 - **Checkpoint 57:** Deploy a public demonstration dashboard.
 
 ## Primary Version 2 Decision Question

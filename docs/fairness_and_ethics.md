@@ -293,6 +293,44 @@ For the selected model:
 - Organizational level triggered recall review.
 - Age band and education did not trigger the configured screens.
 
+## Prediction Fairness Does Not Guarantee Allocation Equity
+
+Checkpoint 44 audits calibrated probabilities and a top-10% reporting
+scenario before the economic policy is applied. Checkpoint 46 later ranks:
+
+\[
+P(\text{attrition})
+\times
+\text{salary-based replacement cost}
+\]
+
+Salary therefore enters the decision after the original model fairness
+analysis. Job level is only a partial proxy and cannot replace direct
+salary-band analysis.
+
+Checkpoint 56 adds a separate post-policy allocation-equity audit. In the
+current population:
+
+- Eligible mean salary is $95,722.
+- Frozen-policy selected mean salary is $125,670.
+- The highest salary quintile has a 21.22% selection rate.
+- The lowest salary quintile has a 0.82% selection rate.
+- The highest-to-lowest selection-rate ratio is 25.83.
+- Only 321 of the 700 frozen selections overlap probability-only top-700
+  selection.
+
+This concentration is a structural consequence of the financial objective,
+not merely a statistical subgroup fluctuation. The expected-value policy is
+financially optimized, not equity-neutral.
+
+The audit compares probability-only, salary-capped, and constant-cost
+sensitivity policies. It does not access outcome columns, retune the final
+test, or replace the frozen policy. A different policy would require a new
+holdout or prospective evaluation.
+
+See the
+[retention policy salary-allocation equity audit](retention_policy_equity.md).
+
 ## Ethical use restrictions
 
 This project must not be represented as an automated employment-decision
@@ -325,6 +363,8 @@ discipline, termination, promotion denial, or surveillance.
    the uncertainty of every disparity difference.
 8. Removing direct fields cannot remove all proxy information.
 9. Observational predictive differences do not establish causation.
+10. Model-level subgroup diagnostics do not evaluate salary-driven allocation
+    introduced by the later expected-value policy.
 
 ## Reproduction
 

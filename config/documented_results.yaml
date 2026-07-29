@@ -85,3 +85,18 @@ documents:
       - "no department-history mismatch"
       - "location-history attribution"
       - "synthetic"
+
+  - path: docs/retention_policy_equity.md
+    required_values:
+      - "$125,670"
+      - "$95,722"
+      - "21.22%"
+      - "0.82%"
+      - "25.83"
+      - "$108,935"
+      - "379"
+    required_phrases:
+      - "financially optimized, not equity-neutral"
+      - "does not access outcome columns"
+      - "does not change the frozen policy"
+      - "new holdout or prospective evaluation"

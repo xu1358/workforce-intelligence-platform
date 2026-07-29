@@ -1,0 +1,99 @@
+version: "2.0"
+description: >-
+  Post-policy allocation-equity audit of the frozen expected-value retention
+  policy. The audit measures salary-driven selection and compares committed
+  sensitivity policies without accessing outcome columns or changing the
+  tested policy.
+
+snapshots:
+  validation: "2024-06-30"
+  final_test: "2025-06-30"
+  current: "2026-06-30"
+
+selected_calibration_method: "Sigmoid"
+model_eligible_levels:
+  - "Individual Contributor"
+  - "Team Manager"
+
+reference_economics:
+  replacement_cost_salary_multiplier: 1.0
+  intervention_cost_usd: 2500.0
+  intervention_success_probability: 0.25
+
+capacity:
+  maximum_employees: 700
+  maximum_budget_usd: 1750000.0
+
+salary_groups:
+  absolute_bands:
+    edges:
+      - 0
+      - 60000
+      - 80000
+      - 100000
+      - 125000
+      - 150000
+      - 1000000000
+    labels:
+      - "Under $60k"
+      - "$60k-$79,999"
+      - "$80k-$99,999"
+      - "$100k-$124,999"
+      - "$125k-$149,999"
+      - "$150k+"
+  population_quantiles: 5
+  within_job_level_quantiles: 5
+  risk_quantiles: 5
+
+sensitivity_policies:
+  frozen_expected_value:
+    display_name: "Frozen expected-value policy"
+    ranking: "probability_times_salary"
+    require_positive_score: true
+  probability_only:
+    display_name: "Top 700 probability"
+    ranking: "probability_only"
+    require_positive_score: false
+  salary_capped_expected_value:
+    display_name: "Salary-capped expected value"
+    ranking: "probability_times_capped_salary"
+    validation_salary_cap_quantile: 0.75
+    require_positive_score: true
+  constant_cost:
+    display_name: "Constant replacement cost"
+    ranking: "probability_times_constant_cost"
+    validation_salary_quantile: 0.50
+    require_positive_score: true
+
+review_triggers:
+  selected_to_population_mean_salary_ratio: 1.10
+  highest_to_lowest_salary_quintile_selection_rate_ratio: 2.0
+  within_highest_risk_quintile_selection_rate_gap: 0.10
+  note: >-
+    These are descriptive portfolio review triggers, not legal thresholds or
+    binary fairness verdicts.
+
+governance:
+  audit_is_descriptive: true
+  no_binary_fairness_verdict: true
+  do_not_access_outcome_columns: true
+  do_not_modify_frozen_policy: true
+  sensitivity_policies_are_not_selected: true
+  new_policy_requires_new_holdout_or_prospective_evaluation: true
+  human_review_required: true
+  automatic_employment_action_permitted: false
+
+figures:
+  format: "png"
+  dpi: 160
+  expected_files:
+    - "policy_selected_salary_comparison.png"
+    - "current_pay_quintile_selection.png"
+    - "policy_value_equity_tradeoff.png"
+
+validation:
+  expected_populations: 3
+  expected_policies: 4
+  expected_selected_count: 700
+  expected_salary_quintiles: 5
+  numeric_tolerance: 0.000001

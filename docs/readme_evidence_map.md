@@ -22,6 +22,7 @@ measurements from a real employer.
 | Frozen 700-person, $1.75 million expected-value policy | `data/processed/retention_policy_decision.csv` | 46 | Notebook 3 and `docs/retention_policy_analysis.md` |
 | Final-test policy capture 17.06% and $2.03 million outcome-aligned net value | `data/processed/retention_policy_decision.csv` | 46 | Notebook 3 |
 | Current projection of 35.0 prevented departures and $2.40 million expected net value | `data/processed/current_retention_policy_summary.csv` | 46 | Notebooks 3–4 |
+| Current selected mean salary $125,670 versus $95,722 eligible and 25.83 highest-to-lowest pay-quintile selection ratio | `data/processed/policy_equity/policy_equity_population_summary.csv` | 56 | Notebook 34 and `docs/retention_policy_equity.md` |
 | Manufacturing expected departures 229.7 and residual backfills 221.3 | `data/processed/manufacturing_stability_summary.csv` | 48 | Notebook 4 and `docs/manufacturing_workforce_stability.md` |
 | IBM benchmark contains 1,470 rows and 237 positive cases | `data/processed/ibm_benchmark/ibm_benchmark_data_profile.csv` | 53 | Notebook 31 and `docs/ibm_external_benchmark.md` |
 | IBM repeated out-of-fold PR-AUC 0.6094, ROC-AUC 0.8277, and Brier 0.0975 | `data/processed/ibm_benchmark/ibm_benchmark_metrics.csv` | 53 | Notebook 31 and `docs/ibm_external_benchmark.md` |
@@ -30,7 +31,7 @@ measurements from a real employer.
 | Explanation minimum top-10 overlap 0.6667 | `data/processed/retention_explanations/retention_explanation_pairwise_stability.csv` | 54 | Notebook 32 |
 | Kaplan–Meier 12-month retention 89.53% and 60-month retention 57.51% | `data/processed/survival_analysis/survival_horizon_summary.csv` | 55 | Notebook 33 and `docs/survival_analysis.md` |
 | Cox five-fold mean concordance 0.5738 | `data/processed/survival_analysis/cox_cross_validation.csv` | 55 | Notebook 33 and `docs/survival_analysis.md` |
-| Automated test count | pytest collection during `scripts/run_checkpoint55.ps1` | 55 | GitHub Actions and local terminal output |
+| Automated test count | pytest collection during `scripts/run_checkpoint56.ps1` | 56 | GitHub Actions and local terminal output |
 
 Generated CSV files are intentionally excluded from Git. The executed curated
 notebooks preserve aggregate evidence so GitHub reviewers can inspect results
@@ -68,6 +69,18 @@ Selection means eligibility for supportive human review. It does not mean an
 employee is known to leave, and it must not trigger an automatic employment
 action. Financial value is a scenario-planning quantity, not a measure of a
 person's value.
+
+### Allocation-equity evidence
+
+Checkpoint 56 evaluates the policy decision after salary-based economics are
+applied. It reports absolute salary bands, population and within-job-level
+salary quintiles, salary selection within risk quintiles, department salary
+concentration, and three alternative ranking sensitivities.
+
+The audit reads no target or termination columns and does not change the
+frozen policy. Salary-neutral and salary-capped alternatives are diagnostic;
+adopting a replacement policy requires a new holdout or prospective
+evaluation.
 
 ### External benchmark
 
@@ -141,4 +154,11 @@ pytest suite:
 
 ```powershell
 .\scripts\run_checkpoint55.ps1
+```
+
+Checkpoint 56 reproduces the salary-allocation equity audit and complete
+pytest suite:
+
+```powershell
+.\scripts\run_checkpoint56.ps1
 ```

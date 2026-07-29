@@ -17,6 +17,20 @@ group_attributes:
   - "job_level"
   - "organizational_level"
 
+post_policy_allocation_equity:
+  checkpoint: 56
+  config: "config/retention_policy_equity.yaml"
+  document: "docs/retention_policy_equity.md"
+  reason: >-
+    Checkpoint 44 audits model probabilities before the salary-based economic
+    policy is applied. Salary allocation is therefore audited separately at
+    the final decision layer.
+  direct_salary_groups:
+    - "absolute_salary_band"
+    - "population_salary_quintile"
+    - "within_job_level_salary_quintile"
+    - "risk_salary_intersection"
+
 derived_groups:
   age_band:
     source_column: "approx_age"

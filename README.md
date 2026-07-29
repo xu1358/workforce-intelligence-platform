@@ -23,6 +23,7 @@ For a concise review, use these entry points:
 5. [Run the automated quality checks](#fast-local-validation).
 6. [Review the isolated IBM benchmark](#external-methodological-benchmark).
 7. [Review retention over employee tenure](#employee-survival-extension).
+8. [Review salary allocation in the final policy](#allocation-equity-audit).
 
 ## Business Decision
 
@@ -56,6 +57,7 @@ pipeline.
 | Frozen intervention plan | 700 human reviews; $1.75M budget | Capacity- and budget-constrained expected-value policy |
 | Final-test policy | 17.06% capture; $2.03M outcome-aligned net value | Once-only evaluation with no post-test retuning |
 | Current planning projection | 35.0 expected prevented departures; $2.40M expected net value | Scenario projection, not an observed outcome |
+| Policy allocation equity | Selected mean salary $125,670 versus $95,722 eligible; highest pay quintile selected 25.83× as often as lowest | Salary-based value optimization is not equity-neutral |
 | Manufacturing plan | 229.7 expected departures; 221.3 residual backfills | Probability-weighted 12-month planning estimates |
 | Explanation stability | Minimum rank correlation 0.8857; minimum top-10 overlap 0.6667 | Aggregate model drivers remain broadly stable across grouped refits |
 | Survival extension | 89.53% retained at 12 months; 57.51% at 60 months | Censoring-aware synthetic retention estimates |
@@ -81,6 +83,7 @@ The repository demonstrates a complete analytical decision system:
 - ranking, subgroup, fairness, and sensitivity analysis;
 - an explicit retention cost model;
 - a frozen budget-constrained intervention policy;
+- a post-policy salary-allocation equity audit;
 - a current-state Streamlit dashboard;
 - an isolated external-dataset methodological benchmark; and
 - automated tests, Ruff checks, and GitHub Actions.
@@ -290,6 +293,24 @@ not realized savings.
 See the [cost model](docs/retention_cost_model.md) and
 [policy analysis](docs/retention_policy_analysis.md).
 
+### Allocation-equity audit
+
+The expected-value policy multiplies probability by a salary-based replacement
+cost. That mechanism structurally favors higher-paid employees even when model
+fairness is evaluated before policy optimization.
+
+The current eligible population earns $95,722 on average, compared with
+$125,670 among the 700 selected employees. The highest salary quintile has a
+21.22% selection rate versus 0.82% for the lowest quintile, a 25.83-to-1
+ratio. Only 321 of the frozen selections overlap the top-700 probability
+policy.
+
+The audit compares probability-only, salary-capped, and constant-cost
+allocations without reading outcome columns or changing the frozen tested
+policy. Any replacement policy requires a new holdout or prospective
+evaluation. Read the
+[salary-allocation equity audit](docs/retention_policy_equity.md).
+
 ## Manufacturing Workforce Stability
 
 Manufacturing is the largest current synthetic department, so the final
@@ -326,6 +347,8 @@ Important boundaries:
 
 - subgroup gaps are diagnostics, not a binary declaration that a model is
   fair or unfair;
+- model fairness does not guarantee allocation equity after salary-based
+  economic optimization;
 - a financial ranking is not a measure of employee value;
 - predictions do not prove that an employee intends to leave;
 - an intervention's effect is assumed, not causally estimated;
@@ -380,11 +403,13 @@ are embedded, so they can be read on GitHub without rerunning the pipeline.
 | 3 | [Fairness, Economics, and Policy](notebooks/portfolio/03_fairness_economics_and_policy.ipynb) | How do subgroup risk, costs, capacity, and governance affect the decision? |
 | 4 | [Current Workforce Stability Plan](notebooks/portfolio/04_current_workforce_stability_plan.ipynb) | How does the frozen policy support current manufacturing planning? |
 
-The 33 numbered checkpoint notebooks remain in `notebooks/` as detailed
+The 34 numbered checkpoint notebooks remain in `notebooks/` as detailed
 technical evidence and an audit trail. Notebook 31 separately documents the
 IBM external benchmark, Notebook 32 documents aggregate explanation
-stability, and Notebook 33 documents survival analysis. None is part of the
-four-notebook primary narrative.
+stability, Notebook 33 documents survival analysis, and
+[Notebook 34](notebooks/34_retention_policy_equity.ipynb) audits
+salary allocation in the frozen policy. None is part of the four-notebook
+primary narrative.
 
 Reviewer-visible Version 2 supporting Notebooks `20`–`30` also include saved
 tables and figures. Automated validation prevents them from returning to blank
@@ -415,7 +440,7 @@ workforce-intelligence-platform/
 ├── models/                # Generated model artifacts
 ├── notebooks/
 │   ├── portfolio/         # Four reviewer-facing executed notebooks
-│   └── 01_...33_...       # Detailed supporting and extension notebooks
+│   └── 01_...34_...       # Detailed supporting and extension notebooks
 ├── scripts/               # Checkpoint and end-to-end PowerShell runners
 ├── sql/                   # Schema, validation, and analytical SQL
 ├── src/                   # Generation, modeling, policy, and dashboard code
@@ -513,7 +538,7 @@ It performs:
 2. Ruff lint checks;
 3. test-format checks;
 4. README structure, evidence, link, and stale-claim validation; and
-5. the complete 114-test automated suite.
+5. the complete automated test suite.
 
 The same compile, lint, formatting, and pytest gates run automatically in
 [GitHub Actions](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml).
@@ -540,7 +565,7 @@ stability evidence:
 It reconciles current calibrated scores to Checkpoint 46, calculates exact
 linear SHAP values, performs five employee-grouped stability refits, validates
 aggregate-only governance, generates three figures, and runs the complete
-114-test suite. It does not reopen the final test or alter the policy. See the
+automated suite. It does not reopen the final test or alter the policy. See the
 [Checkpoint 54 runner](scripts/run_checkpoint54.ps1).
 
 Checkpoint 55 reproduces aggregate Kaplan–Meier and Cox survival evidence:
@@ -552,9 +577,21 @@ Checkpoint 55 reproduces aggregate Kaplan–Meier and Cox survival evidence:
 It reconstructs baseline-at-hire fields, encodes active employees as
 right-censored, generates retention curves and adjusted hazard ratios, runs
 five held-out concordance folds, reports proportional-hazards diagnostics,
-and executes the complete 114-test suite. It does not change the primary
+and executes the complete automated suite. It does not change the primary
 classifier, final test, frozen policy, dashboard, or review list. See the
 [Checkpoint 55 runner](scripts/run_checkpoint55.ps1).
+
+Checkpoint 56 audits salary allocation in the frozen policy:
+
+```powershell
+.\scripts\run_checkpoint56.ps1
+```
+
+It compares direct salary bands, salary quintiles, within-job-level pay,
+within-risk salary selection, and three salary-neutral or salary-capped
+sensitivity policies. It reads no outcome columns and does not change the
+frozen plan. See the
+[Checkpoint 56 runner](scripts/run_checkpoint56.ps1).
 
 ## Documentation Guide
 
@@ -573,6 +610,7 @@ classifier, final test, frozen policy, dashboard, or review list. See the
 | Fairness | [Fairness and ethics](docs/fairness_and_ethics.md) |
 | Economics | [Retention cost model](docs/retention_cost_model.md) |
 | Policy | [Retention policy analysis](docs/retention_policy_analysis.md) |
+| Allocation equity | [Salary-allocation equity audit](docs/retention_policy_equity.md) |
 | Current dashboard | [Dashboard timeline and safety](docs/dashboard_current_state.md) |
 | Manufacturing plan | [Workforce-stability analysis](docs/manufacturing_workforce_stability.md) |
 | Model explanations | [Explanation and stability analysis](docs/model_explanations_and_stability.md) |
@@ -596,6 +634,8 @@ classifier, final test, frozen policy, dashboard, or review list. See the
 - Survival hazard ratios are baseline associations, and one feature triggers
   a proportional-hazards review flag.
 - Subgroup sample sizes and simulator structure affect fairness diagnostics.
+- The expected-value policy structurally favors higher salaries and requires
+  explicit allocation-equity review.
 - Cost and effectiveness values are scenario assumptions.
 - No retention intervention was performed, so causal impact is unknown.
 - Current workforce values are projections with unknown future outcomes.
@@ -613,13 +653,18 @@ review decisions and does not interpret feature importance as causation.
 Checkpoint 55 keeps the time-to-exit extension separate from the primary
 classifier and frozen intervention policy.
 
+Checkpoint 56 shows that the salary-based expected-value policy is not
+equity-neutral, while keeping every alternative diagnostic and preserving the
+tested policy.
+
 ## Version History
 
 - `v1.0-portfolio` preserves the completed Version 1 baseline.
 - `revision-v2` contains the temporal modeling, calibration, fairness,
   economics, policy, current-state dashboard, testing, CI, and curated
-  portfolio revisions, plus the isolated IBM methodological benchmark and
-  aggregate explanation-stability and survival analyses.
+  portfolio revisions, plus the isolated IBM methodological benchmark,
+  aggregate explanation-stability and survival analyses, and a post-policy
+  salary-allocation equity audit.
 
 ## Disclaimer
 

@@ -5,11 +5,13 @@ The project contains two notebook layers:
 1. **Portfolio sequence** — four executed notebooks that tell the complete
    Version 2 analytical and business story.
 2. **Supporting checkpoint notebooks** — the original detailed notebooks
-   `01` through `33`, retained as technical evidence and an audit trail.
+   `01` through `34`, retained as technical evidence and an audit trail.
 3. **External benchmark** — Notebook `31`, which evaluates the same
    methodological discipline on a separate fictional IBM dataset.
 4. **Explanation extension** — Notebook `32`, which documents aggregate
    current-model explanations and grouped-refit stability.
+5. **Allocation-equity extension** — Notebook `34`, which audits salary-driven
+   selection after economic policy optimization.
 
 ## Recommended reviewer sequence
 
@@ -43,7 +45,7 @@ implementation detail:
 - `01`–`10`: generated data and relationship validation
 - `11`–`16`: Version 1 SQL, modeling, interpretation, and dashboard validation
 - `17`–`19`: generator audit, EDA, and historical-assignment analysis
-- `20`–`33`: Version 2 checkpoint-specific analytical validation and extensions
+- `20`–`34`: Version 2 checkpoint-specific analytical validation and extensions
 
 These supporting notebooks are not the recommended first reading path.
 
@@ -96,6 +98,23 @@ Run the survival extension with:
 
 ```powershell
 .\scripts\run_checkpoint55.ps1
+```
+
+## Separate policy allocation-equity extension
+
+[Notebook 34: Retention Policy Salary-Allocation Equity](34_retention_policy_equity.ipynb)
+measures absolute pay bands, population and within-job-level salary quintiles,
+salary selection within risk quintiles, and policy sensitivity alternatives.
+
+It is separate from model fairness because salary-based replacement cost
+enters after probability scoring. The audit reads no outcome columns, changes
+no frozen employee selection, and treats every alternative as sensitivity
+analysis only.
+
+Run it with:
+
+```powershell
+.\scripts\run_checkpoint56.ps1
 ```
 
 ## Reproducibility
