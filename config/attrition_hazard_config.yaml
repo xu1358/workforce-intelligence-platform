@@ -1,7 +1,8 @@
-version: "2.0"
+version: "2.1"
 description: >-
-  Initial design parameters for the Version 2 monthly
-  competing-risks attrition simulator.
+  Executable parameters for the Version 2 monthly competing-risks attrition
+  simulator. Every key in the simulation mapping is validated and used by
+  src/attrition_hazard.py.
 
 random_seed: 42
 

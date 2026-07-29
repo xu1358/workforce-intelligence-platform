@@ -9,6 +9,7 @@ stay active, voluntary exit, or involuntary exit.
 from __future__ import annotations
 
 from collections import defaultdict
+from dataclasses import dataclass
 import math
 from pathlib import Path
 import random
@@ -26,9 +27,105 @@ DATE_COLUMNS = {
     "events": "event_date",
 }
 
+SUPPORTED_CAUSE_MODELS = {"multinomial_logit"}
+REQUIRED_SIMULATION_KEYS = {
+    "time_step",
+    "as_of_date",
+    "cause_model",
+    "feature_lag_months",
+    "allow_first_month_exit",
+    "censor_at_as_of_date",
+}
+
+
+@dataclass(frozen=True)
+class HazardSimulationSettings:
+    """Validated controls for the monthly attrition simulation."""
+
+    time_step: str
+    as_of_date: pd.Timestamp
+    cause_model: str
+    feature_lag_months: int
+    allow_first_month_exit: bool
+    censor_at_as_of_date: bool
+
+
+def hazard_simulation_settings(
+    config: dict[str, Any],
+) -> HazardSimulationSettings:
+    """Validate and materialize the executable simulation contract."""
+
+    simulation = config.get("simulation")
+    if not isinstance(simulation, dict):
+        raise ValueError("Hazard configuration requires a simulation mapping.")
+
+    missing = sorted(REQUIRED_SIMULATION_KEYS - set(simulation))
+    if missing:
+        raise ValueError(
+            "Hazard simulation configuration is missing required keys: "
+            + ", ".join(missing)
+        )
+
+    time_step = simulation["time_step"]
+    if time_step != "month":
+        raise ValueError("Only monthly hazard simulation is supported.")
+
+    try:
+        as_of_date = pd.Timestamp(simulation["as_of_date"])
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            "simulation.as_of_date must be a valid date."
+        ) from exc
+    if pd.isna(as_of_date):
+        raise ValueError("simulation.as_of_date must be a valid date.")
+
+    cause_model = simulation["cause_model"]
+    if not isinstance(cause_model, str) or cause_model not in SUPPORTED_CAUSE_MODELS:
+        supported = ", ".join(sorted(SUPPORTED_CAUSE_MODELS))
+        raise ValueError(
+            "Unsupported simulation.cause_model "
+            f"{cause_model!r}; supported values: {supported}."
+        )
+
+    feature_lag_months = simulation["feature_lag_months"]
+    if (
+        isinstance(feature_lag_months, bool)
+        or not isinstance(feature_lag_months, int)
+        or feature_lag_months < 1
+    ):
+        raise ValueError(
+            "simulation.feature_lag_months must be an integer of at least 1."
+        )
+
+    allow_first_month_exit = simulation["allow_first_month_exit"]
+    if not isinstance(allow_first_month_exit, bool):
+        raise ValueError(
+            "simulation.allow_first_month_exit must be true or false."
+        )
+
+    censor_at_as_of_date = simulation["censor_at_as_of_date"]
+    if not isinstance(censor_at_as_of_date, bool):
+        raise ValueError(
+            "simulation.censor_at_as_of_date must be true or false."
+        )
+    if not censor_at_as_of_date:
+        raise ValueError(
+            "simulation.censor_at_as_of_date=false is unsupported because "
+            "the generator has no observation horizon beyond as_of_date."
+        )
+
+    return HazardSimulationSettings(
+        time_step=time_step,
+        as_of_date=as_of_date,
+        cause_model=cause_model,
+        feature_lag_months=feature_lag_months,
+        allow_first_month_exit=allow_first_month_exit,
+        censor_at_as_of_date=censor_at_as_of_date,
+    )
+
 
 def load_hazard_config(path: Path) -> dict[str, Any]:
-    """Load and perform basic checks on the hazard configuration."""
+    """Load and validate the complete hazard configuration contract."""
 
     with path.open("r", encoding="utf-8") as config_file:
         config = yaml.safe_load(config_file)
@@ -41,8 +138,7 @@ def load_hazard_config(path: Path) -> dict[str, Any]:
             "Baseline stay and exit probabilities must add to 1."
         )
 
-    if config["simulation"]["time_step"] != "month":
-        raise ValueError("Only monthly hazard simulation is supported.")
+    hazard_simulation_settings(config)
 
     return config
 
@@ -68,6 +164,39 @@ def _month_difference(later: pd.Timestamp, earlier: pd.Timestamp) -> int:
         - earlier.month
     )
     return max(0, int(difference))
+
+
+def _feature_cutoff(
+    month_start: pd.Timestamp,
+    feature_lag_months: int,
+) -> pd.Timestamp:
+    """Return the exclusive record cutoff for a configured feature lag."""
+
+    if (
+        isinstance(feature_lag_months, bool)
+        or not isinstance(feature_lag_months, int)
+        or feature_lag_months < 1
+    ):
+        raise ValueError("Feature lag must be an integer of at least 1 month.")
+
+    return month_start - pd.DateOffset(months=feature_lag_months - 1)
+
+
+def _employee_is_at_risk(
+    hire_date: pd.Timestamp,
+    month_start: pd.Timestamp,
+    month_end: pd.Timestamp,
+    allow_first_month_exit: bool,
+) -> bool:
+    """Return whether an employee may exit in the simulated month."""
+
+    normalized_hire_date = pd.Timestamp(hire_date).normalize()
+    if normalized_hire_date > month_end:
+        return False
+    if allow_first_month_exit:
+        return True
+
+    return normalized_hire_date.to_period("M") < month_start.to_period("M")
 
 
 def _group_records(
@@ -362,8 +491,12 @@ def _cause_probabilities(
     voluntary_logit: float,
     involuntary_logit: float,
     config: dict[str, Any],
+    cause_model: str,
 ) -> tuple[float, float, float]:
     """Convert cause logits to bounded multinomial probabilities."""
+
+    if cause_model not in SUPPORTED_CAUSE_MODELS:
+        raise ValueError(f"Unsupported cause model: {cause_model}")
 
     voluntary_exp = math.exp(_clamp(voluntary_logit, -20.0, 20.0))
     involuntary_exp = math.exp(_clamp(involuntary_logit, -20.0, 20.0))
@@ -437,6 +570,7 @@ def simulate_attrition(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Simulate monthly attrition and return outcomes plus diagnostics."""
 
+    settings = hazard_simulation_settings(config)
     employees = employees.copy()
     employees["hire_date"] = pd.to_datetime(employees["hire_date"])
 
@@ -503,7 +637,12 @@ def simulate_attrition(
         for employee_id in employee_ids
     }
 
-    as_of_date = pd.Timestamp(config["simulation"]["as_of_date"])
+    if not settings.censor_at_as_of_date:
+        raise RuntimeError("Validated simulation must censor at as_of_date.")
+    as_of_date = settings.as_of_date
+
+    if settings.time_step != "month":
+        raise RuntimeError("Validated simulation must use monthly steps.")
     month_starts = _month_starts(employees["hire_date"].min(), as_of_date)
 
     baseline = config["baseline_probabilities"]
@@ -537,7 +676,12 @@ def simulate_attrition(
         risk_ids = sorted(
             employee_id
             for employee_id in active_employee_ids
-            if pd.Timestamp(employee_rows[employee_id].hire_date) <= month_end
+            if _employee_is_at_risk(
+                pd.Timestamp(employee_rows[employee_id].hire_date),
+                month_start,
+                month_end,
+                settings.allow_first_month_exit,
+            )
         )
 
         monthly_records: list[dict[str, Any]] = []
@@ -545,7 +689,10 @@ def simulate_attrition(
         for employee_id in risk_ids:
             employee = employee_rows[employee_id]
             role = role_lookup[int(employee.job_role_id)]
-            cutoff = month_start
+            cutoff = _feature_cutoff(
+                month_start,
+                settings.feature_lag_months,
+            )
 
             (
                 performance_level,
@@ -567,7 +714,7 @@ def simulate_attrition(
             )
 
             tenure_months = _month_difference(
-                cutoff,
+                month_start,
                 pd.Timestamp(employee.hire_date),
             )
 
@@ -745,6 +892,7 @@ def simulate_attrition(
                 voluntary_logit,
                 involuntary_logit,
                 config,
+                settings.cause_model,
             )
             last_probabilities[employee_id] = probabilities
             _, voluntary_probability, involuntary_probability = probabilities

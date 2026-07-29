@@ -121,6 +121,22 @@ def build_checks(
         path.name for path in scripts_directory.iterdir() if path.is_file()
     )
     checkpoint_files = sorted(archive.glob("run_checkpoint*.ps1"))
+    archived_powershell = [
+        *checkpoint_files,
+        archive / "execute_supporting_notebooks.ps1",
+    ]
+    root_resolution_failures = []
+    for path in archived_powershell:
+        content = path.read_text(encoding="utf-8")
+        if (
+            "$ScriptsDirectory = Split-Path -Parent $PSScriptRoot"
+            not in content
+            or "$ProjectRoot = Split-Path -Parent $ScriptsDirectory"
+            not in content
+            or "$ProjectRoot = Split-Path -Parent $PSScriptRoot"
+            in content
+        ):
+            root_resolution_failures.append(path.name)
     wrapper_text = wrapper.read_text(encoding="utf-8")
     workflow_text = (
         project_root / ".github" / "workflows" / "python-quality.yml"
@@ -189,6 +205,15 @@ def build_checks(
             "observed": len(checkpoint_files),
             "requirement": config["checkpoint_history"]["expected_count"],
             "details": "Development journals remain available but leave the scripts root.",
+        },
+        {
+            "check": "Archived PowerShell runners resolve repository root",
+            "status": (
+                "PASS" if not root_resolution_failures else "FAIL"
+            ),
+            "observed": root_resolution_failures,
+            "requirement": "0 one-level root calculations",
+            "details": "Archived scripts remain runnable after moving one level deeper.",
         },
         {
             "check": "Scripts root exposes only the finished interface",

@@ -573,6 +573,7 @@ They are no longer the primary project interface. See
 | PostgreSQL | [Database setup](docs/database_setup.md) |
 | SQL metrics | [Analytics definitions](docs/analytics.md) |
 | Version 2 data | [V1 versus V2 comparison](docs/v1_v2_data_comparison.md) |
+| Hazard configuration | [Executable simulation contract](docs/hazard_configuration_contract.md) |
 | Temporal features | [Temporal dataset design](docs/temporal_dataset_design.md) |
 | Validation splits | [Model validation strategy](docs/model_validation_strategy.md) |
 | Feature policy | [Feature interpretation](docs/feature_interpretation.md) |

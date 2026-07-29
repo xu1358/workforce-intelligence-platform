@@ -123,7 +123,9 @@ Checkpoint 59 verifies:
 - Skip flags remove only their intended stage groups.
 - No shell operators or shell executables are used.
 - Twelve supporting notebooks come from the committed manifest.
-- Twenty-four checkpoint runners are archived outside the scripts root.
+- Twenty-five checkpoint runners are archived outside the scripts root.
+- Archived PowerShell runners resolve the repository root from their new
+  two-level location.
 - The Windows wrapper delegates to the Python runner.
 - Documentation contains no stale root checkpoint paths.
 

@@ -244,7 +244,10 @@ environment contracts. Checkpoint 58 adds repository-wide CommonMark fence
 validation and a specific rendering contract for the data-model Mermaid ER
 diagram. Checkpoint 59 adds a cross-platform pipeline-resolution smoke test
 and verifies that the Windows wrapper delegates to the canonical Python
-runner.
+runner. Checkpoint 60 makes the attrition-hazard simulation mapping an
+executable contract and adds regression coverage for every setting. It also
+checks that archived PowerShell runners resolve the repository root from
+their new directory.
 
 ## End-to-End Integration
 

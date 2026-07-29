@@ -134,6 +134,25 @@ def test_checkpoint_journal_is_outside_scripts_root(project_root: Path) -> None:
     ) == sorted(contract["root_script_files"])
 
 
+def test_archived_powershell_runners_resolve_repository_root(
+    project_root: Path,
+) -> None:
+    """Moving the journal must not leave its project-root lookup one level low."""
+
+    archive = project_root / "scripts" / "checkpoints"
+    paths = [
+        *archive.glob("run_checkpoint*.ps1"),
+        archive / "execute_supporting_notebooks.ps1",
+    ]
+
+    assert len(paths) == 26
+    for path in paths:
+        content = path.read_text(encoding="utf-8")
+        assert "$ScriptsDirectory = Split-Path -Parent $PSScriptRoot" in content
+        assert "$ProjectRoot = Split-Path -Parent $ScriptsDirectory" in content
+        assert "$ProjectRoot = Split-Path -Parent $PSScriptRoot" not in content
+
+
 def test_checkpoint_organizer_moves_without_deleting(tmp_path: Path) -> None:
     """The one-time migration must preserve checkpoint file contents."""
 

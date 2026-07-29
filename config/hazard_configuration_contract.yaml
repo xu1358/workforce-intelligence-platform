@@ -1,0 +1,46 @@
+version: "1.0"
+description: >
+  Executable contract for the simulation section of the Version 2
+  attrition-hazard configuration.
+
+hazard_config: config/attrition_hazard_config.yaml
+implementation: src/attrition_hazard.py
+
+required_settings:
+  time_step:
+    expected: month
+    runtime_use: settings.time_step
+  as_of_date:
+    expected: "2026-06-30"
+    runtime_use: settings.as_of_date
+  cause_model:
+    expected: multinomial_logit
+    runtime_use: settings.cause_model
+  feature_lag_months:
+    expected: 1
+    runtime_use: settings.feature_lag_months
+  allow_first_month_exit:
+    expected: true
+    runtime_use: settings.allow_first_month_exit
+  censor_at_as_of_date:
+    expected: true
+    runtime_use: settings.censor_at_as_of_date
+
+supported_cause_models:
+  - multinomial_logit
+
+behavior:
+  one_month_lag_cutoff: "2025-03-01"
+  two_month_lag_cutoff: "2025-02-01"
+  hire_month_example: "2025-03-15"
+  hire_month_start: "2025-03-01"
+  hire_month_end: "2025-03-31"
+
+governance:
+  preserves_committed_default_behavior: true
+  changes_reference_random_seed: false
+  changes_model_results: false
+  changes_frozen_policy: false
+  changes_dashboard_data: false
+
+output_directory: data/processed/hazard_configuration

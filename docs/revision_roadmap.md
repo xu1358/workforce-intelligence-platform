@@ -81,10 +81,13 @@ so the roadmap matches the implemented Git history.
   Mermaid rendering, and add local and CI regression validation.
 - **Checkpoint 59:** Replace the checkpoint-oriented scripts surface with one
   cross-platform Python runner and archive the PowerShell development history.
+- **Checkpoint 60:** Convert every attrition-hazard simulation setting into an
+  executable, tested runtime contract and repair archived-runner root
+  resolution without changing generated or downstream results.
 
 ## Optional Advanced Extensions
 
-- **Checkpoint 60:** Deploy a public demonstration dashboard if a hosted demo
+- **Checkpoint 61:** Deploy a public demonstration dashboard if a hosted demo
   is later required.
 
 ## Primary Version 2 Decision Question

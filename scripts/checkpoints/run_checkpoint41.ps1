@@ -5,7 +5,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$ProjectRoot = Split-Path -Parent $PSScriptRoot
+$ScriptsDirectory = Split-Path -Parent $PSScriptRoot
+$ProjectRoot = Split-Path -Parent $ScriptsDirectory
 $Python = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
 $Checkpoint40Script = Join-Path $PSScriptRoot "run_checkpoint40.ps1"
 $SplitAssignments = Join-Path (

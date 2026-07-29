@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 import math
 from pathlib import Path
 import random
@@ -16,6 +17,8 @@ from src.attrition_hazard import (
     _clamp,
     _compensation_features,
     _current_location,
+    _employee_is_at_risk,
+    _feature_cutoff,
     _manager_change_count,
     _month_difference,
     _month_starts,
@@ -26,6 +29,7 @@ from src.attrition_hazard import (
     _robust_salary_positions,
     _training_features,
     _transform_feature,
+    hazard_simulation_settings,
     load_hazard_config,
 )
 
@@ -40,6 +44,106 @@ def test_committed_hazard_config_loads(
     )
 
     assert config["simulation"]["time_step"] == "month"
+    assert hazard_simulation_settings(config).cause_model == "multinomial_logit"
+
+
+def test_committed_simulation_keys_are_materialized(
+    hazard_config: dict[str, Any],
+) -> None:
+    """Every specification key must become a typed runtime setting."""
+
+    settings = hazard_simulation_settings(hazard_config)
+
+    assert settings.time_step == "month"
+    assert settings.as_of_date == pd.Timestamp("2026-06-30")
+    assert settings.cause_model == "multinomial_logit"
+    assert settings.feature_lag_months == 1
+    assert settings.allow_first_month_exit is True
+    assert settings.censor_at_as_of_date is True
+
+
+@pytest.mark.parametrize(
+    "missing_key",
+    [
+        "time_step",
+        "as_of_date",
+        "cause_model",
+        "feature_lag_months",
+        "allow_first_month_exit",
+        "censor_at_as_of_date",
+    ],
+)
+def test_hazard_config_rejects_missing_simulation_key(
+    hazard_config: dict[str, Any],
+    missing_key: str,
+) -> None:
+    """A simulation control cannot exist only as optional decoration."""
+
+    config = deepcopy(hazard_config)
+    del config["simulation"][missing_key]
+
+    with pytest.raises(ValueError, match="missing required keys"):
+        hazard_simulation_settings(config)
+
+
+def test_hazard_config_rejects_unsupported_cause_model(
+    hazard_config: dict[str, Any],
+) -> None:
+    """A named cause model must map to an implemented probability rule."""
+
+    config = deepcopy(hazard_config)
+    config["simulation"]["cause_model"] = "independent_binary_logits"
+
+    with pytest.raises(ValueError, match="Unsupported simulation.cause_model"):
+        hazard_simulation_settings(config)
+
+
+@pytest.mark.parametrize("invalid_lag", [0, -1, 1.5, True, "1"])
+def test_hazard_config_rejects_invalid_feature_lag(
+    hazard_config: dict[str, Any],
+    invalid_lag: object,
+) -> None:
+    """Feature lag must be an explicit positive whole number of months."""
+
+    config = deepcopy(hazard_config)
+    config["simulation"]["feature_lag_months"] = invalid_lag
+
+    with pytest.raises(ValueError, match="integer of at least 1"):
+        hazard_simulation_settings(config)
+
+
+@pytest.mark.parametrize(
+    ("key", "invalid_value", "message"),
+    [
+        ("allow_first_month_exit", 1, "true or false"),
+        ("censor_at_as_of_date", "true", "true or false"),
+    ],
+)
+def test_hazard_config_rejects_nonboolean_flags(
+    hazard_config: dict[str, Any],
+    key: str,
+    invalid_value: object,
+    message: str,
+) -> None:
+    """Boolean switches cannot be silently coerced from other types."""
+
+    config = deepcopy(hazard_config)
+    config["simulation"][key] = invalid_value
+
+    with pytest.raises(ValueError, match=message):
+        hazard_simulation_settings(config)
+
+
+def test_hazard_config_rejects_uncensored_open_horizon(
+    hazard_config: dict[str, Any],
+) -> None:
+    """The generator cannot pretend to observe beyond its as-of boundary."""
+
+    config = deepcopy(hazard_config)
+    config["simulation"]["censor_at_as_of_date"] = False
+
+    with pytest.raises(ValueError, match="no observation horizon"):
+        hazard_simulation_settings(config)
 
 
 def test_hazard_config_rejects_invalid_baseline(
@@ -113,6 +217,53 @@ def test_month_difference_is_nonnegative(
             pd.Timestamp(earlier),
         )
         == expected
+    )
+
+
+@pytest.mark.parametrize(
+    ("lag_months", "expected"),
+    [
+        (1, "2025-03-01"),
+        (2, "2025-02-01"),
+        (4, "2024-12-01"),
+    ],
+)
+def test_feature_cutoff_applies_configured_lag(
+    lag_months: int,
+    expected: str,
+) -> None:
+    """A one-month lag preserves the original exclusive month-start cutoff."""
+
+    assert _feature_cutoff(
+        pd.Timestamp("2025-03-01"),
+        lag_months,
+    ) == pd.Timestamp(expected)
+
+
+def test_first_month_exit_switch_controls_hire_month_risk() -> None:
+    """The hire month enters the risk set only when the switch allows it."""
+
+    hire_date = pd.Timestamp("2025-03-15")
+    month_start = pd.Timestamp("2025-03-01")
+    month_end = pd.Timestamp("2025-03-31")
+
+    assert _employee_is_at_risk(
+        hire_date,
+        month_start,
+        month_end,
+        allow_first_month_exit=True,
+    )
+    assert not _employee_is_at_risk(
+        hire_date,
+        month_start,
+        month_end,
+        allow_first_month_exit=False,
+    )
+    assert _employee_is_at_risk(
+        hire_date,
+        pd.Timestamp("2025-04-01"),
+        pd.Timestamp("2025-04-30"),
+        allow_first_month_exit=False,
     )
 
 
@@ -387,12 +538,27 @@ def test_cause_probabilities_are_bounded_and_sum_to_one(
         20.0,
         20.0,
         hazard_config,
+        "multinomial_logit",
     )
 
     limits = hazard_config["probability_limits"]
     assert stay + voluntary + involuntary == pytest.approx(1.0)
     assert voluntary + involuntary <= limits["maximum_combined_probability"] + 1e-12
     assert stay >= 0.0
+
+
+def test_cause_probability_dispatch_rejects_unimplemented_model(
+    hazard_config: dict[str, Any],
+) -> None:
+    """The cause-model name must select a real implementation branch."""
+
+    with pytest.raises(ValueError, match="Unsupported cause model"):
+        _cause_probabilities(
+            0.0,
+            0.0,
+            hazard_config,
+            "decorative_model_name",
+        )
 
 
 def test_random_event_date_stays_inside_at_risk_month() -> None:

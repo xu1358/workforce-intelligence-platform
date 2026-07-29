@@ -61,6 +61,24 @@ calibration targets are stored in:
 config/attrition_hazard_config.yaml
 ```
 
+### Executable simulation controls
+
+The `simulation` mapping is an enforced runtime contract rather than
+descriptive metadata:
+
+| Setting | Committed value | Implemented behavior |
+| --- | --- | --- |
+| `time_step` | `month` | Builds monthly risk periods |
+| `as_of_date` | `2026-06-30` | Stops observation at the current boundary |
+| `cause_model` | `multinomial_logit` | Dispatches the three-outcome probability rule |
+| `feature_lag_months` | `1` | Uses dated records strictly before the outcome month |
+| `allow_first_month_exit` | `true` | Allows hire-month risk with event dates bounded by hire |
+| `censor_at_as_of_date` | `true` | Right-censors active employees at the boundary |
+
+Missing, mistyped, and unsupported controls fail before simulation. See
+`docs/hazard_configuration_contract.md` for executable examples and
+validation evidence.
+
 ## Hierarchy Handling
 
 The static hierarchy now creates spare team-manager capacity by

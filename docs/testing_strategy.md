@@ -54,6 +54,10 @@ The hazard tests verify:
 - Peer-relative salary positioning.
 - Competing-risk probability bounds.
 - Termination-date sampling boundaries.
+- Complete materialization of all six simulation controls.
+- Feature-lag and first-month-risk branch behavior.
+- Cause-model dispatch and unsupported-model rejection.
+- Mandatory administrative censoring at the as-of date.
 
 The tests use small examples with known answers. They do not recalibrate the
 hazard or sample a new workforce.
@@ -338,6 +342,7 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `tests/test_dependency_reproducibility.py` | Tests direct pins, transitive hashes, fingerprints, CI, and update documentation |
 | `tests/test_markdown_integrity.py` | Tests CommonMark fence balance and Mermaid ER rendering |
 | `tests/test_cross_platform_runner.py` | Tests portable commands, stage parity, archive layout, and wrapper delegation |
+| `tests/test_hazard_configuration_contract.py` | Tests complete simulation-key wiring, behavior, and governance |
 | `scripts/checkpoints/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
 | `scripts/checkpoints/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
 | `scripts/checkpoints/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
@@ -348,6 +353,7 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `scripts/run_project.py` | Provides the canonical cross-platform execution interface |
 | `src/validate_cross_platform_runner.py` | Saves aggregate runner and repository-layout validation |
 | `scripts/checkpoints/run_checkpoint59.ps1` | Applies and validates the runner reorganization on Windows |
+| `scripts/checkpoints/run_checkpoint60.ps1` | Validates executable hazard settings and the complete quality suite |
 | `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `requirements.txt` | Pins every direct dependency |
 | `requirements-lock.txt` | Pins and hashes every resolved distribution |
@@ -402,6 +408,18 @@ Run the primary engineering contract with:
 ```bash
 python scripts/run_project.py quality
 ```
+
+## Attrition-Hazard Configuration Contracts
+
+Checkpoint 60 treats the `simulation` mapping in
+`config/attrition_hazard_config.yaml` as executable input. Tests require all
+six keys, materialize them as typed settings, exercise alternative lag and
+hire-month branches, reject unknown cause models, and enforce the current
+administrative-censoring boundary.
+
+The committed values reproduce the prior hard-coded semantics, so these
+checks prevent silent configuration drift without retuning the synthetic
+generator.
 
 ## Limitations
 

@@ -14,3 +14,7 @@ python scripts/run_project.py --help
 
 The canonical commands and pipeline options are documented in
 [`scripts/README.md`](../README.md).
+
+Every archived PowerShell runner resolves the repository root by moving from
+this directory to `scripts/` and then to the repository root. This keeps the
+historical commands runnable after the Checkpoint 59 reorganization.
