@@ -205,6 +205,26 @@ Successful validation reports:
 SQL/PYTHON TEMPORAL EQUIVALENCE VALIDATED SUCCESSFULLY
 ```
 
+## Clean CI and live integration responsibilities
+
+The ordinary `pytest` suite must run from a clean Git checkout. It therefore
+does not read `data/processed/retention_multi_snapshot.csv` or
+`data/processed/current_active_scoring_population.csv`, because these are
+generated runtime artifacts and are intentionally not committed.
+
+The automated unit tests verify the committed population, schema, comparison,
+fingerprint, read-only, and privacy contracts using repository-owned fixtures.
+The live PostgreSQL command performs the full 24,082-row comparison:
+
+```bash
+python scripts/run_project.py postgres
+```
+
+This separation prevents GitHub Actions from depending on one developer's
+local outputs while preserving the complete SQL/Python integration gate. The
+live validator still fails unless both generated datasets exist, PostgreSQL is
+available, and all 52 columns agree across both implementations.
+
 ## What a failure means
 
 A failed check means the two implementations no longer construct the same

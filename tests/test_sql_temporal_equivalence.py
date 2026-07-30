@@ -13,7 +13,6 @@ import yaml
 
 from build_multi_snapshot_retention_dataset import MODEL_COLUMNS
 from validate_sql_temporal_equivalence import (
-    canonical_fingerprint,
     compare_frames,
     execute_read_only_query,
     sql_contract_issues,
@@ -125,28 +124,31 @@ def test_exact_feature_difference_fails_equivalence(
     assert not summary["fingerprints_match"]
 
 
-def test_python_outputs_retain_committed_population_contract(
+def test_committed_population_contract_is_complete_and_portable(
     project_root: Path,
 ) -> None:
-    """The comparison baseline must remain the complete frozen Python output."""
+    """The committed contract must be testable without generated local files."""
 
     config = load_yaml(project_root / "config" / "sql_temporal_equivalence.yaml")
-    historical = pd.read_csv(project_root / config["python_outputs"]["historical"])
-    current = pd.read_csv(project_root / config["python_outputs"]["current_scoring"])
+    expected = config["expected"]
+    output_paths = {name: Path(path) for name, path in config["python_outputs"].items()}
+    fingerprint = str(expected["canonical_result_sha256"])
 
-    assert len(historical) == config["expected"]["dataset_rows"]["historical"]
-    assert len(current) == config["expected"]["dataset_rows"]["current_scoring"]
-    assert list(historical.columns) == MODEL_COLUMNS
-    assert list(current.columns) == MODEL_COLUMNS
-    combined = (
-        pd.concat([historical, current], ignore_index=True)
-        .sort_values(config["row_key"])
-        .reset_index(drop=True)
+    assert expected["dataset_rows"] == {
+        "historical": 16673,
+        "current_scoring": 7409,
+    }
+    assert expected["total_rows"] == sum(expected["dataset_rows"].values())
+    assert expected["columns"] == len(MODEL_COLUMNS)
+    assert expected["snapshot_sequences"] == [1, 2, 3, 4]
+    assert config["row_key"] == ["snapshot_sequence", "employee_id"]
+    assert set(output_paths) == {"historical", "current_scoring"}
+    assert all(
+        path.parts[:2] == ("data", "processed") and path.suffix == ".csv"
+        for path in output_paths.values()
     )
-    assert (
-        canonical_fingerprint(combined, config)
-        == config["expected"]["canonical_result_sha256"]
-    )
+    assert len(fingerprint) == 64
+    assert set(fingerprint) <= set("0123456789abcdef")
 
 
 class FakeCursor:
