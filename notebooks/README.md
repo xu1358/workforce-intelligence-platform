@@ -55,7 +55,7 @@ sizes are enforced by the portfolio validator and automated tests. Regenerate
 them after refreshing the processed pipeline artifacts with:
 
 ```powershell
-python scripts/run_project.py notebooks
+.\scripts\execute_supporting_notebooks.ps1
 ```
 
 ## Separate external benchmark
@@ -97,7 +97,7 @@ final test, change the frozen policy, or export employee-level survival rows.
 Run the survival extension with:
 
 ```powershell
-.\scripts\checkpoints\run_checkpoint55.ps1
+.\scripts\run_checkpoint55.ps1
 ```
 
 ## Separate policy allocation-equity extension
@@ -114,7 +114,23 @@ analysis only.
 Run it with:
 
 ```powershell
-.\scripts\checkpoints\run_checkpoint56.ps1
+.\scripts\run_checkpoint56.ps1
+```
+
+## Separate deployed-policy fairness extension
+
+[Notebook 35: Deployed Retention Policy Fairness](35_deployed_policy_fairness.ipynb)
+applies the exact frozen budget-constrained expected-value rule and compares
+its subgroup selection rates with the probability-only top-10% diagnostic.
+
+It is the authoritative decision-layer subgroup artifact. It imports the same
+`policy_flags()` implementation used by Checkpoint 46, reads validation
+outcomes only, saves aggregate evidence, and does not change the policy.
+
+Run it with:
+
+```powershell
+.\scripts\checkpoints\run_checkpoint64.ps1
 ```
 
 ## Reproducibility
@@ -137,11 +153,11 @@ Run the external benchmark and reproduce Notebook 31's aggregate source data
 with:
 
 ```powershell
-.\scripts\checkpoints\run_checkpoint53.ps1
+.\scripts\run_checkpoint53.ps1
 ```
 
 Run the primary explanation and stability extension with:
 
 ```powershell
-.\scripts\checkpoints\run_checkpoint54.ps1
+.\scripts\run_checkpoint54.ps1
 ```

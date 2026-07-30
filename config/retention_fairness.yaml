@@ -1,12 +1,16 @@
 version: "2.0"
 description: >-
-  Validation-stage subgroup and fairness diagnostics for the selected
-  sigmoid-calibrated Logistic Regression. The reserved 2025 test target
-  is not accessed, and the analysis does not make a binary fairness claim.
+  Validation-stage model-probability and subgroup diagnostics for the selected
+  sigmoid-calibrated Logistic Regression. Its top-10% rule is explicitly a
+  probability-ranking diagnostic, not the deployed expected-value policy.
+  Checkpoint 64 separately audits the exact frozen policy allocation.
 
 selected_calibration_method: "Sigmoid"
 validation_snapshot: "2024-06-30"
 reporting_fraction: 0.10
+analysis_layer: model_probability_diagnostic
+selection_rule_name: probability_only_top_10_percent_diagnostic
+selection_rule_is_deployed_policy: false
 
 group_attributes:
   - "age_band"
@@ -30,6 +34,15 @@ post_policy_allocation_equity:
     - "population_salary_quintile"
     - "within_job_level_salary_quintile"
     - "risk_salary_intersection"
+
+deployed_policy_fairness:
+  checkpoint: 64
+  config: "config/retention_policy_fairness.yaml"
+  document: "docs/deployed_policy_fairness.md"
+  source_policy_function: "optimize_retention_policy.policy_flags"
+  reason: >-
+    Model-ranking subgroup diagnostics cannot stand in for decision-layer
+    fairness when expected value also depends on replacement cost.
 
 derived_groups:
   age_band:

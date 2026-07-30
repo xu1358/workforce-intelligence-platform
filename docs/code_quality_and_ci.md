@@ -16,6 +16,12 @@ Checkpoint 50 adds:
 
 The answer is now yes for the configured scope.
 
+Checkpoint 64 adds decision-layer regression coverage for the frozen
+expected-value policy. Unit tests use small synthetic fixtures to prove that
+probability ranking and expected-value ranking are not interchangeable. The
+live audit reconciles its selection with Checkpoint 46 before publishing any
+subgroup metric.
+
 ## Quality Gates
 
 The local and GitHub workflows run the same four gates in the same order:

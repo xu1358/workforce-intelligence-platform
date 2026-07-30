@@ -28,6 +28,7 @@ EXPECTED_EXECUTED_SUPPORTING_NOTEBOOKS = [
     "29_dashboard_current_state_validation.ipynb",
     "30_manufacturing_workforce_stability.ipynb",
     "34_retention_policy_equity.ipynb",
+    "35_deployed_policy_fairness.ipynb",
 ]
 
 

@@ -57,6 +57,7 @@ pipeline.
 | Frozen intervention plan | 700 human reviews; $1.75M budget | Capacity- and budget-constrained expected-value policy |
 | Final-test policy | 17.06% capture; $2.03M outcome-aligned net value | Once-only evaluation with no post-test retuning |
 | Current planning projection | 35.0 expected prevented departures; $2.40M expected net value | Scenario projection, not an observed outcome |
+| Deployed-policy fairness | Only 184 selections overlap the probability top 10%; Customer Support 1.25% selected versus Engineering 24.02% | Subgroup rates use the exact frozen expected-value rule |
 | Policy allocation equity | Selected mean salary $125,670 versus $95,722 eligible; highest pay quintile selected 25.83× as often as lowest | Salary-based value optimization is not equity-neutral |
 | Manufacturing plan | 229.7 expected departures; 221.3 residual backfills | Probability-weighted 12-month planning estimates |
 | Explanation stability | Minimum rank correlation 0.8857; minimum top-10 overlap 0.6667 | Aggregate model drivers remain broadly stable across grouped refits |
@@ -84,6 +85,7 @@ The repository demonstrates a complete analytical decision system:
 - ranking, subgroup, fairness, and sensitivity analysis;
 - an explicit retention cost model;
 - a frozen budget-constrained intervention policy;
+- a decision-layer subgroup audit using the exact frozen policy;
 - a post-policy salary-allocation equity audit;
 - a current-state Streamlit dashboard;
 - an isolated external-dataset methodological benchmark; and
@@ -328,6 +330,16 @@ policy. Any replacement policy requires a new holdout or prospective
 evaluation. Read the
 [salary-allocation equity audit](docs/retention_policy_equity.md).
 
+### Deployed-policy subgroup audit
+
+The top-10% cutoff is a probability diagnostic, not the frozen policy; only 184
+employees overlap. Under the exact expected-value rule, Customer Support is
+selected at 1.25% versus Engineering at 24.02%, Hourly at 0.67% versus
+Salaried at 14.98%, and job level 1 at 0.63% versus level 3 at 19.21%.
+
+The aggregate validation audit leaves the policy and final test frozen. Read
+the [deployed-policy fairness audit](docs/deployed_policy_fairness.md).
+
 ## Manufacturing Workforce Stability
 
 Manufacturing is the largest current synthetic department, so the final
@@ -420,13 +432,15 @@ are embedded, so they can be read on GitHub without rerunning the pipeline.
 | 3 | [Fairness, Economics, and Policy](notebooks/portfolio/03_fairness_economics_and_policy.ipynb) | How do subgroup risk, costs, capacity, and governance affect the decision? |
 | 4 | [Current Workforce Stability Plan](notebooks/portfolio/04_current_workforce_stability_plan.ipynb) | How does the frozen policy support current manufacturing planning? |
 
-The 34 numbered checkpoint notebooks remain in `notebooks/` as detailed
+The 35 numbered checkpoint notebooks remain in `notebooks/` as detailed
 technical evidence and an audit trail. Notebook 31 separately documents the
 IBM external benchmark, Notebook 32 documents aggregate explanation
 stability, Notebook 33 documents survival analysis, and
 [Notebook 34](notebooks/34_retention_policy_equity.ipynb) audits
-salary allocation in the frozen policy. None is part of the four-notebook
-primary narrative.
+salary allocation in the frozen policy.
+[Notebook 35](notebooks/35_deployed_policy_fairness.ipynb) audits subgroup
+selection under the exact expected-value rule. None is part of the
+four-notebook primary narrative.
 
 Reviewer-visible Version 2 supporting Notebooks `20`–`30` also include saved
 tables and figures. Automated validation prevents them from returning to blank
@@ -611,7 +625,8 @@ They are no longer the primary project interface. See
 | Model selection | [Version 2 model comparison](docs/model_comparison_v2.md) |
 | Calibration | [Calibration analysis](docs/calibration_analysis.md) |
 | Ranking | [Ranking analysis](docs/ranking_analysis.md) |
-| Fairness | [Fairness and ethics](docs/fairness_and_ethics.md) |
+| Model fairness | [Fairness and ethics](docs/fairness_and_ethics.md) |
+| Deployed-policy fairness | [Expected-value policy subgroup audit](docs/deployed_policy_fairness.md) |
 | Economics | [Retention cost model](docs/retention_cost_model.md) |
 | Policy | [Retention policy analysis](docs/retention_policy_analysis.md) |
 | Allocation equity | [Salary-allocation equity audit](docs/retention_policy_equity.md) |

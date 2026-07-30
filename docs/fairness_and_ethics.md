@@ -51,7 +51,7 @@ The analysis does not invent or infer a missing attribute.
 This absence is a limitation. It is not evidence that the model is fair with
 respect to an unobserved attribute.
 
-## Reporting policy
+## Probability-ranking diagnostic
 
 Checkpoint 43 used a global top-10% reporting scenario. Checkpoint 44 preserves
 that exact scenario:
@@ -63,8 +63,9 @@ Observed attrition:      586
 Captured attrition:      109
 ```
 
-The top 10% is a reporting device, not a final intervention policy.
-Checkpoint 46 will compare decision policies using explicit costs and benefits.
+The top 10% is a model-ranking diagnostic, not the final intervention policy.
+Checkpoint 46 uses explicit costs and benefits, and Checkpoint 64 audits that
+actual expected-value allocation.
 
 The global ranking is applied once to the complete validation population.
 Checkpoint 44 does not independently select the top 10% inside every group.
@@ -187,7 +188,7 @@ The selected model produced the following descriptive gaps:
 
 The largest gaps occur for department, employment type, job level, and region.
 
-### Examples
+### Probability-diagnostic examples
 
 At the global top-10% reporting cutoff:
 
@@ -198,7 +199,23 @@ At the global top-10% reporting cutoff:
 - Job level 1 had a 25.16% selection rate.
 - Job level 3 had a 2.77% selection rate.
 
-These are model-selection rates, not termination decisions.
+These are probability-ranking diagnostic rates, not deployed-policy selection
+rates and not termination decisions.
+
+The exact frozen expected-value policy produces materially different results:
+
+- Customer Support: 1.25%, rather than 44.61%.
+- Engineering: 24.02%, rather than 1.21%.
+- Hourly: 0.67%, rather than 26.43%.
+- Salaried: 14.98%, rather than 6.87%.
+- Job level 1: 0.63%, rather than 25.16%.
+- Job level 3: 19.21%, rather than 2.77%.
+
+Only 184 employees overlap between the 553-person probability proxy and the
+700-person frozen policy. The separate
+[deployed-policy fairness audit](deployed_policy_fairness.md) imports the
+shared `policy_flags()` implementation and is the authoritative decision-layer
+subgroup artifact.
 
 The global cutoff magnifies relatively small score differences. If one group
 receives scores concentrated just above the cutoff and another receives scores
@@ -293,7 +310,7 @@ For the selected model:
 - Organizational level triggered recall review.
 - Age band and education did not trigger the configured screens.
 
-## Prediction Fairness Does Not Guarantee Allocation Equity
+## Model Fairness Does Not Guarantee Policy Fairness
 
 Checkpoint 44 audits calibrated probabilities and a top-10% reporting
 scenario before the economic policy is applied. Checkpoint 46 later ranks:
@@ -308,8 +325,11 @@ Salary therefore enters the decision after the original model fairness
 analysis. Job level is only a partial proxy and cannot replace direct
 salary-band analysis.
 
-Checkpoint 56 adds a separate post-policy allocation-equity audit. In the
-current population:
+Checkpoint 56 adds a post-policy salary-allocation equity audit. Checkpoint 64
+adds full decision-layer subgroup selection, true-positive-rate, and
+false-positive-rate diagnostics using the exact frozen policy.
+
+In the current population:
 
 - Eligible mean salary is $95,722.
 - Frozen-policy selected mean salary is $125,670.
@@ -330,6 +350,8 @@ holdout or prospective evaluation.
 
 See the
 [retention policy salary-allocation equity audit](retention_policy_equity.md).
+For the corrected validation-stage subgroup rates, see
+[deployed retention policy fairness](deployed_policy_fairness.md).
 
 ## Ethical use restrictions
 
@@ -363,15 +385,15 @@ discipline, termination, promotion denial, or surveillance.
    the uncertainty of every disparity difference.
 8. Removing direct fields cannot remove all proxy information.
 9. Observational predictive differences do not establish causation.
-10. Model-level subgroup diagnostics do not evaluate salary-driven allocation
-    introduced by the later expected-value policy.
+10. Model-level subgroup diagnostics are not policy-fairness evidence; the
+    separate decision-layer audit must be used for the expected-value policy.
 
 ## Reproduction
 
 Run:
 
 ```powershell
-.\scripts\checkpoints\run_checkpoint44.ps1
+.\scripts\run_checkpoint44.ps1
 ```
 
 The script rebuilds Checkpoint 42 only when required inputs are missing or when

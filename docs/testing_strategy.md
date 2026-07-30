@@ -16,6 +16,21 @@ The tests are designed to answer:
 
 The answer after this checkpoint is yes for the covered contracts.
 
+## Deployed-Policy Fairness Contracts
+
+Checkpoint 64 adds tests proving that:
+
+- probability ranking and expected-value ranking can select different people;
+- subgroup selection rates use the deployed expected-value flag;
+- the audit imports the same `policy_flags()` implementation as Checkpoint 46;
+- the probability proxy is explicitly labeled as not deployed;
+- the reserved final-test target remains unread;
+- no employee-level fairness rows are exported; and
+- the portable pipeline runs policy fairness only after policy optimization.
+
+The live audit additionally reconciles the 700 selected validation employees
+and their mean salary to the saved Checkpoint 46 policy comparison.
+
 ## What the Tests Cover
 
 ### 1. Configuration Contracts

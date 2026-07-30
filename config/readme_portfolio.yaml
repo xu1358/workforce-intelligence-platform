@@ -65,6 +65,9 @@ headline_metrics:
   policy_equity_selected_mean_salary: "$125,670"
   policy_equity_population_mean_salary: "$95,722"
   policy_equity_pay_quintile_selection_ratio: "25.83"
+  policy_fairness_deployed_proxy_overlap: "184"
+  policy_fairness_customer_support_rate: "1.25%"
+  policy_fairness_engineering_rate: "24.02%"
 
 required_links:
   - "notebooks/README.md"
@@ -79,6 +82,7 @@ required_links:
   - "docs/calibration_analysis.md"
   - "docs/ranking_analysis.md"
   - "docs/fairness_and_ethics.md"
+  - "docs/deployed_policy_fairness.md"
   - "docs/retention_cost_model.md"
   - "docs/retention_policy_analysis.md"
   - "docs/retention_policy_equity.md"
@@ -97,6 +101,7 @@ required_links:
   - "notebooks/32_retention_explanation_stability.ipynb"
   - "notebooks/33_survival_analysis.ipynb"
   - "notebooks/34_retention_policy_equity.ipynb"
+  - "notebooks/35_deployed_policy_fairness.ipynb"
   - "scripts/README.md"
   - "scripts/checkpoints/README.md"
   - "scripts/run_project.py"

@@ -93,6 +93,9 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 63:** Execute the independent multi-snapshot SQL in a read-only
   transaction and require complete row-, column-, null-, value-, and
   fingerprint-equivalence with the Python temporal builder before modeling.
+- **Checkpoint 64:** Separate probability-ranking subgroup diagnostics from
+  deployed-policy fairness and audit the exact frozen expected-value
+  selections with the shared Checkpoint 46 implementation.
 
 ## Optional Advanced Extensions
 

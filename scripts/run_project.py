@@ -180,6 +180,10 @@ VERSION_2_ANALYSIS_STEPS = (
         "Optimize and evaluate retention policy",
         "src/optimize_retention_policy.py",
     ),
+    python_script(
+        "Audit deployed-policy subgroup fairness",
+        "src/audit_retention_policy_fairness.py",
+    ),
 )
 
 POSTGRES_STEPS = (

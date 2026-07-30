@@ -90,6 +90,18 @@ frozen policy. Salary-neutral and salary-capped alternatives are diagnostic;
 adopting a replacement policy requires a new holdout or prospective
 evaluation.
 
+### Deployed-policy fairness evidence
+
+Checkpoint 44's global top-10% cutoff is retained only as a model-ranking
+diagnostic. Checkpoint 64 imports the exact frozen `policy_flags()` function
+from Checkpoint 46 and audits the 700-person expected-value allocation.
+
+Only 184 validation employees overlap the probability proxy and deployed
+policy. The corrected policy rates include Customer Support at 1.25% versus
+Engineering at 24.02%, Hourly at 0.67% versus Salaried at 14.98%, and job
+level 1 at 0.63% versus level 3 at 19.21%. The audit reads validation outcomes
+only, exports aggregate evidence, and leaves the final test and policy frozen.
+
 ### External benchmark
 
 The IBM HR Analytics data is a second fictional dataset with no event dates or
@@ -177,4 +189,11 @@ complete pytest suite:
 
 ```powershell
 .\scripts\checkpoints\run_checkpoint57.ps1
+```
+
+Checkpoint 64 reproduces the exact deployed-policy subgroup audit, executes
+Notebook 35, and runs the complete quality suite:
+
+```powershell
+.\scripts\checkpoints\run_checkpoint64.ps1
 ```

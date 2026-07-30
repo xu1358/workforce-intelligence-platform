@@ -89,6 +89,16 @@ def test_sql_equivalence_runs_before_model_analysis() -> None:
     )
 
 
+def test_deployed_policy_fairness_runs_after_policy_selection() -> None:
+    """Decision-layer subgroup evidence must use the frozen policy."""
+
+    names = [step.name for step in VERSION_2_ANALYSIS_STEPS]
+
+    assert names.index("Audit deployed-policy subgroup fairness") > names.index(
+        "Optimize and evaluate retention policy"
+    )
+
+
 def test_pipeline_options_remove_only_requested_stage_groups() -> None:
     """Portable skip flags must have narrow and predictable effects."""
 
@@ -130,13 +140,23 @@ def test_runner_commands_use_active_python_without_shell_syntax() -> None:
     ]
 
 
-def test_notebook_execution_comes_from_committed_manifest() -> None:
+def test_notebook_execution_comes_from_committed_manifest(
+    project_root: Path,
+) -> None:
     """The portable notebook command must execute every support file."""
 
+    with (project_root / "config" / "portfolio_notebooks.yaml").open(
+        encoding="utf-8"
+    ) as handle:
+        manifest = yaml.safe_load(handle)
+    expected_notebooks = manifest["executed_supporting_notebooks"]
     steps = notebook_steps()
 
-    assert len(steps) == 13
-    assert sum("nbconvert" in step.command for step in steps) == 12
+    assert len(steps) == len(expected_notebooks) + 1
+    assert sum("nbconvert" in step.command for step in steps) == len(expected_notebooks)
+    assert [step.command[-1] for step in steps[:-1]] == [
+        f"notebooks/{filename}" for filename in expected_notebooks
+    ]
     assert all(step.command[-1].startswith("notebooks/") for step in steps[:-1])
     assert steps[-1].command[-1].endswith("validate_portfolio_notebooks.py")
 
@@ -167,7 +187,8 @@ def test_archived_powershell_runners_resolve_repository_root(
         archive / "execute_supporting_notebooks.ps1",
     ]
 
-    assert len(paths) == 29
+    history = load_contract(project_root)["checkpoint_history"]
+    assert len(paths) == history["expected_count"] + 1
     for path in paths:
         content = path.read_text(encoding="utf-8")
         assert "$ScriptsDirectory = Split-Path -Parent $PSScriptRoot" in content

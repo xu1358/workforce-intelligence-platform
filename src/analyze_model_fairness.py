@@ -274,11 +274,11 @@ def build_exclusion_policy(
     return excluded_policy, excluded_features
 
 
-def mark_top_fraction(
+def mark_probability_top_fraction_diagnostic(
     probability: np.ndarray,
     fraction: float,
 ) -> np.ndarray:
-    """Return a stable global top-fraction selection indicator."""
+    """Return a probability-only diagnostic, not a deployed-policy flag."""
 
     selected_count = min(
         len(probability),
@@ -392,11 +392,11 @@ def build_prediction_variants(
         predictions,
         fairness_policy,
     )
-    predictions["selected_top_fraction"] = 0
+    predictions["selected_probability_top_fraction_diagnostic"] = 0
 
     for model_variant in predictions["model_variant"].unique():
         variant_mask = predictions["model_variant"].eq(model_variant)
-        selected = mark_top_fraction(
+        selected = mark_probability_top_fraction_diagnostic(
             predictions.loc[
                 variant_mask,
                 "attrition_probability",
@@ -405,11 +405,11 @@ def build_prediction_variants(
         )
         predictions.loc[
             variant_mask,
-            "selected_top_fraction",
+            "selected_probability_top_fraction_diagnostic",
         ] = selected
 
-    predictions["selected_top_fraction"] = predictions[
-        "selected_top_fraction"
+    predictions["selected_probability_top_fraction_diagnostic"] = predictions[
+        "selected_probability_top_fraction_diagnostic"
     ].astype(int)
     return predictions, excluded_features
 
@@ -478,7 +478,7 @@ def group_metric_record(
     probability = group["attrition_probability"].to_numpy(
         dtype=float
     )
-    selected = group["selected_top_fraction"].to_numpy(dtype=int)
+    selected = group["selected_probability_top_fraction_diagnostic"].to_numpy(dtype=int)
     positive_cases = int(target.sum())
     negative_cases = int(len(target) - positive_cases)
     selected_count = int(selected.sum())
@@ -854,7 +854,7 @@ def build_model_comparison(
         summary = top_fraction_summary(
             variant["actual_attrition"].to_numpy(dtype=int),
             variant["attrition_probability"].to_numpy(dtype=float),
-            variant["selected_top_fraction"].to_numpy(dtype=int),
+            variant["selected_probability_top_fraction_diagnostic"].to_numpy(dtype=int),
         )
         records.append(
             {
@@ -1615,7 +1615,7 @@ def save_outputs(
         "method",
         "model_variant",
         "attrition_probability",
-        "selected_top_fraction",
+        "selected_probability_top_fraction_diagnostic",
     ]
     predictions.loc[:, prediction_columns].to_csv(
         PREDICTION_PATH,

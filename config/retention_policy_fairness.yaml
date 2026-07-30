@@ -1,0 +1,85 @@
+version: "1.0"
+description: >-
+  Validation-stage subgroup audit of the exact frozen budget-constrained
+  expected-value policy. This is distinct from the probability-only top-10%
+  model-ranking diagnostic in Checkpoint 44.
+
+source_policy:
+  decision_file: data/processed/retention_policy_decision.csv
+  comparison_file: data/processed/retention_policy_comparison.csv
+  selected_policy_key: budget_expected_value
+  selection_function: optimize_retention_policy.policy_flags
+  validation_period: 2024 validation
+  validation_snapshot: "2024-06-30"
+
+probability_proxy:
+  enabled_for_comparison: true
+  fraction: 0.10
+  label: Probability-only top 10% diagnostic
+  explicitly_not_deployed: true
+
+group_attributes:
+  - age_band
+  - education_level
+  - region
+  - employment_type
+  - department_name
+  - job_level
+  - organizational_level
+
+comparison_eligibility:
+  minimum_group_rows: 100
+  minimum_positive_cases: 20
+  minimum_negative_cases: 50
+  minimum_selected_rows: 5
+
+screening_thresholds:
+  selection_rate_difference: 0.10
+  true_positive_rate_difference: 0.10
+  false_positive_rate_difference: 0.10
+  note: >-
+    These are descriptive portfolio review triggers, not legal thresholds or
+    binary fairness standards.
+
+expected:
+  validation_rows: 5521
+  validation_positive_cases: 586
+  deployed_selected_count: 700
+  probability_proxy_selected_count: 553
+  deployed_proxy_overlap: 184
+  validation_selected_mean_salary_usd: 121964.42857142857
+  headline_selected_counts:
+    department_name:
+      Customer Support: 5
+      Engineering: 277
+    employment_type:
+      Hourly: 6
+      Salaried: 694
+    job_level:
+      Level 1: 6
+      Level 3: 353
+
+governance:
+  validation_outcomes_only: true
+  accesses_reserved_test_target: false
+  changes_model_results: false
+  changes_frozen_policy: false
+  changes_dashboard_data: false
+  human_review_only: true
+  no_binary_fairness_verdict: true
+  no_causal_claims: true
+  export_employee_level_rows: false
+
+figures:
+  format: png
+  dpi: 160
+  expected_files:
+    - deployed_policy_selection_by_group.png
+    - proxy_vs_deployed_selection.png
+    - deployed_policy_disparity_summary.png
+
+validation:
+  numeric_tolerance: 0.000001
+  expected_group_attributes: 7
+
+output_directory: data/processed/retention_policy_fairness
