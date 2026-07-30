@@ -53,6 +53,4 @@ def test_committed_notebooks_do_not_expose_local_paths(
             relative_path = path.relative_to(project_root).as_posix()
             exposed_paths[relative_path] = matches
 
-    assert not exposed_paths, (
-        f"Machine-specific notebook paths found: {exposed_paths}"
-    )
+    assert not exposed_paths, f"Machine-specific notebook paths found: {exposed_paths}"
