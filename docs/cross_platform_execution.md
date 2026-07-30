@@ -32,7 +32,7 @@ separators.
 
 | Command | Purpose |
 | --- | --- |
-| `quality` | Dependency validation, Markdown checks, compilation, Ruff, and pytest |
+| `quality` | Dependency, Markdown, dashboard-evidence, runner, compilation, Ruff, and pytest checks |
 | `validate` | Quality gates plus notebook and README validation |
 | `postgres` | Load PostgreSQL, build Version 2 temporal data, validate source parity, and execute SQL/Python equivalence |
 | `pipeline` | Complete Version 2 generation, modeling, database, policy, and portfolio pipeline |

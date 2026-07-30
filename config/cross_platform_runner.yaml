@@ -28,6 +28,7 @@ quality_gates:
   - src/validate_dependency_environment.py
   - pip check
   - src/validate_markdown_docs.py
+  - src/validate_dashboard_evidence.py
   - src/validate_cross_platform_runner.py
   - compileall
   - ruff check
@@ -36,8 +37,8 @@ quality_gates:
 
 checkpoint_history:
   first: 36
-  last: 66
-  expected_count: 31
+  last: 67
+  expected_count: 32
 
 postgresql_v2_contract:
   preparation_steps: 6

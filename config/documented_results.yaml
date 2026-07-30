@@ -48,6 +48,20 @@ documents:
       - "Human review is required"
       - "Automatic employment action is prohibited"
 
+  - path: docs/dashboard.md
+    required_values:
+      - "7,409"
+      - "7,305"
+      - "104"
+      - "700"
+      - "0.6061"
+      - "6"
+    required_phrases:
+      - "Static screenshots are intentionally not committed"
+      - "Workforce Stability"
+      - "live Version 2 application"
+      - "Automatic employment action is prohibited"
+
   - path: docs/exploratory_analysis.md
     required_values:
       - "7,386"

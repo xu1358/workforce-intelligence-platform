@@ -50,6 +50,9 @@ jobs:
       - name: Validate Markdown and Mermaid rendering
         run: python src/validate_markdown_docs.py
 
+      - name: Validate current dashboard evidence
+        run: python src/validate_dashboard_evidence.py
+
       - name: Validate cross-platform pipeline resolution
         run: |
           python src/validate_cross_platform_runner.py

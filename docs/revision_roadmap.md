@@ -107,6 +107,9 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 66:** Replace Version 1-only exploratory evidence with
   training-safe Version 2 EDA, re-test performance-history missingness, and
   audit department continuity plus dated location reconstruction.
+- **Checkpoint 67:** Remove the nine stale Version 1 dashboard screenshots,
+  document the six-tab Version 2 interface, and enforce screenshot freshness
+  in local and GitHub quality gates.
 
 ## Optional Advanced Extensions
 

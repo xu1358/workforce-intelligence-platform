@@ -97,6 +97,7 @@ required_links:
   - "docs/retention_policy_analysis.md"
   - "docs/retention_policy_equity.md"
   - "docs/dashboard_current_state.md"
+  - "docs/dashboard.md"
   - "docs/manufacturing_workforce_stability.md"
   - "docs/model_explanations_and_stability.md"
   - "docs/survival_analysis.md"

@@ -1,0 +1,63 @@
+version: "1.0"
+description: >
+  Reviewer-facing dashboard evidence contract. The live Version 2 Streamlit
+  application is authoritative; stale static Version 1 screenshots are not
+  retained on the current branch.
+
+dashboard_application: dashboard/app.py
+dashboard_documentation: docs/dashboard.md
+screenshot_directory: docs/screenshots
+
+expected_tabs:
+  - Overview
+  - Workforce
+  - Workforce Stability
+  - Recruiting
+  - Retention Risk
+  - Model Performance
+
+legacy_v1_screenshots:
+  - docs/screenshots/01_overview.png
+  - docs/screenshots/02(1)_workforce.png
+  - docs/screenshots/02_workforce.png
+  - docs/screenshots/03(1)_recruiting.png
+  - docs/screenshots/03_recruiting.png
+  - docs/screenshots/04_retention_risk.png
+  - docs/screenshots/05_risk_table.png
+  - docs/screenshots/06(1)_model_performance.png
+  - docs/screenshots/06_model_performance.png
+
+forbidden_duplicate_filename_markers:
+  - "(1)"
+
+forbidden_current_dashboard_values:
+  - "8,287"
+  - "739 high-risk"
+  - "0.6968"
+  - "0.50 threshold"
+
+required_current_values:
+  - "7,409"
+  - "7,305"
+  - "700"
+  - "0.6061"
+
+evidence_policy:
+  committed_static_screenshots: false
+  live_application_is_authoritative: true
+  version_1_preserved_by_tag: v1.0-portfolio
+  rationale: >
+    Static UI captures can silently contradict regenerated data and application
+    code. Reviewers should run the locked Streamlit application or inspect the
+    executed dashboard-validation notebook and current-state documentation.
+
+ci_workflow: .github/workflows/python-quality.yml
+
+governance:
+  changes_dashboard_application: false
+  changes_dashboard_data: false
+  changes_model_results: false
+  changes_frozen_policy: false
+  removes_legacy_visual_evidence_only: true
+
+output_directory: data/processed/dashboard_evidence

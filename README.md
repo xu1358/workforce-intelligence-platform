@@ -453,9 +453,11 @@ python scripts/run_project.py dashboard
 
 Streamlit normally opens `http://localhost:8501`.
 
-The dashboard is a local portfolio application; it is not currently a public
-production deployment. See the
-[current-state dashboard documentation](docs/dashboard_current_state.md).
+The dashboard is local, not a public deployment. See the
+[current-state documentation](docs/dashboard_current_state.md) and [six-tab guide](docs/dashboard.md).
+
+Checkpoint 67 removes the stale five-tab Version 1 screenshot gallery.
+Until capture is automated, the live six-tab V2 app is the visual source of truth.
 
 ## Curated Notebook Portfolio
 
@@ -636,8 +638,8 @@ Preview the complete pipeline without executing it:
 python scripts/run_project.py --dry-run pipeline
 ```
 
-These commands compile Python, validate dependencies and Markdown, run Ruff,
-execute pytest, and verify the reviewer-facing artifacts. The same gates run
+These commands compile Python, validate dependencies, Markdown, and dashboard
+evidence, run Ruff and pytest, and verify reviewer artifacts. The same gates run
 in [GitHub Actions](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml).
 
 The Windows checkpoint-specific runners are preserved under

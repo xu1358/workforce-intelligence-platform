@@ -74,6 +74,20 @@ def test_default_pipeline_contains_every_version_2_stage() -> None:
     assert steps == list(expected)
 
 
+def test_quality_pipeline_validates_dashboard_evidence() -> None:
+    """Quality must reject stale dashboard images before code checks."""
+
+    names = [step.name for step in QUALITY_STEPS]
+
+    assert names[:5] == [
+        "Validate locked dependency environment",
+        "Check dependency compatibility",
+        "Validate Markdown and Mermaid rendering",
+        "Validate current dashboard evidence",
+        "Validate cross-platform project runner",
+    ]
+
+
 def test_sql_equivalence_runs_before_model_analysis() -> None:
     """The SQL implementation must be executed before downstream modeling."""
 

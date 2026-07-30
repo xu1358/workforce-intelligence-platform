@@ -105,6 +105,22 @@ The UI also states that legacy Version 1 full-snapshot scores were in-sample
 prioritization scores. Those scores are not used in the current workforce
 view.
 
+## Current visual evidence
+
+The live Streamlit application contains six tabs: Overview, Workforce,
+Workforce Stability, Recruiting, Retention Risk, and Model Performance.
+
+Checkpoint 67 removes nine stale Version 1 screenshots that showed a
+five-tab application, obsolete workforce and risk counts, an obsolete
+ROC-AUC, and a classification threshold that is not the deployed policy.
+Three of those files also contained the duplicate-download marker `(1)`.
+
+Static screenshots are intentionally omitted from the current branch until
+their creation can be automated from the same locked application and data
+build. The current interface is documented in the
+[Version 2 dashboard guide](dashboard.md), and the original images remain
+available through the `v1.0-portfolio` Git tag.
+
 ## Safety and governance
 
 The dashboard enforces the following interpretation:

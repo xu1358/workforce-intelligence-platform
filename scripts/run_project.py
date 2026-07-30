@@ -54,6 +54,10 @@ QUALITY_STEPS = (
         "src/validate_markdown_docs.py",
     ),
     python_script(
+        "Validate current dashboard evidence",
+        "src/validate_dashboard_evidence.py",
+    ),
+    python_script(
         "Validate cross-platform project runner",
         "src/validate_cross_platform_runner.py",
     ),

@@ -140,6 +140,12 @@ Dashboard data layer
 Streamlit dashboard
 ```
 
+The current Streamlit application has six tabs, including Workforce
+Stability. Checkpoint 67 removes the stale five-tab Version 1 screenshot
+gallery; reviewers should run the live application or use the current
+[dashboard guide](dashboard.md) instead of relying on unverified static
+captures.
+
 The default Version 2 pipeline queries PostgreSQL before model development.
 The CSV path remains an explicit fallback, and canonical hashes require both
 source paths and both temporal output files to reconcile exactly.

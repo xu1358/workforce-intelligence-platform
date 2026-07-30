@@ -62,6 +62,23 @@ Checkpoint 66 adds tests proving that:
 - the history audit accesses no attrition target; and
 - Notebooks 37–38 remain executed, portable, and free of errors.
 
+## Dashboard Evidence Contracts
+
+Checkpoint 67 adds tests proving that:
+
+- the Streamlit source exposes exactly six Version 2 tabs in the committed
+  order;
+- Workforce Stability remains part of the live interface;
+- all nine reported Version 1 screenshots are absent;
+- the screenshot directory contains no contradictory orphan images;
+- no reviewer-facing Markdown embeds removed screenshots;
+- duplicate-download filenames containing `(1)` cannot return;
+- the dashboard guide contains current Version 2 figures and rejects the
+  reported stale values;
+- GitHub Actions runs the dashboard-evidence validator; and
+- screenshot cleanup does not change the application, dashboard data, model,
+  or frozen policy.
+
 ## What the Tests Cover
 
 ### 1. Configuration Contracts
@@ -408,6 +425,10 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `scripts/checkpoints/run_checkpoint63.ps1` | Executes the temporal SQL, compares every result with Python, and runs the complete quality suite |
 | `scripts/checkpoints/run_checkpoint65.ps1` | Audits temporal base-rate drift, executes Notebook 36, and runs the complete quality suite |
 | `scripts/checkpoints/run_checkpoint66.ps1` | Runs authoritative Version 2 EDA and history audits, executes Notebooks 37–38, and runs the complete quality suite |
+| `config/dashboard_evidence.yaml` | Defines live tabs, removed V1 images, current values, and presentation-only governance |
+| `src/validate_dashboard_evidence.py` | Validates the six-tab source, documentation, screenshot absence, and CI coverage |
+| `tests/test_dashboard_evidence.py` | Prevents stale images, duplicate filenames, old values, and missing Workforce Stability evidence |
+| `scripts/checkpoints/run_checkpoint67.ps1` | Removes the exact nine legacy images and runs the complete quality suite |
 | `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `requirements.txt` | Pins every direct dependency |
 | `requirements-lock.txt` | Pins and hashes every resolved distribution |

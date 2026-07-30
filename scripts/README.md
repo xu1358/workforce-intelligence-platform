@@ -62,7 +62,7 @@ The `pipeline` command supports:
 
 | Option | Effect |
 | --- | --- |
-| `--skip-quality` | Skip compile, lint, formatting, and tests |
+| `--skip-quality` | Skip validation, compilation, lint, formatting, and tests |
 | `--skip-data-generation` | Reuse existing generated CSV files |
 | `--skip-postgres` | Use the parity-tested CSV fallback instead of the primary PostgreSQL source |
 | `--include-legacy-v1` | Rebuild deprecated Version 1 outputs |

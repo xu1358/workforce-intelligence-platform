@@ -25,6 +25,7 @@ measurements from a real employer.
 | Version 2 EDA covers 16,673 temporal rows and 7,745 unique employees | `data/processed/v2_exploratory_analysis/dataset_profile.csv` | 66 | Notebook 37 and `docs/v2_exploratory_analysis.md` |
 | Version 2 training review-missingness is 9.81% versus 9.23%, not the V1 15.07% versus 6.36% | `data/processed/v2_exploratory_analysis/v1_v2_missingness_comparison.csv` | 66 | Notebook 37 and `docs/v2_exploratory_analysis.md` |
 | All 486 transfer events are location-semantic and 86 historical rows are reconstructed away from current location | `data/processed/v2_department_history/department_history_summary.csv` | 66 | Notebook 38 and `docs/v2_department_history.md` |
+| Current dashboard evidence uses six live Version 2 tabs and carries no stale static V1 screenshots | `data/processed/dashboard_evidence/dashboard_evidence_validation.csv` | 67 | `docs/dashboard.md` and `dashboard/app.py` |
 | Final-test PR-AUC 0.1710, ROC-AUC 0.6061, and Brier 0.1048 | `data/processed/retention_final_test_model_metrics.csv` | 46 | Notebook 2 and `docs/retention_policy_analysis.md` |
 | Top-decile precision 19.85%, capture 16.44%, and lift 1.64 | `data/processed/retention_final_test_model_metrics.csv` | 46 | Notebook 2 |
 | Frozen 700-person, $1.75 million expected-value policy | `data/processed/retention_policy_decision.csv` | 46 | Notebook 3 and `docs/retention_policy_analysis.md` |
@@ -85,6 +86,17 @@ EDA population. Outcome relationships are restricted to the training
 snapshot, while validation and final-test rows are profiled structurally only.
 The paired history audit is target-free and distinguishes immutable department
 assignment from dated location transfer reconstruction.
+
+### Dashboard visual evidence
+
+Checkpoint 67 removes the nine Version 1 screenshots from the current branch
+and makes the six-tab Streamlit application authoritative. The validator
+checks the exact tab list, the presence of Workforce Stability, current
+Version 2 figures in the dashboard guide, the absence of duplicate-download
+filenames, and the absence of screenshot links.
+
+The old images remain in the `v1.0-portfolio` tag. No application code,
+dashboard table, model result, or policy selection changes in this checkpoint.
 
 ### Economic values
 
@@ -236,4 +248,11 @@ audits, executes Notebooks 37–38, and runs the complete quality suite:
 
 ```powershell
 .\scripts\checkpoints\run_checkpoint66.ps1
+```
+
+Checkpoint 67 removes the stale Version 1 dashboard gallery and runs the
+current tab, documentation, CI, and screenshot-absence contract:
+
+```powershell
+.\scripts\checkpoints\run_checkpoint67.ps1
 ```

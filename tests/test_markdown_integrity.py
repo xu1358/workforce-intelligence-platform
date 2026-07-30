@@ -18,6 +18,7 @@ REGRESSION_DOCUMENTS = {
     "docs/attrition_hazard_design.md",
     "docs/data_model.md",
     "docs/department_history_bias.md",
+    "docs/dashboard.md",
     "docs/end_to_end_validation.md",
     "docs/exploratory_analysis.md",
     "docs/generator_audit.md",

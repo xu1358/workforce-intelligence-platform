@@ -36,3 +36,7 @@ Checkpoint 66 is `run_checkpoint66.ps1`. It replaces the missing Version 2
 exploratory evidence, re-tests performance-history missingness on training
 data, audits department continuity and location reconstruction, executes
 Notebooks 37–38, and then runs the complete quality suite.
+
+Checkpoint 67 is `run_checkpoint67.ps1`. It removes the exact nine stale
+Version 1 dashboard screenshots, validates the six live Version 2 tabs and
+current dashboard guide, and then runs the complete quality suite.

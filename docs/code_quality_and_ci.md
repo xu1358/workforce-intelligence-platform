@@ -34,6 +34,12 @@ presented as Version 2, verify department continuity and transfer semantics,
 require aggregate target-free history outputs, and preserve executed
 Notebooks 37–38.
 
+Checkpoint 67 adds a presentation-integrity gate. It requires the exact six
+live dashboard tabs, removes the nine stale Version 1 screenshots, rejects
+duplicate-download filenames and screenshot links, verifies current Version 2
+figures in the dashboard guide, and preserves all dashboard application, data,
+model, and policy results.
+
 ## Quality Gates
 
 The local and GitHub workflows run the same four gates in the same order:
@@ -202,10 +208,12 @@ The remote job performs:
 4. Hashed dependency-lock installation
 5. `pip check` and installed-version validation
 6. Markdown and Mermaid rendering validation
-7. Python compilation
-8. Ruff linting
-9. Ruff formatting verification
-10. Pytest execution
+7. Current dashboard-evidence validation
+8. Cross-platform runner and dry-run validation
+9. Python compilation
+10. Ruff linting
+11. Ruff formatting verification
+12. Pytest execution
 
 The workflow does not:
 
@@ -310,6 +318,10 @@ thin Windows wrapper around this canonical Python command.
 | `scripts/run_project.py` | Runs quality, validation, pipeline, dashboard, and notebooks across platforms |
 | `src/validate_cross_platform_runner.py` | Reports command, stage, path, CI, and governance checks |
 | `tests/test_cross_platform_runner.py` | Tests stage parity, skip flags, paths, and script organization |
+| `config/dashboard_evidence.yaml` | Defines the current tabs and stale-image regression contract |
+| `src/validate_dashboard_evidence.py` | Rejects stale screenshots, image links, old values, and tab drift |
+| `tests/test_dashboard_evidence.py` | Tests dashboard presentation integrity locally and in CI |
+| `scripts/checkpoints/run_checkpoint67.ps1` | Removes the exact legacy images and runs complete validation |
 | `config/v2_postgresql_source.yaml` | Defines Version 2 views, source parity, output fingerprints, and governance |
 | `src/v2_data_access.py` | Implements CSV and PostgreSQL source backends |
 | `src/validate_v2_postgresql_integration.py` | Reconciles database sources and temporal outputs |
