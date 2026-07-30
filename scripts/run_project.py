@@ -142,6 +142,11 @@ V2_POSTGRES_VALIDATION_STEP = python_script(
     "src/validate_v2_postgresql_integration.py",
 )
 
+V2_SQL_EQUIVALENCE_STEP = python_script(
+    "Validate SQL and Python temporal equivalence",
+    "src/validate_sql_temporal_equivalence.py",
+)
+
 VERSION_2_ANALYSIS_STEPS = (
     python_script(
         "Diagnose feature redundancy and stability",
@@ -198,6 +203,7 @@ POSTGRES_STEPS = (
 VERSION_2_MODELING_STEPS = (
     V2_POSTGRES_DATASET_STEP,
     V2_POSTGRES_VALIDATION_STEP,
+    V2_SQL_EQUIVALENCE_STEP,
     *VERSION_2_ANALYSIS_STEPS,
 )
 
@@ -376,8 +382,7 @@ def organize_checkpoint_runners(project_root: Path = PROJECT_ROOT) -> list[Path]
         destination = archive_directory / source.name
         if destination.exists():
             raise FileExistsError(
-                f"Cannot organize {source}; destination already exists: "
-                f"{destination}"
+                f"Cannot organize {source}; destination already exists: {destination}"
             )
         shutil.move(str(source), str(destination))
         moved.append(destination)
@@ -481,6 +486,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     *POSTGRES_STEPS,
                     V2_POSTGRES_DATASET_STEP,
                     V2_POSTGRES_VALIDATION_STEP,
+                    V2_SQL_EQUIVALENCE_STEP,
                 ),
                 dry_run=args.dry_run,
             )

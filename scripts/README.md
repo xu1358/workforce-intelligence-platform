@@ -31,7 +31,8 @@ python scripts/run_project.py pipeline
 ```
 
 Load PostgreSQL, build the Version 2 temporal datasets from analytical views,
-and validate database/CSV parity:
+validate database/CSV parity, and execute the independent SQL/Python temporal
+equivalence check:
 
 ```bash
 python scripts/run_project.py postgres

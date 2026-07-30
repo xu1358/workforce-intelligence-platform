@@ -1,0 +1,97 @@
+version: "1.0"
+description: >-
+  Executable equivalence contract between the PostgreSQL temporal SQL and the
+  Python multi-snapshot retention builder.
+
+sql_query: sql/retention_modeling_multi_snapshot.sql
+python_outputs:
+  historical: data/processed/retention_multi_snapshot.csv
+  current_scoring: data/processed/current_active_scoring_population.csv
+
+row_key:
+  - snapshot_sequence
+  - employee_id
+
+date_columns:
+  - snapshot_date
+  - prediction_end_date
+
+boolean_columns:
+  - promotion_recommended
+
+exact_numeric_columns:
+  - employee_id
+  - snapshot_sequence
+  - approx_age
+  - job_level
+  - days_since_compensation_change
+  - compensation_record_count
+  - promotion_compensation_count
+  - days_since_review
+  - review_count
+  - no_prior_review
+  - completed_training_programs_12m
+  - failed_training_programs_12m
+  - prior_promotion_events
+  - prior_transfer_events
+  - prior_manager_change_events
+  - prior_leave_events
+  - prior_change_events
+  - promotions_12m
+  - manager_changes_12m
+  - leaves_12m
+  - days_since_last_change_event
+  - no_prior_promotion
+  - attrition_next_12m
+
+tolerant_numeric_columns:
+  - tenure_years
+  - initial_base_salary
+  - base_salary
+  - bonus_target
+  - equity_value
+  - salary_growth_percent
+  - salary_growth_12m_percent
+  - salary_position_percent
+  - performance_rating
+  - goal_completion
+  - average_performance_rating
+  - performance_trend
+  - completed_training_hours_12m
+  - average_training_score_12m
+  - months_since_promotion
+
+comparison:
+  absolute_tolerance: 1.0e-9
+  relative_tolerance: 1.0e-9
+  fingerprint_decimal_places: 8
+  require_identical_columns: true
+  require_identical_row_keys: true
+  require_identical_null_patterns: true
+  export_employee_level_differences: false
+
+expected:
+  total_rows: 24082
+  columns: 52
+  dataset_rows:
+    historical: 16673
+    current_scoring: 7409
+  snapshot_sequences:
+    - 1
+    - 2
+    - 3
+    - 4
+  analytical_views: 8
+  canonical_result_sha256: 0ed2538a67d6a7050d33bbdc936f5ef39264565f7c819b40d291032d7238431c
+
+governance:
+  execute_in_read_only_transaction: true
+  changes_synthetic_records: false
+  changes_temporal_dataset_values: false
+  changes_model_results: false
+  reopens_final_test: false
+  changes_frozen_policy: false
+  changes_dashboard_data: false
+  equivalence_validation_only: true
+
+output_directory: data/processed/sql_temporal_equivalence

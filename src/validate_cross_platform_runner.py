@@ -18,6 +18,10 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.run_project import (  # noqa: E402
+    V2_POSTGRES_DATASET_STEP,
+    V2_POSTGRES_VALIDATION_STEP,
+    V2_SQL_EQUIVALENCE_STEP,
+    VERSION_2_ANALYSIS_STEPS,
     build_parser,
     build_pipeline_steps,
     notebook_steps,
@@ -81,10 +85,7 @@ def stale_checkpoint_references(project_root: Path) -> list[str]:
             }:
                 continue
             text = path.read_text(encoding="utf-8")
-            if (
-                forward_reference in text
-                or backward_reference in text
-            ):
+            if forward_reference in text or backward_reference in text:
                 stale.add(path.relative_to(project_root).as_posix())
 
     return sorted(stale)
@@ -102,9 +103,7 @@ def build_checks(
     scripts_directory = project_root / "scripts"
     commands = command_names()
     pipeline = default_pipeline_steps()
-    all_command_parts = [
-        part for step in pipeline for part in step.command
-    ]
+    all_command_parts = [part for step in pipeline for part in step.command]
     shell_tokens = {
         "&&",
         "||",
@@ -114,9 +113,7 @@ def build_checks(
         "bash",
         "sh",
     }
-    shell_specific = [
-        part for part in all_command_parts if part in shell_tokens
-    ]
+    shell_specific = [part for part in all_command_parts if part in shell_tokens]
     root_files = sorted(
         path.name for path in scripts_directory.iterdir() if path.is_file()
     )
@@ -129,12 +126,9 @@ def build_checks(
     for path in archived_powershell:
         content = path.read_text(encoding="utf-8")
         if (
-            "$ScriptsDirectory = Split-Path -Parent $PSScriptRoot"
-            not in content
-            or "$ProjectRoot = Split-Path -Parent $ScriptsDirectory"
-            not in content
-            or "$ProjectRoot = Split-Path -Parent $PSScriptRoot"
-            in content
+            "$ScriptsDirectory = Split-Path -Parent $PSScriptRoot" not in content
+            or "$ProjectRoot = Split-Path -Parent $ScriptsDirectory" not in content
+            or "$ProjectRoot = Split-Path -Parent $PSScriptRoot" in content
         ):
             root_resolution_failures.append(path.name)
     wrapper_text = wrapper.read_text(encoding="utf-8")
@@ -142,6 +136,12 @@ def build_checks(
         project_root / ".github" / "workflows" / "python-quality.yml"
     ).read_text(encoding="utf-8")
     stale_references = stale_checkpoint_references(project_root)
+    sql_stage_order = [
+        pipeline.index(V2_POSTGRES_DATASET_STEP),
+        pipeline.index(V2_POSTGRES_VALIDATION_STEP),
+        pipeline.index(V2_SQL_EQUIVALENCE_STEP),
+        pipeline.index(VERSION_2_ANALYSIS_STEPS[0]),
+    ]
     governance = config["governance"]
     governance_ok = (
         governance["orchestration_only"]
@@ -161,9 +161,7 @@ def build_checks(
         },
         {
             "check": "Committed command surface is complete",
-            "status": (
-                "PASS" if commands == set(config["commands"]) else "FAIL"
-            ),
+            "status": ("PASS" if commands == set(config["commands"]) else "FAIL"),
             "observed": sorted(commands),
             "requirement": sorted(config["commands"]),
             "details": "Quality, validation, pipeline, UI, and notebook paths are explicit.",
@@ -176,6 +174,24 @@ def build_checks(
             "details": "The dry run preserves complete Version 2 orchestration.",
         },
         {
+            "check": "SQL equivalence gates downstream modeling",
+            "status": (
+                "PASS"
+                if sql_stage_order == sorted(sql_stage_order)
+                and len(set(sql_stage_order)) == len(sql_stage_order)
+                else "FAIL"
+            ),
+            "observed": [position + 1 for position in sql_stage_order],
+            "requirement": (
+                "PostgreSQL builder -> source parity -> SQL equivalence "
+                "-> model analysis"
+            ),
+            "details": (
+                "The independent SQL claim is verified before any downstream "
+                "model stage."
+            ),
+        },
+        {
             "check": "Commands avoid shell-specific execution syntax",
             "status": "PASS" if not shell_specific else "FAIL",
             "observed": shell_specific,
@@ -186,8 +202,7 @@ def build_checks(
             "check": "Supporting notebook command matches manifest",
             "status": (
                 "PASS"
-                if len(notebook_steps()) - 1
-                == config["expected_supporting_notebooks"]
+                if len(notebook_steps()) - 1 == config["expected_supporting_notebooks"]
                 else "FAIL"
             ),
             "observed": len(notebook_steps()) - 1,
@@ -208,9 +223,7 @@ def build_checks(
         },
         {
             "check": "Archived PowerShell runners resolve repository root",
-            "status": (
-                "PASS" if not root_resolution_failures else "FAIL"
-            ),
+            "status": ("PASS" if not root_resolution_failures else "FAIL"),
             "observed": root_resolution_failures,
             "requirement": "0 one-level root calculations",
             "details": "Archived scripts remain runnable after moving one level deeper.",
@@ -218,9 +231,7 @@ def build_checks(
         {
             "check": "Scripts root exposes only the finished interface",
             "status": (
-                "PASS"
-                if root_files == sorted(config["root_script_files"])
-                else "FAIL"
+                "PASS" if root_files == sorted(config["root_script_files"]) else "FAIL"
             ),
             "observed": root_files,
             "requirement": sorted(config["root_script_files"]),
@@ -243,8 +254,7 @@ def build_checks(
             "check": "GitHub Actions resolves the portable pipeline",
             "status": (
                 "PASS"
-                if "python scripts/run_project.py --dry-run pipeline"
-                in workflow_text
+                if "python scripts/run_project.py --dry-run pipeline" in workflow_text
                 else "FAIL"
             ),
             "observed": platform.system(),
@@ -317,10 +327,7 @@ def print_results(
 
     print("\nCROSS-PLATFORM RUNNER VALIDATION")
     for check in checks:
-        print(
-            f"{check['status']:<4}  {check['check']:<54}  "
-            f"{check['observed']}"
-        )
+        print(f"{check['status']:<4}  {check['check']:<54}  {check['observed']}")
 
     print(f"\nSaved runner validation outputs to: {output_directory}")
 
@@ -328,9 +335,7 @@ def print_results(
 def main() -> None:
     """Run the cross-platform execution contract."""
 
-    config = load_config(
-        PROJECT_ROOT / "config" / "cross_platform_runner.yaml"
-    )
+    config = load_config(PROJECT_ROOT / "config" / "cross_platform_runner.yaml")
     checks = build_checks(PROJECT_ROOT, config)
     output_directory = save_outputs(PROJECT_ROOT, config, checks)
     print_results(checks, output_directory)

@@ -252,7 +252,10 @@ language from being confused with model selection, validates the chronology
 through the unchanged final-test result, and keeps private first-person notes
 outside the public repository. Checkpoint 62 adds database-view, source-parity,
 pipeline-order, least-privilege projection, and frozen-output fingerprint
-contracts for the primary PostgreSQL-backed Version 2 path.
+contracts for the primary PostgreSQL-backed Version 2 path. Checkpoint 63
+adds executable read-only SQL, complete SQL/Python row and feature
+equivalence, deterministic tie-breaking, and aggregate-only evidence
+contracts.
 
 ## End-to-End Integration
 
@@ -294,6 +297,10 @@ thin Windows wrapper around this canonical Python command.
 | `src/validate_v2_postgresql_integration.py` | Reconciles database sources and temporal outputs |
 | `tests/test_v2_postgresql_integration.py` | Tests view, type, runner, and fallback contracts |
 | `scripts/checkpoints/run_checkpoint62.ps1` | Runs live PostgreSQL integration and complete quality gates |
+| `config/sql_temporal_equivalence.yaml` | Defines row keys, field types, tolerances, populations, and governance |
+| `src/validate_sql_temporal_equivalence.py` | Executes SQL read-only and compares all results with Python |
+| `tests/test_sql_temporal_equivalence.py` | Tests SQL safety, complete contracts, mismatch detection, and read-only execution |
+| `scripts/checkpoints/run_checkpoint63.ps1` | Runs live SQL/Python equivalence and complete quality gates |
 | `scripts/checkpoints/run_checkpoint50.ps1` | Reproduces all quality gates locally |
 | `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `tests/test_quality_configuration.py` | Tests local and GitHub quality contracts |

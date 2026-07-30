@@ -72,6 +72,7 @@ The repository demonstrates a complete analytical decision system:
 
 - reproducible synthetic data generation across six fictional source systems;
 - a normalized 12-table PostgreSQL schema and validated ingestion pipeline;
+- executed SQL/Python equivalence across the complete temporal model dataset;
 - historical, point-in-time feature construction;
 - three non-overlapping 12-month prediction windows;
 - explicit feature-redundancy and multicollinearity controls;
@@ -129,6 +130,7 @@ presented as new performance evidence.
 - The intervention policy is selected and hashed before final-test access.
 
 See the [temporal dataset design](docs/temporal_dataset_design.md),
+[SQL/Python temporal equivalence](docs/sql_python_temporal_equivalence.md),
 [feature policy](docs/feature_interpretation.md), and
 [validation strategy](docs/model_validation_strategy.md).
 
@@ -530,17 +532,19 @@ The real `.env` file is ignored by Git.
 The complete pipeline generates the synthetic data, validates Version 2,
 loads PostgreSQL, creates least-privilege Version 2 analytical views, and
 builds the temporal modeling data by querying those views. It then verifies
-database/CSV content parity before fitting and evaluating models, freezing and
-testing the policy, building the current dashboard layer, and validating the
-portfolio. It also explains the current model, checks explanation stability,
-analyzes censoring-aware employee survival, and runs the isolated IBM
-benchmark.
+database/CSV content parity and executes the independent multi-snapshot SQL.
+All 24,082 SQL rows and 52 columns must agree with the Python builder before
+the pipeline fits or evaluates models. The remaining stages freeze and test
+the policy, build the current dashboard layer, validate the portfolio, explain
+the current model, check explanation stability, analyze censoring-aware
+employee survival, and run the isolated IBM benchmark.
 
 ```bash
 python scripts/run_project.py pipeline
 ```
 
-Run only the PostgreSQL ingestion, Version 2 temporal build, and parity audit:
+Run only PostgreSQL ingestion, the Version 2 temporal build, source parity,
+and SQL/Python equivalence:
 
 ```bash
 python scripts/run_project.py postgres
@@ -596,6 +600,7 @@ They are no longer the primary project interface. See
 | Architecture | [System architecture](docs/architecture.md) |
 | PostgreSQL | [Database setup](docs/database_setup.md) |
 | V2 database path | [PostgreSQL integration and parity](docs/v2_postgresql_integration.md) |
+| SQL/Python parity | [Temporal implementation equivalence](docs/sql_python_temporal_equivalence.md) |
 | SQL metrics | [Analytics definitions](docs/analytics.md) |
 | Version 2 data | [V1 versus V2 comparison](docs/v1_v2_data_comparison.md) |
 | Hazard configuration | [Executable simulation contract](docs/hazard_configuration_contract.md) |

@@ -164,6 +164,7 @@ src/v2_data_access.py
 src/validate_v2_postgresql_integration.py
 sql/create_v2_analytics_views.sql
 sql/retention_modeling_multi_snapshot.sql
+src/validate_sql_temporal_equivalence.py
 scripts/checkpoints/run_checkpoint38.ps1
 notebooks/21_temporal_dataset_validation.ipynb
 ```
@@ -171,9 +172,14 @@ notebooks/21_temporal_dataset_validation.ipynb
 The default end-to-end pipeline queries eight PostgreSQL analytical views
 through the Python data-access boundary. The same builder retains an explicit
 CSV fallback, and the integration audit requires canonical source hashes and
-final temporal-file hashes to match across paths. The multi-snapshot SQL file
-also provides an auditable reference implementation of the point-in-time
-eligibility, feature, and target logic.
+final temporal-file hashes to match across paths.
+
+Checkpoint 63 also executes the independent multi-snapshot SQL in a read-only
+transaction and compares all 24,082 rows and 52 columns with the Python
+builder. The contract requires identical keys, null patterns, exact fields,
+and labels, plus agreement within `1e-9` for calculated numeric features.
+See the
+[SQL/Python temporal-equivalence evidence](sql_python_temporal_equivalence.md).
 
 ## Validation results
 

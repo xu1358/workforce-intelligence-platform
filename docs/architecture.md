@@ -253,8 +253,10 @@ src/v2_data_access.py
 ```
 
 The default runner loads the normalized tables, creates these views, builds
-the historical and current temporal datasets from PostgreSQL, and validates
-canonical content hashes against the explicit CSV fallback.
+the historical and current temporal datasets from PostgreSQL, validates
+source parity, executes the independent multi-snapshot SQL, and requires
+complete SQL/Python temporal equivalence before model development. Canonical
+content hashes also protect parity with the explicit CSV fallback.
 
 ---
 

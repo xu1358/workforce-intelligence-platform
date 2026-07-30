@@ -19,7 +19,8 @@ Every archived PowerShell runner resolves the repository root by moving from
 this directory to `scripts/` and then to the repository root. This keeps the
 historical commands runnable after the Checkpoint 59 reorganization.
 
-The newest database-integration journal is
-`run_checkpoint62.ps1`. It runs the canonical cross-platform `postgres`
-command and then the complete quality suite; the analytical implementation
-remains in the reviewer-facing Python and SQL files.
+The newest SQL-equivalence journal is `run_checkpoint63.ps1`. It runs the
+canonical cross-platform `postgres` command, executes the multi-snapshot SQL,
+compares all SQL results with the Python builder, and then runs the complete
+quality suite. The analytical implementation remains in the reviewer-facing
+Python and SQL files.

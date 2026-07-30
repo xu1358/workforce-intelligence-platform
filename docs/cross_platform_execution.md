@@ -34,7 +34,7 @@ separators.
 | --- | --- |
 | `quality` | Dependency validation, Markdown checks, compilation, Ruff, and pytest |
 | `validate` | Quality gates plus notebook and README validation |
-| `postgres` | Load PostgreSQL, build Version 2 temporal data from SQL views, and validate parity |
+| `postgres` | Load PostgreSQL, build Version 2 temporal data, validate source parity, and execute SQL/Python equivalence |
 | `pipeline` | Complete Version 2 generation, modeling, database, policy, and portfolio pipeline |
 | `dashboard` | Launch the Streamlit dashboard |
 | `notebooks` | Execute and validate the twelve supporting notebooks |
@@ -50,7 +50,9 @@ python scripts/run_project.py pipeline --help
 ## Pipeline Controls
 
 The default `pipeline` prepares PostgreSQL before Version 2 modeling and builds
-the temporal dataset from eight analytical views. The focused command is:
+the temporal dataset from eight analytical views. It then executes the
+independent multi-snapshot SQL and requires complete equivalence with the
+Python builder before modeling. The focused command is:
 
 ```bash
 python scripts/run_project.py postgres
@@ -129,11 +131,12 @@ The runner validation verifies:
 - All seven commands are exposed.
 - PostgreSQL preparation occurs before the Version 2 temporal build.
 - The primary temporal builder receives `--source postgresql`.
+- The SQL equivalence validator runs after source parity and before modeling.
 - The `--skip-postgres` path receives `--source csv`.
 - Skip flags remove only their intended stage groups.
 - No shell operators or shell executables are used.
 - Twelve supporting notebooks come from the committed manifest.
-- Twenty-seven checkpoint runners are archived outside the scripts root.
+- Twenty-eight checkpoint runners are archived outside the scripts root.
 - Archived PowerShell runners resolve the repository root from their new
   two-level location.
 - The Windows wrapper delegates to the Python runner.

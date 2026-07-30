@@ -90,6 +90,7 @@ required_links:
   - "docs/dependency_reproducibility.md"
   - "docs/cross_platform_execution.md"
   - "docs/v2_postgresql_integration.md"
+  - "docs/sql_python_temporal_equivalence.md"
   - "docs/hazard_configuration_contract.md"
   - "docs/synthetic_signal_governance.md"
   - "notebooks/31_ibm_external_benchmark.ipynb"

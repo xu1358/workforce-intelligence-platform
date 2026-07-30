@@ -14,6 +14,9 @@ from scripts.run_project import (
     POSTGRES_STEPS,
     QUALITY_STEPS,
     V2_CSV_DATASET_STEP,
+    V2_POSTGRES_DATASET_STEP,
+    V2_POSTGRES_VALIDATION_STEP,
+    V2_SQL_EQUIVALENCE_STEP,
     VERSION_2_MODELING_STEPS,
     VERSION_2_ANALYSIS_STEPS,
     build_parser,
@@ -69,6 +72,21 @@ def test_default_pipeline_contains_every_version_2_stage() -> None:
     )
 
     assert steps == list(expected)
+
+
+def test_sql_equivalence_runs_before_model_analysis() -> None:
+    """The SQL implementation must be executed before downstream modeling."""
+
+    steps = list(VERSION_2_MODELING_STEPS)
+
+    assert steps[:3] == [
+        V2_POSTGRES_DATASET_STEP,
+        V2_POSTGRES_VALIDATION_STEP,
+        V2_SQL_EQUIVALENCE_STEP,
+    ]
+    assert steps.index(V2_SQL_EQUIVALENCE_STEP) < steps.index(
+        VERSION_2_ANALYSIS_STEPS[0]
+    )
 
 
 def test_pipeline_options_remove_only_requested_stage_groups() -> None:
@@ -149,7 +167,7 @@ def test_archived_powershell_runners_resolve_repository_root(
         archive / "execute_supporting_notebooks.ps1",
     ]
 
-    assert len(paths) == 28
+    assert len(paths) == 29
     for path in paths:
         content = path.read_text(encoding="utf-8")
         assert "$ScriptsDirectory = Split-Path -Parent $PSScriptRoot" in content

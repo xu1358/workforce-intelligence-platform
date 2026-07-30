@@ -133,8 +133,12 @@ python scripts/run_project.py postgres
 
 This command tests the connection, creates and validates the schema, reloads
 all twelve tables, creates the Version 2 views, builds the temporal datasets
-from PostgreSQL, and verifies database/CSV content parity. The temporal output
-hashes must remain identical to the frozen file-backed outputs.
+from PostgreSQL, and verifies database/CSV content parity. It then executes the
+independent multi-snapshot SQL in a read-only transaction and compares its
+complete result with the Python builder. The temporal output hashes must
+remain identical to the frozen file-backed outputs.
 
 See `docs/v2_postgresql_integration.md` for the view inventory, pipeline
-sequence, validation evidence, and limitations.
+sequence, validation evidence, and limitations. See
+`docs/sql_python_temporal_equivalence.md` for the implementation-equivalence
+contract.

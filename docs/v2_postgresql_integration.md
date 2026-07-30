@@ -142,6 +142,11 @@ This integration demonstrates:
 The database is therefore part of the primary analytical workflow, not a
 legacy-only exhibit.
 
+Checkpoint 63 extends this source-level evidence by executing
+`sql/retention_modeling_multi_snapshot.sql` and comparing its complete
+24,082-row, 52-column result with the Python builder. See
+[SQL and Python temporal equivalence](sql_python_temporal_equivalence.md).
+
 ## Scope and Governance
 
 Checkpoint 62 changes the source boundary and pipeline order. It does not:

@@ -90,6 +90,9 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 62:** Make PostgreSQL the primary Version 2 temporal-data source,
   add least-privilege analytical views, and enforce database/CSV and frozen
   output parity before downstream modeling.
+- **Checkpoint 63:** Execute the independent multi-snapshot SQL in a read-only
+  transaction and require complete row-, column-, null-, value-, and
+  fingerprint-equivalence with the Python temporal builder before modeling.
 
 ## Optional Advanced Extensions
 

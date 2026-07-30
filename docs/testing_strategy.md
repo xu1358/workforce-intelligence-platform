@@ -358,6 +358,7 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `scripts/checkpoints/run_checkpoint60.ps1` | Validates executable hazard settings and the complete quality suite |
 | `scripts/checkpoints/run_checkpoint61.ps1` | Validates generator-signal governance and the complete quality suite |
 | `scripts/checkpoints/run_checkpoint62.ps1` | Builds Version 2 from PostgreSQL, validates source/output parity, and runs the complete quality suite |
+| `scripts/checkpoints/run_checkpoint63.ps1` | Executes the temporal SQL, compares every result with Python, and runs the complete quality suite |
 | `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `requirements.txt` | Pins every direct dependency |
 | `requirements-lock.txt` | Pins and hashes every resolved distribution |
@@ -449,6 +450,27 @@ keys, and canonical content hashes across all eight sources. It then requires
 the PostgreSQL-built historical and current temporal files to match the frozen
 row counts, widths, and SHA-256 fingerprints before downstream analysis can
 continue.
+
+## SQL/Python Temporal Equivalence Contracts
+
+Checkpoint 63 executes `sql/retention_modeling_multi_snapshot.sql` in a
+read-only PostgreSQL transaction. Tests and runtime validation require:
+
+- all eight least-privilege analytical views;
+- no direct reads from unrestricted base tables;
+- SQL snapshot dates matching `config/temporal_snapshots.yaml`;
+- exactly one read-only SQL statement;
+- 24,082 matching employee-snapshot keys;
+- 52 columns in the committed model-input order;
+- identical historical and current row populations;
+- identical feature null patterns;
+- exact identifiers, dates, categories, counts, booleans, and targets;
+- computed numeric agreement within `1e-9`; and
+- matching canonical full-result SHA-256 fingerprints.
+
+The full row-level comparison exists only in memory. Tests verify that saved
+evidence is aggregate and that the equivalence stage runs before downstream
+model analysis.
 
 ## Limitations
 

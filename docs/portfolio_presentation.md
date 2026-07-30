@@ -102,3 +102,14 @@ Streamlit dashboard
 The default Version 2 pipeline queries PostgreSQL before model development.
 The CSV path remains an explicit fallback, and canonical hashes require both
 source paths and both temporal output files to reconcile exactly.
+
+Checkpoint 63 also executes the independent temporal SQL in a read-only
+transaction and compares all 24,082 rows and 52 columns with the Python
+builder. The first complete comparison exposed 13,512 historical target nulls
+caused by PostgreSQL three-valued logic for missing termination dates. An
+explicit `COALESCE(..., FALSE)` corrected the SQL, after which the
+implementations had zero key, null-pattern, or value mismatches and one shared
+canonical SHA-256 fingerprint.
+
+This is evidence that the SQL is executed and tested, not an unverified
+reference artifact.

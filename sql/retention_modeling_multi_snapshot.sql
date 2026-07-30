@@ -1,8 +1,9 @@
 /*
-Checkpoint 38 reference query
-================================
+Executable Version 2 temporal-equivalence query
+================================================
 
-This query mirrors the temporal rules implemented by
+Checkpoint 63 executes this read-only query and compares every resulting
+employee-snapshot value with the Python implementation in
 src/build_multi_snapshot_retention_dataset.py:
 
 1. Construct three historical snapshots with twelve-month outcomes.
@@ -10,9 +11,11 @@ src/build_multi_snapshot_retention_dataset.py:
 3. Use only feature records dated on or before each snapshot.
 4. Reconstruct historical location from hire and prior transfer events.
 
-The Python builder is the checkpoint's reproducible file-output path.
-This SQL provides an auditable PostgreSQL implementation of the same
-point-in-time feature logic.
+The query uses the same least-privilege analytical views as the Python
+PostgreSQL backend. Snapshot literals are checked against
+config/temporal_snapshots.yaml before execution. The equivalence validator
+checks keys, columns, null patterns, exact values, numeric tolerances, and
+aggregate fingerprints; neither implementation is trusted by assertion alone.
 */
 
 WITH snapshot_definitions (
@@ -66,14 +69,15 @@ eligible_employee_snapshots AS (
 
         CASE
             WHEN s.dataset_type = 'historical'
-            THEN (
+            THEN COALESCE(
                 e.termination_date > s.snapshot_date
-                AND e.termination_date <= s.prediction_end_date
+                AND e.termination_date <= s.prediction_end_date,
+                FALSE
             )::INTEGER
             ELSE NULL::INTEGER
         END AS attrition_next_12m
 
-    FROM employees AS e
+    FROM analytics_v2_employees AS e
 
     CROSS JOIN snapshot_definitions AS s
 
@@ -92,12 +96,14 @@ point_in_time_employee AS (
         COALESCE(
             (
                 SELECT ee.new_value::INTEGER
-                FROM employee_events AS ee
+                FROM analytics_v2_employee_events AS ee
                 WHERE
                     ee.employee_id = es.employee_id
                     AND ee.event_type = 'Transfer'
                     AND ee.event_date <= es.snapshot_date
-                ORDER BY ee.event_date DESC
+                ORDER BY
+                    ee.event_date DESC,
+                    ee.event_id DESC
                 LIMIT 1
             ),
             (
@@ -106,11 +112,13 @@ point_in_time_employee AS (
                         ee.notes
                         FROM 'location_id=([0-9]+)'
                     )::INTEGER
-                FROM employee_events AS ee
+                FROM analytics_v2_employee_events AS ee
                 WHERE
                     ee.employee_id = es.employee_id
                     AND ee.event_type = 'Hire'
-                ORDER BY ee.event_date
+                ORDER BY
+                    ee.event_date,
+                    ee.event_id
                 LIMIT 1
             ),
             es.final_location_id
@@ -126,13 +134,9 @@ base_features AS (
         pe.snapshot_sequence,
         pe.snapshot_date,
         pe.prediction_end_date,
+        pe.birth_year,
         pe.snapshot_date::DATE - pe.hire_date::DATE
             AS tenure_days,
-        pe.snapshot_date::DATE - make_date(
-            pe.birth_year,
-            1,
-            1
-        ) AS approximate_age_days,
         pe.employment_type,
         pe.education_level,
         pe.organizational_level,
@@ -251,17 +255,13 @@ base_features AS (
 
         COALESCE(
             (
-                EXTRACT(
-                    YEAR FROM AGE(
-                        pe.snapshot_date,
-                        event_summary.latest_promotion_date
-                    )
+                EXTRACT(YEAR FROM pe.snapshot_date) * 12
+                + EXTRACT(MONTH FROM pe.snapshot_date)
+                - EXTRACT(
+                    YEAR FROM event_summary.latest_promotion_date
                 ) * 12
-                + EXTRACT(
-                    MONTH FROM AGE(
-                        pe.snapshot_date,
-                        event_summary.latest_promotion_date
-                    )
+                - EXTRACT(
+                    MONTH FROM event_summary.latest_promotion_date
                 )
             )::DOUBLE PRECISION,
             (
@@ -277,22 +277,24 @@ base_features AS (
 
     FROM point_in_time_employee AS pe
 
-    JOIN departments AS d
+    JOIN analytics_v2_departments AS d
         ON d.department_id = pe.department_id
 
-    JOIN locations AS l
+    JOIN analytics_v2_locations AS l
         ON l.location_id = pe.snapshot_location_id
 
-    JOIN job_roles AS jr
+    JOIN analytics_v2_job_roles AS jr
         ON jr.job_role_id = pe.job_role_id
 
     LEFT JOIN LATERAL (
         SELECT ch.base_salary
-        FROM compensation_history AS ch
+        FROM analytics_v2_compensation_history AS ch
         WHERE
             ch.employee_id = pe.employee_id
             AND ch.effective_date <= pe.snapshot_date
-        ORDER BY ch.effective_date
+        ORDER BY
+            ch.effective_date,
+            ch.compensation_id
         LIMIT 1
     ) AS initial_compensation
         ON TRUE
@@ -303,23 +305,27 @@ base_features AS (
             ch.base_salary,
             ch.bonus_target,
             ch.equity_value
-        FROM compensation_history AS ch
+        FROM analytics_v2_compensation_history AS ch
         WHERE
             ch.employee_id = pe.employee_id
             AND ch.effective_date <= pe.snapshot_date
-        ORDER BY ch.effective_date DESC
+        ORDER BY
+            ch.effective_date DESC,
+            ch.compensation_id DESC
         LIMIT 1
     ) AS current_compensation
         ON TRUE
 
     LEFT JOIN LATERAL (
         SELECT ch.base_salary
-        FROM compensation_history AS ch
+        FROM analytics_v2_compensation_history AS ch
         WHERE
             ch.employee_id = pe.employee_id
             AND ch.effective_date
                 <= pe.snapshot_date - INTERVAL '1 year'
-        ORDER BY ch.effective_date DESC
+        ORDER BY
+            ch.effective_date DESC,
+            ch.compensation_id DESC
         LIMIT 1
     ) AS prior_year_compensation
         ON TRUE
@@ -332,7 +338,7 @@ base_features AS (
                 WHERE ch.change_reason = 'Promotion'
             )::INTEGER
                 AS promotion_compensation_count
-        FROM compensation_history AS ch
+        FROM analytics_v2_compensation_history AS ch
         WHERE
             ch.employee_id = pe.employee_id
             AND ch.effective_date <= pe.snapshot_date
@@ -344,19 +350,25 @@ base_features AS (
             (
                 ARRAY_AGG(
                     pr.performance_rating
-                    ORDER BY pr.review_date DESC
+                    ORDER BY
+                        pr.review_date DESC,
+                        pr.review_id DESC
                 )
             )[1] AS performance_rating,
             (
                 ARRAY_AGG(
                     pr.goal_completion
-                    ORDER BY pr.review_date DESC
+                    ORDER BY
+                        pr.review_date DESC,
+                        pr.review_id DESC
                 )
             )[1] AS goal_completion,
             (
                 ARRAY_AGG(
                     pr.promotion_recommended
-                    ORDER BY pr.review_date DESC
+                    ORDER BY
+                        pr.review_date DESC,
+                        pr.review_id DESC
                 )
             )[1] AS promotion_recommended,
             MAX(pr.review_date) AS latest_review_date,
@@ -366,10 +378,12 @@ base_features AS (
             (
                 ARRAY_AGG(
                     pr.performance_rating
-                    ORDER BY pr.review_date
+                    ORDER BY
+                        pr.review_date,
+                        pr.review_id
                 )
             )[1] AS first_performance_rating
-        FROM performance_reviews AS pr
+        FROM analytics_v2_performance_reviews AS pr
         WHERE
             pr.employee_id = pe.employee_id
             AND pr.review_date <= pe.snapshot_date
@@ -396,7 +410,7 @@ base_features AS (
             AVG(tr.score) FILTER (
                 WHERE tr.completion_status = 'Completed'
             ) AS average_training_score_12m
-        FROM training_records AS tr
+        FROM analytics_v2_training_records AS tr
         WHERE
             tr.employee_id = pe.employee_id
             AND tr.completion_date IS NOT NULL
@@ -457,7 +471,7 @@ base_features AS (
             MAX(ee.event_date) FILTER (
                 WHERE ee.event_type = 'Promotion'
             ) AS latest_promotion_date
-        FROM employee_events AS ee
+        FROM analytics_v2_employee_events AS ee
         WHERE
             ee.employee_id = pe.employee_id
             AND ee.event_date <= pe.snapshot_date
@@ -486,9 +500,8 @@ SELECT
     bf.snapshot_sequence,
     bf.snapshot_date,
     bf.prediction_end_date,
-    FLOOR(
-        bf.approximate_age_days / 365.25
-    )::INTEGER AS approx_age,
+    EXTRACT(YEAR FROM bf.snapshot_date)::INTEGER
+        - bf.birth_year AS approx_age,
     bf.tenure_days / 365.25 AS tenure_years,
     bf.employment_type,
     bf.education_level,
