@@ -20,6 +20,8 @@ measurements from a real employer.
 | Independent SQL and Python temporal implementations agree across 24,082 rows and 52 columns | `data/processed/sql_temporal_equivalence/validation_checks.csv` and `column_equivalence.csv` | 63 | `docs/sql_python_temporal_equivalence.md` |
 | Logistic Regression selected on validation | `data/processed/model_selection_decision_v2.csv` | 41 | Notebook 2 and `docs/model_comparison_v2.md` |
 | Sigmoid calibration selected | `data/processed/retention_calibration_selection.csv` | 42 | Notebook 2 and `docs/calibration_analysis.md` |
+| Full-population base rates rise 9.62% → 10.42% → 11.91%, a 23.74% relative increase | `data/processed/temporal_prior_shift/temporal_base_rate_summary.csv` | 65 | Notebook 36 and `docs/temporal_prior_shift.md` |
+| Final-test mean probability 11.02% versus 12.09% observed, a −1.07 percentage-point gap | `data/processed/temporal_prior_shift/calibration_shift_summary.csv` | 65 | Notebook 36 and `docs/temporal_prior_shift.md` |
 | Final-test PR-AUC 0.1710, ROC-AUC 0.6061, and Brier 0.1048 | `data/processed/retention_final_test_model_metrics.csv` | 46 | Notebook 2 and `docs/retention_policy_analysis.md` |
 | Top-decile precision 19.85%, capture 16.44%, and lift 1.64 | `data/processed/retention_final_test_model_metrics.csv` | 46 | Notebook 2 |
 | Frozen 700-person, $1.75 million expected-value policy | `data/processed/retention_policy_decision.csv` | 46 | Notebook 3 and `docs/retention_policy_analysis.md` |
@@ -59,6 +61,19 @@ The 2026 current plan uses a model refitted on all observable historical
 snapshots. Outcomes after 2026-06-30 are unknown. Expected departures,
 prevented departures, backfills, avoided cost, and net value are projections,
 not a new model test.
+
+### Temporal prior-shift evidence
+
+Checkpoint 65 reports full historical prevalence separately from the
+model-eligible calibration population. Full-population attrition rises 23.74%
+relative across the three periods. Model-eligible prevalence rises from
+10.61% in validation to 12.09% in the final test, while the mean predicted
+probability rises from 10.02% to 11.02%.
+
+The final aggregate gap is −1.07 percentage points. This is documented as
+prior-probability shift risk, not proof of pure label shift. The audit applies
+no test-period probability correction, model change, policy change, or
+dashboard change.
 
 ### Economic values
 
@@ -196,4 +211,11 @@ Notebook 35, and runs the complete quality suite:
 
 ```powershell
 .\scripts\checkpoints\run_checkpoint64.ps1
+```
+
+Checkpoint 65 reproduces the temporal base-rate and calibration-transport
+audit, executes Notebook 36, and runs the complete quality suite:
+
+```powershell
+.\scripts\checkpoints\run_checkpoint65.ps1
 ```

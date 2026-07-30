@@ -181,6 +181,10 @@ VERSION_2_ANALYSIS_STEPS = (
         "src/optimize_retention_policy.py",
     ),
     python_script(
+        "Audit temporal base-rate and prior shift",
+        "src/audit_temporal_prior_shift.py",
+    ),
+    python_script(
         "Audit deployed-policy subgroup fairness",
         "src/audit_retention_policy_fairness.py",
     ),

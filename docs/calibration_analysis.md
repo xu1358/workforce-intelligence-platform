@@ -76,6 +76,29 @@ score is 47.23%, while the validation attrition rate is only 10.61%.
 
 Both calibration methods correct most of that gap.
 
+## Temporal Calibration Transport
+
+The validation result is not the end of the calibration story. The
+model-eligible observed rate rises from 10.61% in validation to 12.09% in the
+once-only final test. Over the same transition, the selected model's mean
+probability rises from 10.02% to 11.02%.
+
+| Period | Observed rate | Mean probability | Calibration gap |
+| --- | ---: | ---: | ---: |
+| 2024 validation | 10.61% | 10.02% | −0.59 percentage points |
+| 2025 final test | 12.09% | 11.02% | −1.07 percentage points |
+
+Observed prevalence increases 1.478 percentage points while the predicted
+mean increases 1.002 percentage points. The model therefore tracks part, but
+not all, of the temporal increase; its calibration gap becomes 0.476
+percentage points more negative.
+
+This pattern is consistent with **prior-probability shift risk**. It does not
+prove pure label shift because feature distributions and conditional outcome
+relationships may also change. The final-test rate is not used to recalibrate
+the model. See the
+[temporal base-rate and prior-shift audit](temporal_prior_shift.md).
+
 ## Understanding the Brier Score
 
 The Brier score is the average squared distance between:
@@ -200,7 +223,9 @@ not evidence of real-world employee behavior.
 
 Calibration may drift when the employee population, base attrition rate,
 or economic environment changes. A production system would require
-ongoing monitoring and scheduled recalibration.
+ongoing monitoring and scheduled recalibration. This project observes that
+risk directly: the full historical base rate rises from 9.62% to 10.42% to
+11.91%, and final-test aggregate underprediction is −1.07 percentage points.
 
 The scores support aggregate planning and carefully reviewed outreach.
 They must not be used as automatic employment decisions or interpreted as

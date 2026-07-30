@@ -12,6 +12,8 @@ The project contains two notebook layers:
    current-model explanations and grouped-refit stability.
 5. **Allocation-equity extension** — Notebook `34`, which audits salary-driven
    selection after economic policy optimization.
+6. **Temporal prior-shift extension** — Notebook `36`, which quantifies
+   historical base-rate drift and calibration transport.
 
 ## Recommended reviewer sequence
 
@@ -45,7 +47,7 @@ implementation detail:
 - `01`–`10`: generated data and relationship validation
 - `11`–`16`: Version 1 SQL, modeling, interpretation, and dashboard validation
 - `17`–`19`: generator audit, EDA, and historical-assignment analysis
-- `20`–`34`: Version 2 checkpoint-specific analytical validation and extensions
+- `20`–`36`: Version 2 checkpoint-specific analytical validation and extensions
 
 These supporting notebooks are not the recommended first reading path.
 
@@ -131,6 +133,22 @@ Run it with:
 
 ```powershell
 .\scripts\checkpoints\run_checkpoint64.ps1
+```
+
+## Separate temporal prior-shift extension
+
+[Notebook 36: Temporal Base-Rate Drift and Prior-Shift Risk](36_temporal_prior_shift.ipynb)
+reports the 9.62% → 10.42% → 11.91% full-population trend and the
+validation-to-test calibration transport in the model-eligible population.
+
+It qualifies the result as prior-probability shift risk rather than proof of
+pure label shift. It reuses the frozen aggregate final result, applies no
+final-test recalibration, and changes no policy or dashboard probability.
+
+Run it with:
+
+```powershell
+.\scripts\checkpoints\run_checkpoint65.ps1
 ```
 
 ## Reproducibility

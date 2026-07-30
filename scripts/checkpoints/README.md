@@ -25,6 +25,9 @@ compares all SQL results with the Python builder, and then runs the complete
 quality suite. The analytical implementation remains in the reviewer-facing
 Python and SQL files.
 
-The newest journal is `run_checkpoint64.ps1`. It audits subgroup allocation
-with the exact frozen expected-value policy, executes Notebook 35, and then
-runs the complete quality suite.
+Checkpoint 64 audits subgroup allocation with the exact frozen expected-value
+policy and executes Notebook 35.
+
+The newest journal is `run_checkpoint65.ps1`. It quantifies temporal
+base-rate drift and prior-probability shift risk, executes Notebook 36, and
+then runs the complete quality suite without recalibrating on the final test.

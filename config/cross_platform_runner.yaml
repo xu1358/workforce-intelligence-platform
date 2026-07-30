@@ -36,8 +36,8 @@ quality_gates:
 
 checkpoint_history:
   first: 36
-  last: 64
-  expected_count: 29
+  last: 65
+  expected_count: 30
 
 postgresql_v2_contract:
   preparation_steps: 6
@@ -46,7 +46,7 @@ postgresql_v2_contract:
   sql_equivalence_validator: src/validate_sql_temporal_equivalence.py
   csv_fallback_flag: --skip-postgres
 
-expected_supporting_notebooks: 13
+expected_supporting_notebooks: 14
 
 root_script_files:
   - README.md

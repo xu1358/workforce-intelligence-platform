@@ -101,6 +101,25 @@ def test_requirement_fingerprints_match_contract(project_root: Path) -> None:
     assert sha256_file(lock_path) == contract["files"]["lock_file_sha256"]
 
 
+def test_requirement_fingerprints_are_line_ending_stable(
+    project_root: Path,
+    tmp_path: Path,
+) -> None:
+    """LF and CRLF checkouts must represent the same dependency contract."""
+
+    contract = load_contract(project_root)
+    for key, expected_key in [
+        ("direct_requirements", "direct_requirements_sha256"),
+        ("lock_file", "lock_file_sha256"),
+    ]:
+        source = project_root / contract["files"][key]
+        canonical_bytes = source.read_bytes().replace(b"\r\n", b"\n")
+        crlf_copy = tmp_path / source.name
+        crlf_copy.write_bytes(canonical_bytes.replace(b"\n", b"\r\n"))
+
+        assert sha256_file(crlf_copy) == contract["files"][expected_key]
+
+
 def test_ci_installs_and_validates_hashed_lock(project_root: Path) -> None:
     """GitHub Actions must use the same immutable environment contract."""
 

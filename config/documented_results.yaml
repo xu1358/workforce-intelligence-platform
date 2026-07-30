@@ -100,3 +100,19 @@ documents:
       - "does not access outcome columns"
       - "does not change the frozen policy"
       - "new holdout or prospective evaluation"
+
+  - path: docs/temporal_prior_shift.md
+    required_values:
+      - "9.62%"
+      - "10.42%"
+      - "11.91%"
+      - "23.74%"
+      - "12.09%"
+      - "11.02%"
+      - "−1.07 percentage points"
+      - "0.476 percentage points"
+    required_phrases:
+      - "prior-probability shift risk"
+      - "does not prove pure label shift"
+      - "does not change the selected model"
+      - "final test is not used for recalibration"

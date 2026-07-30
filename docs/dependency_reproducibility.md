@@ -102,9 +102,13 @@ files:
 | `requirements.txt` | `c04380f6d8435ecc20b938b9fa1e380e5bc89e873b888ef1db9f43e65dbe0771` |
 | `requirements-lock.txt` | `aaa6e316e31d65d121ccc6b3a3c3f3bf3bc114626ef416a1f237698b093401a8` |
 
-`src/validate_dependency_environment.py` recalculates both fingerprints.
-Changing either dependency file without intentionally updating the contract
-causes Checkpoint 57, the end-to-end pipeline, and GitHub Actions to fail.
+`src/validate_dependency_environment.py` recalculates both fingerprints after
+canonicalizing CRLF and LF line endings. The repository also pins these two
+files to LF through `.gitattributes`. Therefore, a Windows checkout cannot
+invalidate the contract solely because Git rewrote newline bytes. Changing
+dependency declarations, versions, markers, or artifact hashes without
+intentionally updating the contract still causes Checkpoint 57, the end-to-end
+pipeline, and GitHub Actions to fail.
 
 Hashes serve two different purposes:
 

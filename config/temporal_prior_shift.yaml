@@ -1,0 +1,103 @@
+version: "1.0"
+description: >
+  Post-evaluation audit of temporal attrition base-rate drift and its
+  relationship to aggregate probability calibration. The audit documents
+  prior-probability shift risk without changing the selected model,
+  recalibrating on the final test, or modifying the frozen policy.
+
+inputs:
+  temporal_panel: data/processed/retention_multi_snapshot.csv
+  validation_calibration_metrics: data/processed/retention_calibration_metrics.csv
+  final_test_metrics: data/processed/retention_final_test_model_metrics.csv
+
+columns:
+  target: attrition_next_12m
+  selected_calibration_method: Sigmoid
+  model_eligible_levels:
+    - Individual Contributor
+    - Team Manager
+
+periods:
+  - snapshot_sequence: 1
+    label: 2023 train
+    snapshot_date: "2023-06-30"
+    prediction_end_date: "2024-06-30"
+  - snapshot_sequence: 2
+    label: 2024 validation
+    snapshot_date: "2024-06-30"
+    prediction_end_date: "2025-06-30"
+  - snapshot_sequence: 3
+    label: 2025 final test
+    snapshot_date: "2025-06-30"
+    prediction_end_date: "2026-06-30"
+
+expected:
+  full_population_rows:
+    - 4303
+    - 5625
+    - 6745
+  full_population_positive_cases:
+    - 414
+    - 586
+    - 803
+  full_population_rates:
+    - 0.09621194515454334
+    - 0.10417777777777778
+    - 0.11905114899925871
+  model_eligible_rows:
+    - 4206
+    - 5521
+    - 6641
+  model_eligible_positive_cases:
+    - 414
+    - 586
+    - 803
+  model_eligible_rates:
+    - 0.09843081312410842
+    - 0.10614019199420394
+    - 0.12091552477036591
+  validation_mean_probability: 0.1001924112745261
+  validation_calibration_gap: -0.0059477807196778
+  final_test_mean_probability: 0.1102080772777062
+  final_test_calibration_gap: -0.0107074474926596
+  full_population_first_to_final_relative_change: 0.23738428537152223
+  validation_to_test_relative_change: 0.13920582296448836
+  calibration_gap_deterioration: -0.0047596667729818
+
+thresholds:
+  material_relative_base_rate_change: 0.10
+  material_absolute_rate_change: 0.01
+  reconciliation_tolerance: 1.0e-12
+  serialized_aggregate_tolerance: 1.0e-9
+
+terminology:
+  preferred: prior-probability shift risk
+  qualified_statement: >
+    Rising outcome prevalence is consistent with prior-probability shift, but
+    prevalence alone does not prove pure label shift because feature and
+    conditional-outcome relationships may also change.
+  forbidden_claim: pure label shift proven
+
+governance:
+  post_evaluation_diagnostic: true
+  final_test_evaluated_once: true
+  aggregates_temporal_outcomes_for_prevalence: true
+  uses_final_test_prediction_rows: false
+  recalibrates_on_final_test: false
+  changes_selected_model: false
+  changes_frozen_policy: false
+  changes_dashboard_probabilities: false
+  monitoring_action: >
+    Re-estimate calibration only after a new labeled monitoring window
+    matures; never use unknown future outcomes to adjust current scores.
+
+outputs:
+  directory: data/processed/temporal_prior_shift
+  files:
+    base_rate_summary: temporal_base_rate_summary.csv
+    calibration_summary: calibration_shift_summary.csv
+    decomposition: prior_shift_decomposition.csv
+    validation: validation_checks.csv
+  figures:
+    - temporal_base_rate_drift.png
+    - observed_vs_predicted_rate.png

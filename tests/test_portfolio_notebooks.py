@@ -29,6 +29,7 @@ EXPECTED_EXECUTED_SUPPORTING_NOTEBOOKS = [
     "30_manufacturing_workforce_stability.ipynb",
     "34_retention_policy_equity.ipynb",
     "35_deployed_policy_fairness.ipynb",
+    "36_temporal_prior_shift.ipynb",
 ]
 
 

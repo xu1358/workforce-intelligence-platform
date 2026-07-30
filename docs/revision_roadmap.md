@@ -101,6 +101,9 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 64:** Separate probability-ranking subgroup diagnostics from
   deployed-policy fairness and audit the exact frozen expected-value
   selections with the shared Checkpoint 46 implementation.
+- **Checkpoint 65:** Quantify temporal base-rate drift, document
+  prior-probability shift risk and calibration transport, and preserve the
+  no-final-test-recalibration boundary.
 
 ## Optional Advanced Extensions
 

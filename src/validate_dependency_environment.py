@@ -45,13 +45,11 @@ def load_yaml(path: Path) -> dict[str, Any]:
 
 
 def sha256_file(path: Path) -> str:
-    """Return a deterministic SHA-256 fingerprint."""
+    """Return a SHA-256 fingerprint with platform-neutral text newlines."""
 
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    content = path.read_bytes()
+    canonical_content = content.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return hashlib.sha256(canonical_content).hexdigest()
 
 
 def parse_requirements(path: Path) -> dict[str, ParsedRequirement]:

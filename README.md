@@ -24,6 +24,7 @@ For a concise review, use these entry points:
 6. [Review the isolated IBM benchmark](#external-methodological-benchmark).
 7. [Review retention over employee tenure](#employee-survival-extension).
 8. [Review salary allocation in the final policy](#allocation-equity-audit).
+9. [Review temporal base-rate drift](#temporal-base-rate-drift).
 
 ## Business Decision
 
@@ -53,6 +54,7 @@ pipeline.
 | Current workforce | 7,409 active employees | Current synthetic population as of 2026-06-30 |
 | Current scoring coverage | 7,305 model-eligible employees | Individual contributors and team managers only |
 | Final out-of-time model | PR-AUC 0.1710; ROC-AUC 0.6061; Brier 0.1048 | Modest but useful ranking on the reserved 2025 snapshot |
+| Temporal base-rate drift | 9.62% → 10.42% → 11.91%; 23.74% relative increase | Material prior-probability shift risk across full historical periods |
 | Top-decile ranking | 19.85% precision; 1.64 lift | Compared with a 12.09% final-test attrition rate |
 | Frozen intervention plan | 700 human reviews; $1.75M budget | Capacity- and budget-constrained expected-value policy |
 | Final-test policy | 17.06% capture; $2.03M outcome-aligned net value | Once-only evaluation with no post-test retuning |
@@ -82,6 +84,7 @@ The repository demonstrates a complete analytical decision system:
 - exact aggregate linear-SHAP explanations and grouped-refit stability checks;
 - Kaplan–Meier and Cox time-to-exit diagnostics with right-censoring;
 - sigmoid probability calibration;
+- temporal base-rate and calibration-transport monitoring;
 - ranking, subgroup, fairness, and sensitivity analysis;
 - an explicit retention cost model;
 - a frozen budget-constrained intervention policy;
@@ -119,6 +122,21 @@ attrition during the following 12 months.
 The final-test target is masked during development. Repeated employees are
 kept together in grouped robustness folds, and current scores are never
 presented as new performance evidence.
+
+### Temporal base-rate drift
+
+Full-population attrition prevalence rises from 9.62% to 10.42% to 11.91%,
+a 23.74% relative increase from the first period to the last. In the
+model-eligible population, calibration is selected on a 10.61% validation
+period and transported to a 12.09% final-test period.
+
+The final mean prediction is 11.02%, producing a −1.07 percentage-point
+aggregate calibration gap. This is consistent with prior-probability shift
+risk, but prevalence drift alone does not prove pure label shift. The result
+is retained as a monitoring limitation: the final test is not used to
+recalibrate the model or change the frozen policy. See the
+[temporal prior-shift audit](docs/temporal_prior_shift.md) and
+[executed supporting notebook](notebooks/36_temporal_prior_shift.ipynb).
 
 ### Leakage controls
 
@@ -197,7 +215,9 @@ After all development choices are frozen, the selected model is fitted on the
 
 Read the full [model comparison](docs/model_comparison_v2.md),
 [calibration analysis](docs/calibration_analysis.md), and
-[ranking analysis](docs/ranking_analysis.md).
+[ranking analysis](docs/ranking_analysis.md). The
+[temporal prior-shift audit](docs/temporal_prior_shift.md) explains why the
+probability scale underpredicts the later period at the aggregate level.
 
 ### Model explanations and stability
 
@@ -623,6 +643,7 @@ They are no longer the primary project interface. See
 | Feature policy | [Feature interpretation](docs/feature_interpretation.md) |
 | Model selection | [Version 2 model comparison](docs/model_comparison_v2.md) |
 | Calibration | [Calibration analysis](docs/calibration_analysis.md) |
+| Temporal calibration drift | [Prior-shift audit](docs/temporal_prior_shift.md) |
 | Ranking | [Ranking analysis](docs/ranking_analysis.md) |
 | Model fairness | [Fairness and ethics](docs/fairness_and_ethics.md) |
 | Deployed-policy fairness | [Expected-value policy subgroup audit](docs/deployed_policy_fairness.md) |
@@ -649,6 +670,8 @@ They are no longer the primary project interface. See
 - The final model has modest discrimination and only one reserved temporal
   test period.
 - Calibration on synthetic data does not guarantee calibration elsewhere.
+- Historical prevalence rises materially; the final model underpredicts the
+  aggregate by 1.07 percentage points and is not recalibrated on the test.
 - Model explanations are log-odds associations, not causal intervention
   effects or calibrated probability changes.
 - Survival hazard ratios are baseline associations, and one feature triggers

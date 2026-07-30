@@ -31,6 +31,23 @@ Checkpoint 64 adds tests proving that:
 The live audit additionally reconciles the 700 selected validation employees
 and their mean salary to the saved Checkpoint 46 policy comparison.
 
+## Temporal Prior-Shift Contracts
+
+Checkpoint 65 adds tests proving that:
+
+- full-population and model-eligible prevalence are summarized separately;
+- all three temporal rates retain their exact denominators;
+- validation and final calibration aggregates reconcile to frozen artifacts;
+- the validation-to-test prevalence change and calibration-gap deterioration
+  are arithmetically complete;
+- a prior-odds multiplier remains a diagnostic scalar rather than an applied
+  probability correction;
+- prior-probability shift wording does not claim pure label shift is proven;
+- the production audit does not read employee-level final-test predictions;
+- final-test recalibration, model changes, policy changes, and dashboard score
+  changes remain prohibited; and
+- Notebook 36 retains executed aggregate outputs.
+
 ## What the Tests Cover
 
 ### 1. Configuration Contracts
@@ -360,6 +377,7 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `tests/test_hazard_configuration_contract.py` | Tests complete simulation-key wiring, behavior, and governance |
 | `tests/test_generator_signal_governance.py` | Tests generator/model separation, chronology, public evidence, and private-note exclusion |
 | `tests/test_v2_postgresql_integration.py` | Tests V2 analytical views, least-privilege projections, type normalization, pipeline order, and CSV fallback |
+| `tests/test_temporal_prior_shift.py` | Tests temporal prevalence, calibration transport, terminology, and no-retuning governance |
 | `scripts/checkpoints/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
 | `scripts/checkpoints/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
 | `scripts/checkpoints/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
@@ -374,6 +392,7 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `scripts/checkpoints/run_checkpoint61.ps1` | Validates generator-signal governance and the complete quality suite |
 | `scripts/checkpoints/run_checkpoint62.ps1` | Builds Version 2 from PostgreSQL, validates source/output parity, and runs the complete quality suite |
 | `scripts/checkpoints/run_checkpoint63.ps1` | Executes the temporal SQL, compares every result with Python, and runs the complete quality suite |
+| `scripts/checkpoints/run_checkpoint65.ps1` | Audits temporal base-rate drift, executes Notebook 36, and runs the complete quality suite |
 | `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `requirements.txt` | Pins every direct dependency |
 | `requirements-lock.txt` | Pins and hashes every resolved distribution |

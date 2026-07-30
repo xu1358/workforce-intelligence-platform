@@ -7,7 +7,7 @@ description: >
 portfolio_directory: notebooks/portfolio
 index_file: notebooks/README.md
 expected_portfolio_notebooks: 4
-minimum_supporting_notebooks: 35
+minimum_supporting_notebooks: 36
 maximum_notebook_size_bytes: 2000000
 minimum_code_outputs_per_notebook: 5
 minimum_supporting_code_outputs_per_notebook: 1
@@ -26,6 +26,7 @@ executed_supporting_notebooks:
   - 30_manufacturing_workforce_stability.ipynb
   - 34_retention_policy_equity.ipynb
   - 35_deployed_policy_fairness.ipynb
+  - 36_temporal_prior_shift.ipynb
 
 notebooks:
   - order: 1

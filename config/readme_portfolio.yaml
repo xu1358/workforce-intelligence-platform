@@ -8,7 +8,7 @@ evidence_map_path: "docs/readme_evidence_map.md"
 
 line_limits:
   minimum: 300
-  maximum: 700
+  maximum: 750
 
 required_headings:
   - "## Business Decision"
@@ -68,6 +68,11 @@ headline_metrics:
   policy_fairness_deployed_proxy_overlap: "184"
   policy_fairness_customer_support_rate: "1.25%"
   policy_fairness_engineering_rate: "24.02%"
+  temporal_full_first_rate: "9.62%"
+  temporal_full_validation_rate: "10.42%"
+  temporal_full_final_rate: "11.91%"
+  final_test_mean_probability: "11.02%"
+  final_test_calibration_gap: "−1.07"
 
 required_links:
   - "notebooks/README.md"
@@ -97,11 +102,13 @@ required_links:
   - "docs/sql_python_temporal_equivalence.md"
   - "docs/hazard_configuration_contract.md"
   - "docs/synthetic_signal_governance.md"
+  - "docs/temporal_prior_shift.md"
   - "notebooks/31_ibm_external_benchmark.ipynb"
   - "notebooks/32_retention_explanation_stability.ipynb"
   - "notebooks/33_survival_analysis.ipynb"
   - "notebooks/34_retention_policy_equity.ipynb"
   - "notebooks/35_deployed_policy_fairness.ipynb"
+  - "notebooks/36_temporal_prior_shift.ipynb"
   - "scripts/README.md"
   - "scripts/checkpoints/README.md"
   - "scripts/run_project.py"

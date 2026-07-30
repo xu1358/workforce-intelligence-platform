@@ -6,10 +6,10 @@ Checkpoint 51 changes how the analytical work is presented without changing
 the data generator, model, calibration, policy, dashboard, or workforce
 planning calculations.
 
-Thirty-three checkpoint notebooks document the construction history in detail. That
-history is valuable for auditing, but it is too long to serve as the primary
-portfolio narrative. The curated layer reduces the reviewer-facing path to
-four executed notebooks while retaining all supporting notebooks.
+Thirty-six checkpoint notebooks document the construction history in detail.
+That history is valuable for auditing, but it is too long to serve as the
+primary portfolio narrative. The curated layer reduces the reviewer-facing
+path to four executed notebooks while retaining all supporting notebooks.
 
 ## Portfolio sequence
 
@@ -127,6 +127,15 @@ Checkpoint 56 adds
 extension. It audits salary allocation after economic optimization, compares
 salary-neutral and salary-capped sensitivities, and preserves the frozen
 policy and outcome-access boundaries.
+
+Checkpoint 64 adds `notebooks/35_deployed_policy_fairness.ipynb` as the
+authoritative decision-layer subgroup audit. It reproduces the exact frozen
+expected-value policy instead of substituting probability-only selection.
+
+Checkpoint 65 adds `notebooks/36_temporal_prior_shift.ipynb` as a temporal
+calibration-transport extension. It quantifies material base-rate drift,
+documents prior-probability shift risk, and prohibits recalibration on the
+once-only final test.
 
 ## Automated validation
 

@@ -22,6 +22,11 @@ probability ranking and expected-value ranking are not interchangeable. The
 live audit reconciles its selection with Checkpoint 46 before publishing any
 subgroup metric.
 
+Checkpoint 65 adds regression coverage for temporal outcome prevalence and
+calibration transport. Tests reproduce the period-rate arithmetic, require
+qualified prior-shift terminology, and prohibit final-test recalibration or
+changes to the selected model, policy, and dashboard probabilities.
+
 ## Quality Gates
 
 The local and GitHub workflows run the same four gates in the same order:

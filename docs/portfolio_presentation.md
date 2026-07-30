@@ -46,6 +46,27 @@ Detailed evidence and safeguards are documented in
 
 ---
 
+## Temporal Calibration Transport
+
+Historical 12-month attrition prevalence rises from `9.62%` to `10.42%` to
+`11.91%`, a `23.74%` relative increase. In the model-eligible population,
+sigmoid calibration is selected on a `10.61%` validation period and evaluated
+on a `12.09%` final-test period.
+
+The final mean prediction is `11.02%`, so the aggregate calibration gap is
+`−1.07` percentage points. The model tracks part of the period change but not
+all of it. This is described as prior-probability shift risk rather than proof
+of pure label shift.
+
+The final test is not used to recalibrate probabilities. In a real deployment,
+recalibration would be fit only after a new labeled monitoring window matures
+and would be evaluated on a later untouched period.
+
+Detailed evidence is documented in
+[`temporal_prior_shift.md`](temporal_prior_shift.md).
+
+---
+
 ## Technology Stack
 
 - Python

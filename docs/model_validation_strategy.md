@@ -24,6 +24,21 @@ Version 2 therefore uses chronological periods.
 The prediction windows touch at their boundaries but do not overlap.
 Each termination can belong to only one outcome window.
 
+## Observed Base Rates and Temporal Transport
+
+After the once-only final evaluation is complete, the model-eligible outcome
+rates are 9.84% in train, 10.61% in validation, and 12.09% in the final test.
+The full historical population rates are 9.62%, 10.42%, and 11.91%.
+
+That upward drift is not used during split creation because the test target is
+still masked at that stage. It becomes post-evaluation monitoring evidence:
+calibration selected on the 10.61% validation period underpredicts the 12.09%
+final-test aggregate by 1.07 percentage points.
+
+The result is documented as prior-probability shift risk rather than proof of
+pure label shift. No model or policy decision is revisited after seeing it.
+See [Temporal Base-Rate Drift and Prior-Shift Risk](temporal_prior_shift.md).
+
 ## Why Validation Is Separate From Test
 
 Choosing a model, probability calibration method, risk cutoff, or
@@ -127,4 +142,5 @@ the documented simulation.
 The grouped folds are not temporal folds because they contain rows from
 both development snapshots. They measure employee-disjoint robustness;
 the 2024 validation period remains the primary time-based model-selection
-test.
+test. Checkpoint 65 separately documents calibration transport after the
+frozen final result is known.

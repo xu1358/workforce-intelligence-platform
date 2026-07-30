@@ -41,6 +41,21 @@ Otherwise, the target is zero.
 The three outcome periods are adjacent and do not overlap. An exit on
 one boundary date cannot be counted in both neighboring windows.
 
+### Base-rate drift
+
+The full-population rate rises from 9.62% to 10.42% to 11.91%. The
+first-to-final increase is 2.284 percentage points, or 23.74% relative to the
+first period. This is a substantive temporal change, not just a table-format
+detail.
+
+For the classifier's eligible population, the corresponding rates are 9.84%,
+10.61%, and 12.09%. Calibration selected on the middle period therefore has
+to transport to a later period with a 13.92% higher outcome prevalence.
+Checkpoint 65 names this **prior-probability shift risk**, quantifies its
+relationship to final-test underprediction, and keeps the result diagnostic
+rather than recalibrating on the final test. See the
+[temporal prior-shift audit](temporal_prior_shift.md).
+
 ## What one row represents
 
 One historical row represents one employee at one snapshot date.
@@ -206,6 +221,7 @@ All Checkpoint 38 checks pass:
 - The data remains synthetic.
 - Historical department changes are not simulated.
 - Current scoring has no observable post-2026 outcomes.
+- Outcome prevalence changes materially across historical periods.
 - Multiple rows from one employee are statistically dependent.
 - Feature redundancy and encoding are deferred to Checkpoint 39.
 - Final train, validation, and test assignments are deferred to

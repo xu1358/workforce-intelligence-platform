@@ -99,6 +99,16 @@ def test_deployed_policy_fairness_runs_after_policy_selection() -> None:
     )
 
 
+def test_prior_shift_audit_runs_after_once_only_policy_evaluation() -> None:
+    """Temporal prevalence drift must remain a post-evaluation diagnostic."""
+
+    names = [step.name for step in VERSION_2_ANALYSIS_STEPS]
+
+    assert names.index("Audit temporal base-rate and prior shift") > names.index(
+        "Optimize and evaluate retention policy"
+    )
+
+
 def test_pipeline_options_remove_only_requested_stage_groups() -> None:
     """Portable skip flags must have narrow and predictable effects."""
 
