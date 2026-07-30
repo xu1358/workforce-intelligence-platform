@@ -7,9 +7,9 @@ leakage, and signal checks and is approved for multi-snapshot dataset
 construction.
 
 Checkpoint 37 initially identified that the first hazard configuration
-produced insufficient observable signal: a leakage-safe five-fold
-Logistic Regression diagnostic reached approximately 0.54 ROC-AUC,
-below the configured minimum of 0.62.
+produced insufficient observable signal: a leakage-safe five-fold Logistic
+Regression generator diagnostic reached approximately 0.54 ROC-AUC, below the
+development-only acceptance minimum of 0.62.
 
 The hazard was recalibrated before approval:
 
@@ -20,7 +20,8 @@ The hazard was recalibrated before approval:
 
 This adjustment increased detectable signal without making the outcome
 deterministic or pushing the twelve-month attrition rate outside its
-target range.
+acceptance range. It occurred before formal temporal model development and
+without access to the reserved final-test target.
 
 ## Headline Comparison
 
@@ -75,7 +76,7 @@ protected structural levels in this version. When a team manager exits,
 surviving reports receive a valid same-department reassignment and a
 dated manager-change event.
 
-## Calibration Results
+## Generator Acceptance Results
 
 The final Version 2 reference run produces:
 
@@ -86,14 +87,15 @@ The final Version 2 reference run produces:
 - 803 positive cases in the 2025 twelve-month target window
 - 11.91% next-twelve-month positive rate
 
-The configured acceptance ranges are:
+These ranges validate the synthetic data-generating process. They are not
+performance targets for the later classifier:
 
 | Check | Accepted range | Version 2 |
 |---|---:|---:|
 | Twelve-month positive rate | 7%–13% | 11.91% |
 | Positive cases | 500–1,100 | 803 |
 | Voluntary share | 65%–80% | 71.17% |
-| Diagnostic ROC-AUC | 0.62–0.75 | 0.6298 |
+| Development-only generator ROC-AUC diagnostic | 0.62–0.75 | 0.6298 |
 | Maximum numeric target correlation | At most 0.40 | 0.1292 |
 | Maximum large-group rate ratio | At most 2.00 | 1.3611 |
 
@@ -110,9 +112,15 @@ A simple five-fold Logistic Regression diagnostic produces:
 | PR-AUC lift over no-skill | 1.62 |
 
 This is deliberately not the project's final model evaluation. Its only
-purpose is to verify that observable history contains moderate signal.
-Formal temporal splitting, validation, model selection, calibration,
-and policy evaluation occur later.
+purpose is to reject a generator with either nearly random or unrealistically
+easy observable signal. Formal temporal splitting, validation, model
+selection, calibration, and policy evaluation occur later.
+
+The frozen final model subsequently produced `0.6061` ROC-AUC on the once-only
+2025 temporal test, below the generator diagnostic band. That result was
+retained without post-test retuning. See
+`docs/synthetic_signal_governance.md` for the full chronology and
+methodological safeguards.
 
 The strongest individual numeric relationship is recent performance,
 with an absolute target correlation of approximately 0.129. No
@@ -181,3 +189,5 @@ configuration, notebook, and this methodology document are tracked.
   estimates.
 - Passing these checks supports internal consistency, not real-world
   validity.
+- The `0.62–0.75` band is a synthetic-design choice, not an external industry
+  benchmark or a promise about final-model performance.

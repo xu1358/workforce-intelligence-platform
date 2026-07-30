@@ -1,0 +1,58 @@
+version: "1.0"
+description: >
+  Governance contract separating the development-only synthetic-generator
+  signal diagnostic from model selection and once-only final testing.
+
+hazard_config: config/attrition_hazard_config.yaml
+data_validator: src/validate_v2_attrition_data.py
+reviewer_document: docs/synthetic_signal_governance.md
+public_documents:
+  - README.md
+  - docs/synthetic_signal_governance.md
+  - docs/portfolio_presentation.md
+
+diagnostic_contract:
+  config_section: generator_acceptance_targets
+  config_key: observable_signal_diagnostic
+  metric: five_fold_logistic_regression_roc_auc
+  minimum: 0.62
+  maximum: 0.75
+  initial_observed_approximate: 0.54
+  accepted_observed: 0.6298
+  performed_before_temporal_model_development: true
+  final_test_target_accessed: false
+  selects_final_model: false
+  establishes_external_validity: false
+
+later_model_evidence:
+  validation_selected_model: Logistic Regression
+  validation_roc_auc: 0.621134
+  final_test_roc_auc: 0.606113
+  final_test_evaluated_once: true
+  post_test_retuning_performed: false
+
+public_documentation:
+  required_phrases:
+    - "development-only"
+    - "generator acceptance"
+    - "once-only final test"
+    - "0.6061"
+    - "no retuning"
+  private_markers_prohibited_in_repository:
+    - "30-Second Answer"
+    - "15-Second Answer"
+    - "Shorter Answer"
+    - "Personal preparation material"
+    - "> I calibrated"
+    - "my final model"
+
+governance:
+  changes_synthetic_records: false
+  reruns_generator: false
+  changes_model_results: false
+  reopens_final_test: false
+  changes_frozen_policy: false
+  changes_dashboard_data: false
+  documentation_and_naming_only: true
+
+output_directory: data/processed/generator_signal_governance

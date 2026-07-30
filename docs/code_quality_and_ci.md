@@ -247,7 +247,10 @@ and verifies that the Windows wrapper delegates to the canonical Python
 runner. Checkpoint 60 makes the attrition-hazard simulation mapping an
 executable contract and adds regression coverage for every setting. It also
 checks that archived PowerShell runners resolve the repository root from
-their new directory.
+their new directory. Checkpoint 61 prevents generator-signal acceptance
+language from being confused with model selection, validates the chronology
+through the unchanged final-test result, and keeps private first-person notes
+outside the public repository.
 
 ## End-to-End Integration
 

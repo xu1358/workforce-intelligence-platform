@@ -15,6 +15,7 @@ measurements from a real employer.
 | --- | --- | ---: | --- |
 | 7,409 current active employees and 7,305 model-eligible employees | `data/processed/dashboard/dashboard_metadata.csv` | 47 | Notebook 4 and `docs/dashboard_current_state.md` |
 | 2023 train, 2024 validation, and reserved 2025 final-test populations | `data/processed/model_split_summary.csv` | 40 | Notebooks 1–2 and `docs/model_validation_strategy.md` |
+| Generator diagnostic 0.6298 was development-only; final-test ROC-AUC 0.6061 was retained without retuning | `data/processed/v2_validation/diagnostic_model_summary.csv` and `data/processed/retention_final_test_model_metrics.csv` | 37 and 46 | `docs/synthetic_signal_governance.md` |
 | Logistic Regression selected on validation | `data/processed/model_selection_decision_v2.csv` | 41 | Notebook 2 and `docs/model_comparison_v2.md` |
 | Sigmoid calibration selected | `data/processed/retention_calibration_selection.csv` | 42 | Notebook 2 and `docs/calibration_analysis.md` |
 | Final-test PR-AUC 0.1710, ROC-AUC 0.6061, and Brier 0.1048 | `data/processed/retention_final_test_model_metrics.csv` | 46 | Notebook 2 and `docs/retention_policy_analysis.md` |
@@ -45,6 +46,10 @@ without downloading employee-level synthetic records.
 The final model metrics come from the reserved 2025 snapshot predicting through
 2026-06-30. The target was accessed once after the model, calibration, economic
 assumptions, and intervention policy were frozen.
+
+The earlier `0.62–0.75` ROC-AUC range belongs only to the synthetic-generator
+acceptance stage. The later final-test ROC-AUC of `0.6061` was not compared
+with that band for retuning or acceptance.
 
 ### Current planning projections
 

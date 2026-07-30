@@ -90,6 +90,7 @@ required_links:
   - "docs/dependency_reproducibility.md"
   - "docs/cross_platform_execution.md"
   - "docs/hazard_configuration_contract.md"
+  - "docs/synthetic_signal_governance.md"
   - "notebooks/31_ibm_external_benchmark.ipynb"
   - "notebooks/32_retention_explanation_stability.ipynb"
   - "notebooks/33_survival_analysis.ipynb"

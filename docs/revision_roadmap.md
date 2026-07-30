@@ -84,10 +84,13 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 60:** Convert every attrition-hazard simulation setting into an
   executable, tested runtime contract and repair archived-runner root
   resolution without changing generated or downstream results.
+- **Checkpoint 61:** Separate the synthetic-generator signal acceptance check
+  from model performance and document the design chronology without reopening
+  any analytical result.
 
 ## Optional Advanced Extensions
 
-- **Checkpoint 61:** Deploy a public demonstration dashboard if a hosted demo
+- **Checkpoint 62:** Deploy a public demonstration dashboard if a hosted demo
   is later required.
 
 ## Primary Version 2 Decision Question

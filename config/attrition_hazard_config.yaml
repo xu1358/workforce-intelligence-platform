@@ -27,7 +27,7 @@ baseline_probabilities:
   voluntary_exit: 0.0054
   involuntary_exit: 0.0018
 
-calibration_targets:
+generator_acceptance_targets:
   annual_attrition_rate:
     minimum: 0.07
     preferred: 0.10
@@ -43,15 +43,17 @@ calibration_targets:
     preferred: 750
     maximum: 1100
 
-  model_roc_auc:
+  observable_signal_diagnostic:
+    metric: "five_fold_logistic_regression_roc_auc"
+    stage: "generator_validation_before_temporal_model_development"
     minimum: 0.62
-    preferred: 0.68
     maximum: 0.75
-
-  top_decile_lift:
-    minimum: 1.5
-    preferred: 2.0
-    maximum: 3.0
+    purpose: >-
+      Confirm that the synthetic histories contain moderate recoverable signal
+      while retaining a ceiling that rejects an unrealistically easy outcome.
+    prohibited_use: >-
+      Do not use this range to select the final classifier, tune against the
+      reserved test period, or claim real-world predictive validity.
 
 probability_limits:
   minimum_cause_probability: 0.0001

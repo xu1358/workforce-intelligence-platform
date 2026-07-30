@@ -145,7 +145,7 @@ def test_archived_powershell_runners_resolve_repository_root(
         archive / "execute_supporting_notebooks.ps1",
     ]
 
-    assert len(paths) == 26
+    assert len(paths) == 27
     for path in paths:
         content = path.read_text(encoding="utf-8")
         assert "$ScriptsDirectory = Split-Path -Parent $PSScriptRoot" in content

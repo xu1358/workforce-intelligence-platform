@@ -343,6 +343,7 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `tests/test_markdown_integrity.py` | Tests CommonMark fence balance and Mermaid ER rendering |
 | `tests/test_cross_platform_runner.py` | Tests portable commands, stage parity, archive layout, and wrapper delegation |
 | `tests/test_hazard_configuration_contract.py` | Tests complete simulation-key wiring, behavior, and governance |
+| `tests/test_generator_signal_governance.py` | Tests generator/model separation, chronology, public evidence, and private-note exclusion |
 | `scripts/checkpoints/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
 | `scripts/checkpoints/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
 | `scripts/checkpoints/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
@@ -354,6 +355,7 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `src/validate_cross_platform_runner.py` | Saves aggregate runner and repository-layout validation |
 | `scripts/checkpoints/run_checkpoint59.ps1` | Applies and validates the runner reorganization on Windows |
 | `scripts/checkpoints/run_checkpoint60.ps1` | Validates executable hazard settings and the complete quality suite |
+| `scripts/checkpoints/run_checkpoint61.ps1` | Validates generator-signal governance and the complete quality suite |
 | `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `requirements.txt` | Pins every direct dependency |
 | `requirements-lock.txt` | Pins and hashes every resolved distribution |
@@ -420,6 +422,17 @@ administrative-censoring boundary.
 The committed values reproduce the prior hard-coded semantics, so these
 checks prevent silent configuration drift without retuning the synthetic
 generator.
+
+## Generator-Signal Governance Contracts
+
+Checkpoint 61 renames the old model-sounding ROC-AUC target as a
+development-only generator diagnostic. Tests verify its lower and upper
+bounds, disclose both the initial `0.54` and accepted `0.6298` diagnostics,
+and require the later `0.6061` final-test result to remain evidence of no
+post-test retuning.
+
+The public methodology is tested for essential chronology and the absence of
+private first-person response markers.
 
 ## Limitations
 

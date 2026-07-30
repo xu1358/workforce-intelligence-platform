@@ -822,7 +822,7 @@ def main() -> None:
             }
         )
 
-    targets = hazard_config["calibration_targets"]
+    targets = hazard_config["generator_acceptance_targets"]
     rules = hazard_config["validation_rules"]
 
     add_check(
@@ -974,21 +974,23 @@ def main() -> None:
             "are included."
         ),
     )
+    signal_diagnostic = targets["observable_signal_diagnostic"]
     add_check(
-        "Detectable observable signal",
+        "Development-only generator signal",
         (
-            float(targets["model_roc_auc"]["minimum"])
+            float(signal_diagnostic["minimum"])
             <= diagnostic_roc_auc
-            <= float(targets["model_roc_auc"]["maximum"])
+            <= float(signal_diagnostic["maximum"])
         ),
         f"{diagnostic_roc_auc:.4f}",
         (
-            f"{targets['model_roc_auc']['minimum']:.2f}"
-            f"–{targets['model_roc_auc']['maximum']:.2f}"
+            f"{signal_diagnostic['minimum']:.2f}"
+            f"–{signal_diagnostic['maximum']:.2f}"
         ),
         (
-            "Five-fold Logistic Regression diagnostic; this is a "
-            "generator check, not final model selection."
+            "Five-fold Logistic Regression is used only to reject a "
+            "signal-free or overly easy generator before temporal model "
+            "development. It is not a final-model performance target."
         ),
     )
     add_check(

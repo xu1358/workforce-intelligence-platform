@@ -30,6 +30,21 @@ The project uses entirely synthetic employee and candidate data.
 
 ---
 
+## Generator Signal Governance
+
+The generator used a development-only ROC-AUC diagnostic before formal model
+development. Its purpose was to reject both a nearly random synthetic problem
+and an unrealistically easy one.
+
+The accepted generator diagnostic was `0.6298`. The later once-only final test
+produced `0.6061` ROC-AUC with no retuning. Therefore the generator acceptance
+range is not a final-model performance requirement.
+
+Detailed evidence and safeguards are documented in
+[`synthetic_signal_governance.md`](synthetic_signal_governance.md).
+
+---
+
 ## Technology Stack
 
 - Python

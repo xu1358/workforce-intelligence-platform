@@ -134,6 +134,21 @@ See the [temporal dataset design](docs/temporal_dataset_design.md),
 
 ## Model Development and Final Evaluation
 
+### Generator signal is not a model-performance target
+
+Before formal model development, a simple five-fold diagnostic checked whether
+the synthetic generator contained moderate, recoverable signal. Its accepted
+ROC-AUC was 0.6298 inside a bounded 0.62–0.75 generator acceptance range. The
+lower bound rejected a nearly random synthetic problem; the upper bound
+rejected an unrealistically easy one.
+
+This range did not select the final classifier and was never enforced on the
+reserved test. After the data and modeling decisions were frozen, the
+once-only final-test ROC-AUC was 0.6061—below the generator band—and no
+retuning occurred. See the
+[synthetic-generator signal governance](docs/synthetic_signal_governance.md)
+for the full chronology and methodological safeguards.
+
 ### Candidate comparison
 
 Logistic Regression, Gradient Boosting, and Random Forest receive the same 21
@@ -574,6 +589,7 @@ They are no longer the primary project interface. See
 | SQL metrics | [Analytics definitions](docs/analytics.md) |
 | Version 2 data | [V1 versus V2 comparison](docs/v1_v2_data_comparison.md) |
 | Hazard configuration | [Executable simulation contract](docs/hazard_configuration_contract.md) |
+| Generator signal | [Synthetic signal governance](docs/synthetic_signal_governance.md) |
 | Temporal features | [Temporal dataset design](docs/temporal_dataset_design.md) |
 | Validation splits | [Model validation strategy](docs/model_validation_strategy.md) |
 | Feature policy | [Feature interpretation](docs/feature_interpretation.md) |

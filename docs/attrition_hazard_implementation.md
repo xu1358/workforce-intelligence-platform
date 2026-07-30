@@ -54,8 +54,8 @@ The monthly logits combine:
 
 Protected demographic attributes and future information are excluded.
 
-All coefficients, probability bounds, latent-effect scales, and
-calibration targets are stored in:
+All coefficients, probability bounds, latent-effect scales, and generator
+acceptance targets are stored in:
 
 ```text
 config/attrition_hazard_config.yaml
@@ -78,6 +78,11 @@ descriptive metadata:
 Missing, mistyped, and unsupported controls fail before simulation. See
 `docs/hazard_configuration_contract.md` for executable examples and
 validation evidence.
+
+The generator’s `0.62–0.75` observable-signal diagnostic is not a target for
+the final classifier. It is applied before temporal model development to
+reject both signal-free and overly easy synthetic outcomes. The later
+once-only final-test ROC-AUC of `0.6061` is retained without retuning.
 
 ## Hierarchy Handling
 
