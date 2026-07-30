@@ -6,7 +6,7 @@ Checkpoint 51 changes how the analytical work is presented without changing
 the data generator, model, calibration, policy, dashboard, or workforce
 planning calculations.
 
-Thirty-six checkpoint notebooks document the construction history in detail.
+Thirty-eight checkpoint notebooks document the construction history in detail.
 That history is valuable for auditing, but it is too long to serve as the
 primary portfolio narrative. The curated layer reduces the reviewer-facing
 path to four executed notebooks while retaining all supporting notebooks.
@@ -136,6 +136,17 @@ Checkpoint 65 adds `notebooks/36_temporal_prior_shift.ipynb` as a temporal
 calibration-transport extension. It quantifies material base-rate drift,
 documents prior-probability shift risk, and prohibits recalibration on the
 once-only final test.
+
+Checkpoint 66 adds two authoritative data-foundation successors:
+
+- `notebooks/37_v2_exploratory_analysis.ipynb` profiles the temporal panel,
+  current population, training-only group rates, and review-history
+  availability without inspecting reserved outcomes for EDA; and
+- `notebooks/38_v2_department_history.ipynb` verifies immutable department
+  assignment, location-semantic transfers, and dated location reconstruction
+  without accessing attrition targets.
+
+Notebooks 18–19 remain explicitly labeled historical Version 1 evidence.
 
 ## Automated validation
 

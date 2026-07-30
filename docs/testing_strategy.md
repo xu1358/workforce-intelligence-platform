@@ -48,6 +48,20 @@ Checkpoint 65 adds tests proving that:
   changes remain prohibited; and
 - Notebook 36 retains executed aggregate outputs.
 
+## Version 2 Exploratory and History Contracts
+
+Checkpoint 66 adds tests proving that:
+
+- the 16,673-row Version 2 temporal panel, not the 7,386-row Version 1
+  snapshot, is the authoritative exploratory population;
+- exploratory outcome relationships use the training snapshot only;
+- the Version 1 15.07% versus 6.36% review-missingness result is not reused;
+- Version 2 training reports 9.81% versus 9.23% with explicit denominators;
+- all 486 transfer events remain location-semantic;
+- no temporal-panel employee receives multiple departments;
+- the history audit accesses no attrition target; and
+- Notebooks 37–38 remain executed, portable, and free of errors.
+
 ## What the Tests Cover
 
 ### 1. Configuration Contracts
@@ -393,6 +407,7 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `scripts/checkpoints/run_checkpoint62.ps1` | Builds Version 2 from PostgreSQL, validates source/output parity, and runs the complete quality suite |
 | `scripts/checkpoints/run_checkpoint63.ps1` | Executes the temporal SQL, compares every result with Python, and runs the complete quality suite |
 | `scripts/checkpoints/run_checkpoint65.ps1` | Audits temporal base-rate drift, executes Notebook 36, and runs the complete quality suite |
+| `scripts/checkpoints/run_checkpoint66.ps1` | Runs authoritative Version 2 EDA and history audits, executes Notebooks 37–38, and runs the complete quality suite |
 | `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `requirements.txt` | Pins every direct dependency |
 | `requirements-lock.txt` | Pins and hashes every resolved distribution |

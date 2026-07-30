@@ -37,7 +37,7 @@ separators.
 | `postgres` | Load PostgreSQL, build Version 2 temporal data, validate source parity, and execute SQL/Python equivalence |
 | `pipeline` | Complete Version 2 generation, modeling, database, policy, and portfolio pipeline |
 | `dashboard` | Launch the Streamlit dashboard |
-| `notebooks` | Execute and validate the twelve supporting notebooks |
+| `notebooks` | Execute and validate the sixteen supporting notebooks |
 | `organize-checkpoints` | One-time migration of checkpoint journals |
 
 List all options:
@@ -135,8 +135,8 @@ The runner validation verifies:
 - The `--skip-postgres` path receives `--source csv`.
 - Skip flags remove only their intended stage groups.
 - No shell operators or shell executables are used.
-- Twelve supporting notebooks come from the committed manifest.
-- Twenty-eight checkpoint runners are archived outside the scripts root.
+- Sixteen supporting notebooks come from the committed manifest.
+- Thirty-one checkpoint runners are archived outside the scripts root.
 - Archived PowerShell runners resolve the repository root from their new
   two-level location.
 - The Windows wrapper delegates to the Python runner.

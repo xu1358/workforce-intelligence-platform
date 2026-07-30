@@ -149,6 +149,14 @@ V2_SQL_EQUIVALENCE_STEP = python_script(
 
 VERSION_2_ANALYSIS_STEPS = (
     python_script(
+        "Analyze Version 2 temporal data",
+        "src/analyze_v2_exploratory_data.py",
+    ),
+    python_script(
+        "Audit Version 2 department and location history",
+        "src/audit_v2_department_history.py",
+    ),
+    python_script(
         "Diagnose feature redundancy and stability",
         "src/diagnose_feature_redundancy.py",
     ),

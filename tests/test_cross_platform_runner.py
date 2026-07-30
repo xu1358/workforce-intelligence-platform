@@ -89,6 +89,18 @@ def test_sql_equivalence_runs_before_model_analysis() -> None:
     )
 
 
+def test_version_2_exploration_precedes_feature_diagnostics() -> None:
+    """Current EDA and history evidence must describe data before modeling."""
+
+    names = [step.name for step in VERSION_2_ANALYSIS_STEPS]
+
+    assert names[:3] == [
+        "Analyze Version 2 temporal data",
+        "Audit Version 2 department and location history",
+        "Diagnose feature redundancy and stability",
+    ]
+
+
 def test_deployed_policy_fairness_runs_after_policy_selection() -> None:
     """Decision-layer subgroup evidence must use the frozen policy."""
 

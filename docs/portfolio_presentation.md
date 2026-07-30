@@ -67,6 +67,26 @@ Detailed evidence is documented in
 
 ---
 
+## Version 2 Exploratory Evidence
+
+The primary exploratory population is now the 16,673-row temporal panel with
+7,745 unique employees, not the discarded 7,386-row Version 1 snapshot.
+Performance-history missingness is explicitly re-tested on training data:
+9.81% attrition without a prior review versus 9.23% with review history. The
+old 15.07% versus 6.36% result is historical only.
+
+The related assignment audit shows that all 486 transfer events represent
+location, department is invariant by generator design, and 86 historical rows
+are protected from final-location backfill. This is evidence of correct
+temporal attribution and also a limitation: real department mobility is not
+represented.
+
+Detailed evidence is documented in
+[`v2_exploratory_analysis.md`](v2_exploratory_analysis.md) and
+[`v2_department_history.md`](v2_department_history.md).
+
+---
+
 ## Technology Stack
 
 - Python

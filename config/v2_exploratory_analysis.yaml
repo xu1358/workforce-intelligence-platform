@@ -1,0 +1,101 @@
+version: "1.0"
+description: >
+  Reproducible exploratory analysis of the Version 2 temporal panel and
+  current scoring population. Outcome relationships are restricted to the
+  training snapshot; later outcomes remain outside pre-model exploration.
+
+inputs:
+  temporal_panel: data/processed/retention_multi_snapshot.csv
+  current_population: data/processed/current_active_scoring_population.csv
+
+columns:
+  employee_id: employee_id
+  snapshot_sequence: snapshot_sequence
+  target: attrition_next_12m
+  review_flag: no_prior_review
+  review_fields:
+    - performance_rating
+    - goal_completion
+    - promotion_recommended
+    - days_since_review
+    - average_performance_rating
+  group_dimensions:
+    - department_name
+    - employment_type
+    - organizational_level
+    - job_level
+    - region
+
+periods:
+  - snapshot_sequence: 1
+    label: 2023 training snapshot
+    role: training_eda
+  - snapshot_sequence: 2
+    label: 2024 validation snapshot
+    role: structure_only
+  - snapshot_sequence: 3
+    label: 2025 final-test snapshot
+    role: structure_only
+
+expected:
+  historical_rows: 16673
+  historical_unique_employees: 7745
+  current_rows: 7409
+  period_rows:
+    - 4303
+    - 5625
+    - 6745
+  historical_missing_review_rows: 7226
+  historical_missing_review_rate: 0.43339530978228274
+  current_missing_review_rows: 1475
+  current_missing_review_rate: 0.19908219732757457
+  missing_review_rate_by_period:
+    - 0.6776667441320009
+    - 0.4424888888888889
+    - 0.2699777613046701
+  training_missing_review_rows: 2916
+  training_missing_review_positive_cases: 286
+  training_missing_review_attrition_rate: 0.09807956104252401
+  training_review_present_rows: 1387
+  training_review_present_positive_cases: 128
+  training_review_present_attrition_rate: 0.09228550829127613
+  training_missingness_gap: 0.005794052751247877
+
+historical_v1_baseline:
+  rows: 7386
+  attrition_rate: 0.08489
+  missing_review_rows: 1805
+  missing_review_rate: 0.2444
+  missing_review_attrition_rate: 0.1507
+  review_present_attrition_rate: 0.0636
+  label: Version 1 single snapshot
+
+thresholds:
+  reconciliation_tolerance: 1.0e-12
+  minimum_group_rows: 5
+
+governance:
+  version_2_is_authoritative: true
+  training_outcomes_only_for_eda: true
+  validation_outcomes_used_for_eda: false
+  final_test_outcomes_used_for_eda: false
+  current_outcomes_known: false
+  causal_claims_permitted: false
+  changes_selected_model: false
+  changes_frozen_policy: false
+  changes_dashboard_probabilities: false
+
+outputs:
+  directory: data/processed/v2_exploratory_analysis
+  files:
+    dataset_profile: dataset_profile.csv
+    period_structure: period_structure.csv
+    missingness: missingness_summary.csv
+    review_missingness: training_review_missingness.csv
+    group_rates: training_group_rates.csv
+    v1_v2_comparison: v1_v2_missingness_comparison.csv
+    validation: validation_checks.csv
+  figures:
+    - review_availability_over_time.png
+    - training_department_attrition.png
+    - v1_v2_missingness_signal.png

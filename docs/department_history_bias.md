@@ -1,5 +1,10 @@
 # Historical Assignment Attribution Analysis
 
+> **Historical Version 1 evidence only.** The current temporal dataset is
+> audited separately in the authoritative
+> [Version 2 department and location history report](v2_department_history.md)
+> and [Notebook 38](../notebooks/38_v2_department_history.ipynb).
+
 ## Purpose
 
 This analysis tests whether historical workforce activity is incorrectly

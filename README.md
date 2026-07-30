@@ -154,6 +154,23 @@ See the [temporal dataset design](docs/temporal_dataset_design.md),
 [feature policy](docs/feature_interpretation.md), and
 [validation strategy](docs/model_validation_strategy.md).
 
+### Version 2 exploratory profile
+
+The authoritative historical panel contains 16,673 employee-snapshot rows
+covering 7,745 unique employees; current scoring contains 7,409 active
+employees. Review history changes with snapshot age: `no_prior_review` falls
+from 67.77% in training to 44.25%, 27.00%, and 19.91% in current scoring.
+
+The strong Version 1 missingness result does not transfer. Version 2 training
+attrition is 9.81% without a prior review versus 9.23% with review history, a
+0.58-point descriptive gap rather than 8.71 points. Department is invariant by
+generator design; all 486 transfer events represent location, and dated
+reconstruction protects 86 historical rows from final-location backfill. See
+the [Version 2 EDA](docs/v2_exploratory_analysis.md),
+[history audit](docs/v2_department_history.md), and executed
+[Notebook 37](notebooks/37_v2_exploratory_analysis.ipynb) and
+[Notebook 38](notebooks/38_v2_department_history.ipynb).
+
 ## Model Development and Final Evaluation
 
 ### Generator signal is not a model-performance target
@@ -452,19 +469,21 @@ are embedded, so they can be read on GitHub without rerunning the pipeline.
 | 3 | [Fairness, Economics, and Policy](notebooks/portfolio/03_fairness_economics_and_policy.ipynb) | How do subgroup risk, costs, capacity, and governance affect the decision? |
 | 4 | [Current Workforce Stability Plan](notebooks/portfolio/04_current_workforce_stability_plan.ipynb) | How does the frozen policy support current manufacturing planning? |
 
-The 35 numbered checkpoint notebooks remain in `notebooks/` as detailed
+The 38 numbered checkpoint notebooks remain in `notebooks/` as detailed
 technical evidence and an audit trail. Notebook 31 separately documents the
 IBM external benchmark, Notebook 32 documents aggregate explanation
 stability, Notebook 33 documents survival analysis, and
 [Notebook 34](notebooks/34_retention_policy_equity.ipynb) audits
 salary allocation in the frozen policy.
 [Notebook 35](notebooks/35_deployed_policy_fairness.ipynb) audits subgroup
-selection under the exact expected-value rule. None is part of the
-four-notebook primary narrative.
+selection under the exact expected-value rule. Notebook 36 audits temporal
+prior shift, while [Notebooks 37–38](notebooks/README.md) provide the
+authoritative Version 2 EDA and history-attribution evidence. None is part of
+the four-notebook primary narrative.
 
-Reviewer-visible Version 2 supporting Notebooks `20`–`30` also include saved
-tables and figures. Automated validation prevents them from returning to blank
-notebook templates.
+Reviewer-visible Version 2 supporting Notebooks `20`–`30` and `34`–`38` also
+include saved tables and figures. Automated validation prevents them from
+returning to blank notebook templates.
 
 ## Technology Stack
 
@@ -491,7 +510,7 @@ workforce-intelligence-platform/
 ├── models/                # Generated model artifacts
 ├── notebooks/
 │   ├── portfolio/         # Four reviewer-facing executed notebooks
-│   └── 01_...34_...       # Detailed supporting and extension notebooks
+│   └── 01_...38_...       # Detailed supporting and extension notebooks
 ├── scripts/               # Cross-platform runner and archived checkpoint history
 ├── sql/                   # Schema, validation, and analytical SQL
 ├── src/                   # Generation, modeling, policy, and dashboard code
@@ -636,6 +655,8 @@ They are no longer the primary project interface. See
 | SQL/Python parity | [Temporal implementation equivalence](docs/sql_python_temporal_equivalence.md) |
 | SQL metrics | [Analytics definitions](docs/analytics.md) |
 | Version 2 data | [V1 versus V2 comparison](docs/v1_v2_data_comparison.md) |
+| Version 2 EDA | [Temporal exploratory analysis](docs/v2_exploratory_analysis.md) |
+| Department/location history | [Version 2 history audit](docs/v2_department_history.md) |
 | Hazard configuration | [Executable simulation contract](docs/hazard_configuration_contract.md) |
 | Generator signal | [Synthetic signal governance](docs/synthetic_signal_governance.md) |
 | Temporal features | [Temporal dataset design](docs/temporal_dataset_design.md) |
@@ -672,6 +693,10 @@ They are no longer the primary project interface. See
 - Calibration on synthetic data does not guarantee calibration elsewhere.
 - Historical prevalence rises materially; the final model underpredicts the
   aggregate by 1.07 percentage points and is not recalibrated on the test.
+- Version 1 EDA results are historical only; Version 2 training shows a much
+  smaller performance-history missingness gap.
+- Synthetic department is time-invariant, so the project cannot evaluate real
+  department mobility without an effective-dated assignment source.
 - Model explanations are log-odds associations, not causal intervention
   effects or calibrated probability changes.
 - Survival hazard ratios are baseline associations, and one feature triggers

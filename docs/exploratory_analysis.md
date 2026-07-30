@@ -1,5 +1,10 @@
 # Workforce Exploratory Analysis
 
+> **Historical Version 1 evidence only.** This report does not describe the
+> temporal data used by the current model, policy, or dashboard. See the
+> authoritative [Version 2 exploratory analysis](v2_exploratory_analysis.md)
+> and [Notebook 37](../notebooks/37_v2_exploratory_analysis.ipynb).
+
 ## Purpose
 
 This report summarizes exploratory analysis of the Version 1 synthetic

@@ -116,3 +116,35 @@ documents:
       - "does not prove pure label shift"
       - "does not change the selected model"
       - "final test is not used for recalibration"
+
+  - path: docs/v2_exploratory_analysis.md
+    required_values:
+      - "16,673"
+      - "7,745"
+      - "43.34%"
+      - "67.77%"
+      - "19.91%"
+      - "15.07%"
+      - "6.36%"
+      - "9.81%"
+      - "9.23%"
+      - "0.58 points"
+    required_phrases:
+      - "authoritative exploratory analysis"
+      - "training snapshot only"
+      - "does not establish causal relationships"
+      - "does not transfer"
+
+  - path: docs/v2_department_history.md
+    required_values:
+      - "10,000"
+      - "486"
+      - "7,745"
+      - "86"
+      - "60"
+      - "107"
+    required_phrases:
+      - "department is assigned at hire and remains invariant"
+      - "location may change"
+      - "does not access the attrition target"
+      - "effective-dated department-assignment"

@@ -1,0 +1,56 @@
+version: "1.0"
+description: >
+  Version 2 audit of department continuity and location-transfer semantics.
+  The audit verifies that department is invariant by generator design while
+  historical locations are reconstructed from dated transfer events.
+
+inputs:
+  employees: data/raw/employees.csv
+  employee_events: data/raw/employee_events.csv
+  departments: data/raw/departments.csv
+  locations: data/raw/locations.csv
+  temporal_panel: data/processed/retention_multi_snapshot.csv
+
+expected:
+  employees: 10000
+  hire_events: 10000
+  parsed_hire_departments: 10000
+  hire_to_current_department_mismatches: 0
+  current_location_differs_from_hire: 107
+  transfer_events: 486
+  transfer_employees: 486
+  location_semantic_transfer_events: 486
+  department_semantic_transfer_events: 0
+  panel_unique_employees: 7745
+  employees_with_multiple_panel_departments: 0
+  historical_rows_reconstructed_away_from_current_location: 86
+  employees_reconstructed_away_from_current_location: 60
+  reconstructed_rows_by_snapshot:
+    - 31
+    - 34
+    - 21
+
+thresholds:
+  reconciliation_tolerance: 1.0e-12
+
+governance:
+  version_2_is_authoritative: true
+  department_is_time_invariant_by_generator_design: true
+  transfer_events_represent_location: true
+  target_column_accessed: false
+  causal_claims_permitted: false
+  changes_model_inputs: false
+  changes_selected_model: false
+  changes_frozen_policy: false
+
+outputs:
+  directory: data/processed/v2_department_history
+  files:
+    summary: department_history_summary.csv
+    event_types: event_type_summary.csv
+    continuity: department_continuity_summary.csv
+    location_reconstruction: location_reconstruction_summary.csv
+    validation: validation_checks.csv
+  figures:
+    - transfer_event_semantics.png
+    - historical_location_reconstruction.png

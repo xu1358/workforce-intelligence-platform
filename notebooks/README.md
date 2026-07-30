@@ -5,7 +5,7 @@ The project contains two notebook layers:
 1. **Portfolio sequence** — four executed notebooks that tell the complete
    Version 2 analytical and business story.
 2. **Supporting checkpoint notebooks** — the original detailed notebooks
-   `01` through `34`, retained as technical evidence and an audit trail.
+   `01` through `38`, retained as technical evidence and an audit trail.
 3. **External benchmark** — Notebook `31`, which evaluates the same
    methodological discipline on a separate fictional IBM dataset.
 4. **Explanation extension** — Notebook `32`, which documents aggregate
@@ -14,6 +14,10 @@ The project contains two notebook layers:
    selection after economic policy optimization.
 6. **Temporal prior-shift extension** — Notebook `36`, which quantifies
    historical base-rate drift and calibration transport.
+7. **Version 2 EDA extension** — Notebook `37`, which profiles the actual
+   temporal panel and re-tests performance-history missingness.
+8. **Version 2 history extension** — Notebook `38`, which verifies department
+   continuity and dated location reconstruction.
 
 ## Recommended reviewer sequence
 
@@ -46,18 +50,18 @@ implementation detail:
 
 - `01`–`10`: generated data and relationship validation
 - `11`–`16`: Version 1 SQL, modeling, interpretation, and dashboard validation
-- `17`–`19`: generator audit, EDA, and historical-assignment analysis
-- `20`–`36`: Version 2 checkpoint-specific analytical validation and extensions
+- `17`–`19`: generator audit and explicitly historical Version 1 EDA/history
+- `20`–`38`: Version 2 checkpoint-specific analytical validation and extensions
 
 These supporting notebooks are not the recommended first reading path.
 
-The reviewer-visible Version 2 notebooks `20`–`30` are committed with saved
+The reviewer-visible Version 2 notebooks `20`–`30` and `34`–`38` are committed with saved
 tables and figures. Their execution state, error outputs, portability, and file
 sizes are enforced by the portfolio validator and automated tests. Regenerate
 them after refreshing the processed pipeline artifacts with:
 
 ```powershell
-.\scripts\execute_supporting_notebooks.ps1
+python scripts\run_project.py notebooks
 ```
 
 ## Separate external benchmark
@@ -99,7 +103,7 @@ final test, change the frozen policy, or export employee-level survival rows.
 Run the survival extension with:
 
 ```powershell
-.\scripts\run_checkpoint55.ps1
+.\scripts\checkpoints\run_checkpoint55.ps1
 ```
 
 ## Separate policy allocation-equity extension
@@ -116,7 +120,7 @@ analysis only.
 Run it with:
 
 ```powershell
-.\scripts\run_checkpoint56.ps1
+.\scripts\checkpoints\run_checkpoint56.ps1
 ```
 
 ## Separate deployed-policy fairness extension
@@ -151,6 +155,29 @@ Run it with:
 .\scripts\checkpoints\run_checkpoint65.ps1
 ```
 
+## Authoritative Version 2 exploratory extension
+
+[Notebook 37: Version 2 Exploratory Analysis](37_v2_exploratory_analysis.ipynb)
+describes the 16,673-row temporal panel, 7,745 unique historical employees,
+training-only group patterns, and changing review-history availability.
+
+It explicitly shows that the Version 1 15.07% versus 6.36% missingness result
+does not transfer: Version 2 training is 9.81% versus 9.23%. Validation and
+final-test outcomes are not used for exploratory relationships.
+
+## Authoritative Version 2 history extension
+
+[Notebook 38: Version 2 Department and Location History](38_v2_department_history.ipynb)
+re-tests Notebook 19's hypothesis on current data. Department remains
+time-invariant, all 486 transfers represent location, and 86 historical rows
+are protected from final-location backfill.
+
+Run both authoritative successors with:
+
+```powershell
+.\scripts\checkpoints\run_checkpoint66.ps1
+```
+
 ## Reproducibility
 
 The embedded outputs were produced from the deterministic Version 2 pipeline.
@@ -171,11 +198,11 @@ Run the external benchmark and reproduce Notebook 31's aggregate source data
 with:
 
 ```powershell
-.\scripts\run_checkpoint53.ps1
+.\scripts\checkpoints\run_checkpoint53.ps1
 ```
 
 Run the primary explanation and stability extension with:
 
 ```powershell
-.\scripts\run_checkpoint54.ps1
+.\scripts\checkpoints\run_checkpoint54.ps1
 ```

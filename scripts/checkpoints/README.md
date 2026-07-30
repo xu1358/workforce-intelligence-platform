@@ -28,6 +28,11 @@ Python and SQL files.
 Checkpoint 64 audits subgroup allocation with the exact frozen expected-value
 policy and executes Notebook 35.
 
-The newest journal is `run_checkpoint65.ps1`. It quantifies temporal
+Checkpoint 65 is `run_checkpoint65.ps1`. It quantifies temporal
 base-rate drift and prior-probability shift risk, executes Notebook 36, and
 then runs the complete quality suite without recalibrating on the final test.
+
+Checkpoint 66 is `run_checkpoint66.ps1`. It replaces the missing Version 2
+exploratory evidence, re-tests performance-history missingness on training
+data, audits department continuity and location reconstruction, executes
+Notebooks 37–38, and then runs the complete quality suite.

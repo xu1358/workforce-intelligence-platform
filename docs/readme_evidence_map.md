@@ -22,6 +22,9 @@ measurements from a real employer.
 | Sigmoid calibration selected | `data/processed/retention_calibration_selection.csv` | 42 | Notebook 2 and `docs/calibration_analysis.md` |
 | Full-population base rates rise 9.62% → 10.42% → 11.91%, a 23.74% relative increase | `data/processed/temporal_prior_shift/temporal_base_rate_summary.csv` | 65 | Notebook 36 and `docs/temporal_prior_shift.md` |
 | Final-test mean probability 11.02% versus 12.09% observed, a −1.07 percentage-point gap | `data/processed/temporal_prior_shift/calibration_shift_summary.csv` | 65 | Notebook 36 and `docs/temporal_prior_shift.md` |
+| Version 2 EDA covers 16,673 temporal rows and 7,745 unique employees | `data/processed/v2_exploratory_analysis/dataset_profile.csv` | 66 | Notebook 37 and `docs/v2_exploratory_analysis.md` |
+| Version 2 training review-missingness is 9.81% versus 9.23%, not the V1 15.07% versus 6.36% | `data/processed/v2_exploratory_analysis/v1_v2_missingness_comparison.csv` | 66 | Notebook 37 and `docs/v2_exploratory_analysis.md` |
+| All 486 transfer events are location-semantic and 86 historical rows are reconstructed away from current location | `data/processed/v2_department_history/department_history_summary.csv` | 66 | Notebook 38 and `docs/v2_department_history.md` |
 | Final-test PR-AUC 0.1710, ROC-AUC 0.6061, and Brier 0.1048 | `data/processed/retention_final_test_model_metrics.csv` | 46 | Notebook 2 and `docs/retention_policy_analysis.md` |
 | Top-decile precision 19.85%, capture 16.44%, and lift 1.64 | `data/processed/retention_final_test_model_metrics.csv` | 46 | Notebook 2 |
 | Frozen 700-person, $1.75 million expected-value policy | `data/processed/retention_policy_decision.csv` | 46 | Notebook 3 and `docs/retention_policy_analysis.md` |
@@ -74,6 +77,14 @@ The final aggregate gap is −1.07 percentage points. This is documented as
 prior-probability shift risk, not proof of pure label shift. The audit applies
 no test-period probability correction, model change, policy change, or
 dashboard change.
+
+### Version 2 exploratory and history evidence
+
+Checkpoint 66 makes the current temporal data—not Version 1—the authoritative
+EDA population. Outcome relationships are restricted to the training
+snapshot, while validation and final-test rows are profiled structurally only.
+The paired history audit is target-free and distinguishes immutable department
+assignment from dated location transfer reconstruction.
 
 ### Economic values
 
@@ -218,4 +229,11 @@ audit, executes Notebook 36, and runs the complete quality suite:
 
 ```powershell
 .\scripts\checkpoints\run_checkpoint65.ps1
+```
+
+Checkpoint 66 reproduces the Version 2 exploratory and history-attribution
+audits, executes Notebooks 37–38, and runs the complete quality suite:
+
+```powershell
+.\scripts\checkpoints\run_checkpoint66.ps1
 ```

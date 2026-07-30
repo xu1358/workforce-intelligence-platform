@@ -27,6 +27,13 @@ calibration transport. Tests reproduce the period-rate arithmetic, require
 qualified prior-shift terminology, and prohibit final-test recalibration or
 changes to the selected model, policy, and dashboard probabilities.
 
+Checkpoint 66 adds regression coverage for authoritative Version 2
+exploration and assignment history. Tests keep validation and final-test
+outcomes outside EDA, prevent the Version 1 missingness result from being
+presented as Version 2, verify department continuity and transfer semantics,
+require aggregate target-free history outputs, and preserve executed
+Notebooks 37–38.
+
 ## Quality Gates
 
 The local and GitHub workflows run the same four gates in the same order:

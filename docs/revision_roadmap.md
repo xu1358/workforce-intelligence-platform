@@ -104,6 +104,9 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 65:** Quantify temporal base-rate drift, document
   prior-probability shift risk and calibration transport, and preserve the
   no-final-test-recalibration boundary.
+- **Checkpoint 66:** Replace Version 1-only exploratory evidence with
+  training-safe Version 2 EDA, re-test performance-history missingness, and
+  audit department continuity plus dated location reconstruction.
 
 ## Optional Advanced Extensions
 
