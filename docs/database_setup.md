@@ -117,3 +117,24 @@ Additional SQL validation queries are stored in:
 `sql/validate_loaded_data.sql`
 
 At the end of Checkpoint 18, all twelve PostgreSQL tables contain the generated synthetic data.
+
+## Version 2 analytical path
+
+Checkpoint 62 makes PostgreSQL part of the primary Version 2 pipeline rather
+than a detached ingestion exercise. The committed SQL file
+`sql/create_v2_analytics_views.sql` creates eight least-privilege views for the
+temporal retention builder.
+
+Run the focused database path with:
+
+```bash
+python scripts/run_project.py postgres
+```
+
+This command tests the connection, creates and validates the schema, reloads
+all twelve tables, creates the Version 2 views, builds the temporal datasets
+from PostgreSQL, and verifies database/CSV content parity. The temporal output
+hashes must remain identical to the frozen file-backed outputs.
+
+See `docs/v2_postgresql_integration.md` for the view inventory, pipeline
+sequence, validation evidence, and limitations.

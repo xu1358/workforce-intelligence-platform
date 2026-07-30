@@ -11,6 +11,7 @@ scripts_guide: scripts/README.md
 commands:
   - quality
   - validate
+  - postgres
   - pipeline
   - dashboard
   - notebooks
@@ -35,8 +36,14 @@ quality_gates:
 
 checkpoint_history:
   first: 36
-  last: 61
-  expected_count: 26
+  last: 62
+  expected_count: 27
+
+postgresql_v2_contract:
+  preparation_steps: 6
+  builder_source: postgresql
+  parity_validator: src/validate_v2_postgresql_integration.py
+  csv_fallback_flag: --skip-postgres
 
 expected_supporting_notebooks: 12
 

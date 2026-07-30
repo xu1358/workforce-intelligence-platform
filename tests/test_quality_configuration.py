@@ -92,6 +92,7 @@ def test_workflow_runs_compile_lint_format_and_tests(
     assert "ruff check src dashboard tests" in commands
     assert "ruff format --check tests" in commands
     assert "pytest -q" in commands
+    assert "run_project.py --dry-run postgres" in commands
 
 
 def test_local_runner_matches_github_quality_gates(

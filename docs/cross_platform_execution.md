@@ -34,6 +34,7 @@ separators.
 | --- | --- |
 | `quality` | Dependency validation, Markdown checks, compilation, Ruff, and pytest |
 | `validate` | Quality gates plus notebook and README validation |
+| `postgres` | Load PostgreSQL, build Version 2 temporal data from SQL views, and validate parity |
 | `pipeline` | Complete Version 2 generation, modeling, database, policy, and portfolio pipeline |
 | `dashboard` | Launch the Streamlit dashboard |
 | `notebooks` | Execute and validate the twelve supporting notebooks |
@@ -48,8 +49,14 @@ python scripts/run_project.py pipeline --help
 
 ## Pipeline Controls
 
-The default `pipeline` command preserves the previous complete end-to-end
-behavior. Optional flags allow a reviewer to narrow infrastructure work:
+The default `pipeline` prepares PostgreSQL before Version 2 modeling and builds
+the temporal dataset from eight analytical views. The focused command is:
+
+```bash
+python scripts/run_project.py postgres
+```
+
+Optional flags allow a reviewer to narrow infrastructure work:
 
 ```bash
 python scripts/run_project.py pipeline --skip-data-generation
@@ -91,9 +98,10 @@ python -m pip install "pip==26.0.1" "setuptools==83.0.0" "wheel==0.47.0"
 python -m pip install --no-build-isolation --require-hashes -r requirements-lock.txt
 ```
 
-The database stages still require a reachable PostgreSQL instance and a local
-`.env` file. A reviewer without PostgreSQL can inspect or run the file-based
-analytical path with `--skip-postgres`.
+The database stages require a reachable PostgreSQL instance and a local `.env`
+file. A reviewer without PostgreSQL can run the explicit file-based fallback
+with `--skip-postgres`; that path is parity-tested against the primary
+PostgreSQL source contract.
 
 ## Windows Compatibility
 
@@ -116,14 +124,16 @@ choose among two dozen primary-looking runners.
 
 ## Validation
 
-Checkpoint 59 verifies:
+The runner validation verifies:
 
-- All six commands are exposed.
-- Default pipeline stages match the previous Version 2 orchestration.
+- All seven commands are exposed.
+- PostgreSQL preparation occurs before the Version 2 temporal build.
+- The primary temporal builder receives `--source postgresql`.
+- The `--skip-postgres` path receives `--source csv`.
 - Skip flags remove only their intended stage groups.
 - No shell operators or shell executables are used.
 - Twelve supporting notebooks come from the committed manifest.
-- Twenty-six checkpoint runners are archived outside the scripts root.
+- Twenty-seven checkpoint runners are archived outside the scripts root.
 - Archived PowerShell runners resolve the repository root from their new
   two-level location.
 - The Windows wrapper delegates to the Python runner.

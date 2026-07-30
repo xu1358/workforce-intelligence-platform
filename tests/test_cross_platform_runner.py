@@ -13,7 +13,9 @@ from scripts.run_project import (
     EXTERNAL_BENCHMARK_STEPS,
     POSTGRES_STEPS,
     QUALITY_STEPS,
+    V2_CSV_DATASET_STEP,
     VERSION_2_MODELING_STEPS,
+    VERSION_2_ANALYSIS_STEPS,
     build_parser,
     build_pipeline_steps,
     notebook_steps,
@@ -60,8 +62,8 @@ def test_default_pipeline_contains_every_version_2_stage() -> None:
     expected = (
         *QUALITY_STEPS,
         *DATA_GENERATION_STEPS,
-        *VERSION_2_MODELING_STEPS,
         *POSTGRES_STEPS,
+        *VERSION_2_MODELING_STEPS,
         *CURRENT_DELIVERABLE_STEPS,
         *EXTERNAL_BENCHMARK_STEPS,
     )
@@ -82,7 +84,8 @@ def test_pipeline_options_remove_only_requested_stage_groups() -> None:
     steps = build_pipeline_steps(args)
 
     assert steps == [
-        *VERSION_2_MODELING_STEPS,
+        V2_CSV_DATASET_STEP,
+        *VERSION_2_ANALYSIS_STEPS,
         *CURRENT_DELIVERABLE_STEPS,
     ]
 
@@ -93,8 +96,9 @@ def test_runner_commands_use_active_python_without_shell_syntax() -> None:
     all_steps = (
         *QUALITY_STEPS,
         *DATA_GENERATION_STEPS,
-        *VERSION_2_MODELING_STEPS,
         *POSTGRES_STEPS,
+        V2_CSV_DATASET_STEP,
+        *VERSION_2_MODELING_STEPS,
         *CURRENT_DELIVERABLE_STEPS,
         *EXTERNAL_BENCHMARK_STEPS,
     )
@@ -145,7 +149,7 @@ def test_archived_powershell_runners_resolve_repository_root(
         archive / "execute_supporting_notebooks.ps1",
     ]
 
-    assert len(paths) == 27
+    assert len(paths) == 28
     for path in paths:
         content = path.read_text(encoding="utf-8")
         assert "$ScriptsDirectory = Split-Path -Parent $PSScriptRoot" in content

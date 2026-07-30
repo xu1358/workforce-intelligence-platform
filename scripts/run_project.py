@@ -26,12 +26,20 @@ class Step:
     command: tuple[str, ...]
 
 
-def python_script(name: str, relative_path: str) -> Step:
+def python_script(
+    name: str,
+    relative_path: str,
+    *arguments: str,
+) -> Step:
     """Create a step that runs one repository Python script."""
 
     return Step(
         name=name,
-        command=(sys.executable, str(PROJECT_ROOT / relative_path)),
+        command=(
+            sys.executable,
+            str(PROJECT_ROOT / relative_path),
+            *arguments,
+        ),
     )
 
 
@@ -115,11 +123,26 @@ DATA_GENERATION_STEPS = (
     python_script("Generate applications", "src/generate_applications.py"),
 )
 
-VERSION_2_MODELING_STEPS = (
-    python_script(
-        "Build multi-snapshot temporal datasets",
-        "src/build_multi_snapshot_retention_dataset.py",
-    ),
+V2_CSV_DATASET_STEP = python_script(
+    "Build multi-snapshot temporal datasets from CSV",
+    "src/build_multi_snapshot_retention_dataset.py",
+    "--source",
+    "csv",
+)
+
+V2_POSTGRES_DATASET_STEP = python_script(
+    "Build multi-snapshot temporal datasets from PostgreSQL",
+    "src/build_multi_snapshot_retention_dataset.py",
+    "--source",
+    "postgresql",
+)
+
+V2_POSTGRES_VALIDATION_STEP = python_script(
+    "Validate Version 2 PostgreSQL source parity",
+    "src/validate_v2_postgresql_integration.py",
+)
+
+VERSION_2_ANALYSIS_STEPS = (
     python_script(
         "Diagnose feature redundancy and stability",
         "src/diagnose_feature_redundancy.py",
@@ -166,6 +189,16 @@ POSTGRES_STEPS = (
         "Validate PostgreSQL data load",
         "src/validate_database_load.py",
     ),
+    python_script(
+        "Create Version 2 PostgreSQL analytical views",
+        "src/create_v2_analytics_views.py",
+    ),
+)
+
+VERSION_2_MODELING_STEPS = (
+    V2_POSTGRES_DATASET_STEP,
+    V2_POSTGRES_VALIDATION_STEP,
+    *VERSION_2_ANALYSIS_STEPS,
 )
 
 LEGACY_VERSION_1_STEPS = (
@@ -276,10 +309,12 @@ def build_pipeline_steps(args: argparse.Namespace) -> list[Step]:
     if not args.skip_data_generation:
         steps.extend(DATA_GENERATION_STEPS)
 
-    steps.extend(VERSION_2_MODELING_STEPS)
-
     if not args.skip_postgres:
         steps.extend(POSTGRES_STEPS)
+        steps.extend(VERSION_2_MODELING_STEPS)
+    else:
+        steps.append(V2_CSV_DATASET_STEP)
+        steps.extend(VERSION_2_ANALYSIS_STEPS)
     if args.include_legacy_v1:
         steps.extend(LEGACY_VERSION_1_STEPS)
 
@@ -387,6 +422,13 @@ def build_parser() -> argparse.ArgumentParser:
         "validate",
         help="Run quality gates plus notebook and README validation.",
     )
+    subparsers.add_parser(
+        "postgres",
+        help=(
+            "Load PostgreSQL, build Version 2 temporal data from analytical "
+            "views, and validate CSV/database parity."
+        ),
+    )
 
     pipeline = subparsers.add_parser(
         "pipeline",
@@ -431,6 +473,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         elif args.command == "validate":
             run_steps(
                 (*QUALITY_STEPS, *PORTFOLIO_VALIDATION_STEPS),
+                dry_run=args.dry_run,
+            )
+        elif args.command == "postgres":
+            run_steps(
+                (
+                    *POSTGRES_STEPS,
+                    V2_POSTGRES_DATASET_STEP,
+                    V2_POSTGRES_VALIDATION_STEP,
+                ),
                 dry_run=args.dry_run,
             )
         elif args.command == "pipeline":

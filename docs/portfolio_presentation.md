@@ -19,7 +19,8 @@ The project uses entirely synthetic employee and candidate data.
 - Generated approximately 10,000 synthetic employees and 40,000 candidates.
 - Simulated six enterprise HR source systems.
 - Designed and populated a 12-table PostgreSQL relational schema.
-- Built automated CSV-to-PostgreSQL ingestion and validation pipelines.
+- Built automated CSV-to-PostgreSQL ingestion, analytical views, and
+  content-parity validation.
 - Developed SQL analytics for workforce, turnover, recruiting, compensation, performance, and training.
 - Created a leakage-aware employee retention modeling dataset.
 - Compared Logistic Regression, Random Forest, and Gradient Boosting.
@@ -85,9 +86,9 @@ Raw CSV files
         ↓
 PostgreSQL database
         ↓
-SQL analytics
+Version 2 SQL analytical views
         ↓
-Retention modeling dataset
+Point-in-time retention dataset
         ↓
 Machine-learning models
         ↓
@@ -97,3 +98,7 @@ Dashboard data layer
         ↓
 Streamlit dashboard
 ```
+
+The default Version 2 pipeline queries PostgreSQL before model development.
+The CSV path remains an explicit fallback, and canonical hashes require both
+source paths and both temporal output files to reconcile exactly.

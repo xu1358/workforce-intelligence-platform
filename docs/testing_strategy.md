@@ -344,6 +344,7 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `tests/test_cross_platform_runner.py` | Tests portable commands, stage parity, archive layout, and wrapper delegation |
 | `tests/test_hazard_configuration_contract.py` | Tests complete simulation-key wiring, behavior, and governance |
 | `tests/test_generator_signal_governance.py` | Tests generator/model separation, chronology, public evidence, and private-note exclusion |
+| `tests/test_v2_postgresql_integration.py` | Tests V2 analytical views, least-privilege projections, type normalization, pipeline order, and CSV fallback |
 | `scripts/checkpoints/run_checkpoint49.ps1` | Runs the isolated Checkpoint 49 suite |
 | `scripts/checkpoints/run_checkpoint53.ps1` | Runs the verified external benchmark and complete suite |
 | `scripts/checkpoints/run_checkpoint54.ps1` | Runs aggregate explanation and grouped stability validation |
@@ -356,6 +357,7 @@ the committed Version 2 story and its safeguards remain reproducible.
 | `scripts/checkpoints/run_checkpoint59.ps1` | Applies and validates the runner reorganization on Windows |
 | `scripts/checkpoints/run_checkpoint60.ps1` | Validates executable hazard settings and the complete quality suite |
 | `scripts/checkpoints/run_checkpoint61.ps1` | Validates generator-signal governance and the complete quality suite |
+| `scripts/checkpoints/run_checkpoint62.ps1` | Builds Version 2 from PostgreSQL, validates source/output parity, and runs the complete quality suite |
 | `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `requirements.txt` | Pins every direct dependency |
 | `requirements-lock.txt` | Pins and hashes every resolved distribution |
@@ -433,6 +435,20 @@ post-test retuning.
 
 The public methodology is tested for essential chronology and the absence of
 private first-person response markers.
+
+## Version 2 PostgreSQL Integration Contracts
+
+Checkpoint 62 moves PostgreSQL ahead of the temporal builder in the default
+pipeline. Tests require eight explicit analytical views, exclude direct names
+and unused identifiers from the query boundary, normalize database and CSV
+types identically, and ensure `--skip-postgres` is the only route to the CSV
+fallback.
+
+The live integration validator compares row counts, column contracts, primary
+keys, and canonical content hashes across all eight sources. It then requires
+the PostgreSQL-built historical and current temporal files to match the frozen
+row counts, widths, and SHA-256 fingerprints before downstream analysis can
+continue.
 
 ## Limitations
 

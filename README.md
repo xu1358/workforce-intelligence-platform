@@ -528,14 +528,22 @@ The real `.env` file is ignored by Git.
 ## Reproduce the Project
 
 The complete pipeline generates the synthetic data, validates Version 2,
-loads PostgreSQL, fits and evaluates the models, freezes and tests the policy,
-builds the current dashboard layer, and validates the portfolio notebooks and
-README. It also explains the current model, checks explanation stability, and
-analyzes censoring-aware employee survival. It also downloads, verifies, and
-runs the isolated IBM benchmark.
+loads PostgreSQL, creates least-privilege Version 2 analytical views, and
+builds the temporal modeling data by querying those views. It then verifies
+database/CSV content parity before fitting and evaluating models, freezing and
+testing the policy, building the current dashboard layer, and validating the
+portfolio. It also explains the current model, checks explanation stability,
+analyzes censoring-aware employee survival, and runs the isolated IBM
+benchmark.
 
 ```bash
 python scripts/run_project.py pipeline
+```
+
+Run only the PostgreSQL ingestion, Version 2 temporal build, and parity audit:
+
+```bash
+python scripts/run_project.py postgres
 ```
 
 The full run requires a configured local PostgreSQL database. To reuse
@@ -545,9 +553,10 @@ existing generated CSV files:
 python scripts/run_project.py pipeline --skip-data-generation
 ```
 
-The legacy Version 1 modeling path is disabled by default to protect the
-Version 2 analytical boundary. A reviewer without PostgreSQL can inspect the
-file-based analytical path with `--skip-postgres`. See the
+The legacy Version 1 modeling path is disabled by default. PostgreSQL is the
+primary Version 2 source whenever database stages are enabled. A reviewer
+without PostgreSQL can deliberately use the equivalent CSV fallback with
+`--skip-postgres`. See the
 [cross-platform execution guide](docs/cross_platform_execution.md) for all
 commands and options.
 
@@ -586,6 +595,7 @@ They are no longer the primary project interface. See
 | --- | --- |
 | Architecture | [System architecture](docs/architecture.md) |
 | PostgreSQL | [Database setup](docs/database_setup.md) |
+| V2 database path | [PostgreSQL integration and parity](docs/v2_postgresql_integration.md) |
 | SQL metrics | [Analytics definitions](docs/analytics.md) |
 | Version 2 data | [V1 versus V2 comparison](docs/v1_v2_data_comparison.md) |
 | Hazard configuration | [Executable simulation contract](docs/hazard_configuration_contract.md) |

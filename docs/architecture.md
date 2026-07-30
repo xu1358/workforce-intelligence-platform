@@ -243,6 +243,19 @@ Database credentials are stored locally in:
 
 The `.env` file is excluded from Git.
 
+The primary Version 2 pipeline now queries PostgreSQL before model
+development. Eight least-privilege analytical views expose only the fields
+required by the temporal builder:
+
+```text
+sql/create_v2_analytics_views.sql
+src/v2_data_access.py
+```
+
+The default runner loads the normalized tables, creates these views, builds
+the historical and current temporal datasets from PostgreSQL, and validates
+canonical content hashes against the explicit CSV fallback.
+
 ---
 
 ## 7. Database Loading Pipeline
@@ -490,11 +503,12 @@ data/processed/
 
 This improves data-pipeline organization.
 
-### Separate database analytics and machine learning
+### Connect database analytics to machine learning
 
-SQL is used for relational workforce analytics.
-
-Python and scikit-learn are used for predictive modeling.
+SQL defines relational constraints and least-privilege analytical views.
+Python queries those views, constructs leakage-safe point-in-time features,
+and passes the resulting temporal datasets to scikit-learn. Source-table and
+final-output hashes ensure that the PostgreSQL and CSV paths do not drift.
 
 ### Separate dashboard preparation and presentation
 

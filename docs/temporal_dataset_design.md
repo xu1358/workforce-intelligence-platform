@@ -149,6 +149,7 @@ Validation artifacts include:
 - `panel_summary.csv`
 - `feature_source_cutoffs.csv`
 - `dataset_fingerprints.csv`
+- `source_provenance.csv`
 
 The generated CSV files remain excluded from Git because they can be
 reproduced from the committed code and configuration.
@@ -157,14 +158,21 @@ reproduced from the committed code and configuration.
 
 ```text
 config/temporal_snapshots.yaml
+config/v2_postgresql_source.yaml
 src/build_multi_snapshot_retention_dataset.py
+src/v2_data_access.py
+src/validate_v2_postgresql_integration.py
+sql/create_v2_analytics_views.sql
 sql/retention_modeling_multi_snapshot.sql
 scripts/checkpoints/run_checkpoint38.ps1
 notebooks/21_temporal_dataset_validation.ipynb
 ```
 
-The Python implementation is the reproducible file-output path. The SQL
-file provides an auditable PostgreSQL version of the same point-in-time
+The default end-to-end pipeline queries eight PostgreSQL analytical views
+through the Python data-access boundary. The same builder retains an explicit
+CSV fallback, and the integration audit requires canonical source hashes and
+final temporal-file hashes to match across paths. The multi-snapshot SQL file
+also provides an auditable reference implementation of the point-in-time
 eligibility, feature, and target logic.
 
 ## Validation results

@@ -250,7 +250,9 @@ checks that archived PowerShell runners resolve the repository root from
 their new directory. Checkpoint 61 prevents generator-signal acceptance
 language from being confused with model selection, validates the chronology
 through the unchanged final-test result, and keeps private first-person notes
-outside the public repository.
+outside the public repository. Checkpoint 62 adds database-view, source-parity,
+pipeline-order, least-privilege projection, and frozen-output fingerprint
+contracts for the primary PostgreSQL-backed Version 2 path.
 
 ## End-to-End Integration
 
@@ -287,6 +289,11 @@ thin Windows wrapper around this canonical Python command.
 | `scripts/run_project.py` | Runs quality, validation, pipeline, dashboard, and notebooks across platforms |
 | `src/validate_cross_platform_runner.py` | Reports command, stage, path, CI, and governance checks |
 | `tests/test_cross_platform_runner.py` | Tests stage parity, skip flags, paths, and script organization |
+| `config/v2_postgresql_source.yaml` | Defines Version 2 views, source parity, output fingerprints, and governance |
+| `src/v2_data_access.py` | Implements CSV and PostgreSQL source backends |
+| `src/validate_v2_postgresql_integration.py` | Reconciles database sources and temporal outputs |
+| `tests/test_v2_postgresql_integration.py` | Tests view, type, runner, and fallback contracts |
+| `scripts/checkpoints/run_checkpoint62.ps1` | Runs live PostgreSQL integration and complete quality gates |
 | `scripts/checkpoints/run_checkpoint50.ps1` | Reproduces all quality gates locally |
 | `scripts/run_end_to_end.ps1` | Maps Windows switches to the canonical Python pipeline |
 | `tests/test_quality_configuration.py` | Tests local and GitHub quality contracts |

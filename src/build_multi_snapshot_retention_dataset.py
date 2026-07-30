@@ -8,17 +8,20 @@ deliberately contains no known future outcome.
 
 from __future__ import annotations
 
+import argparse
 from hashlib import sha256
 from pathlib import Path
+from typing import Sequence
 from typing import Any
 
 import numpy as np
 import pandas as pd
 import yaml
 
+from v2_data_access import V2DataSource
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-RAW_DATA_DIR = PROJECT_ROOT / "data" / "raw"
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 VALIDATION_DIR = PROCESSED_DIR / "temporal_dataset_validation"
 CONFIG_PATH = PROJECT_ROOT / "config" / "temporal_snapshots.yaml"
@@ -30,14 +33,6 @@ HISTORICAL_OUTPUT = PROCESSED_DIR / "retention_multi_snapshot.csv"
 CURRENT_OUTPUT = (
     PROCESSED_DIR / "current_active_scoring_population.csv"
 )
-
-DATE_COLUMNS = {
-    "employees.csv": ["hire_date", "termination_date"],
-    "compensation_history.csv": ["effective_date"],
-    "performance_reviews.csv": ["review_date"],
-    "training_records.csv": ["start_date", "completion_date"],
-    "employee_events.csv": ["event_date"],
-}
 
 MODEL_COLUMNS = [
     "employee_id",
@@ -110,22 +105,6 @@ def load_yaml(path: Path) -> dict[str, Any]:
 
     with path.open(encoding="utf-8") as handle:
         return yaml.safe_load(handle)
-
-
-def load_table(filename: str) -> pd.DataFrame:
-    """Load one raw table and parse its known date columns."""
-
-    path = RAW_DATA_DIR / filename
-    if not path.exists():
-        raise FileNotFoundError(
-            f"Missing {filename}. Run Checkpoint 37 first."
-        )
-
-    frame = pd.read_csv(path)
-    for column in DATE_COLUMNS.get(filename, []):
-        frame[column] = pd.to_datetime(frame[column], errors="coerce")
-
-    return frame
 
 
 def latest_before(
@@ -1136,6 +1115,7 @@ def save_outputs(
     validation_table: pd.DataFrame,
     snapshot_summary: pd.DataFrame,
     panel_summary: pd.DataFrame,
+    source_provenance: pd.DataFrame,
 ) -> None:
     """Save modeling datasets and validation artifacts."""
 
@@ -1150,6 +1130,7 @@ def save_outputs(
         "snapshot_summary.csv": snapshot_summary,
         "panel_summary.csv": panel_summary,
         "feature_source_cutoffs.csv": cutoffs,
+        "source_provenance.csv": source_provenance,
     }
     for filename, frame in outputs.items():
         frame.to_csv(VALIDATION_DIR / filename, index=False)
@@ -1174,22 +1155,46 @@ def save_outputs(
     )
 
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
+    """Create the temporal-dataset source selection interface."""
+
+    parser = argparse.ArgumentParser(
+        description=(
+            "Build leakage-safe Version 2 temporal datasets from CSV or "
+            "PostgreSQL analytical views."
+        )
+    )
+    parser.add_argument(
+        "--source",
+        choices=("csv", "postgresql"),
+        default="csv",
+        help=(
+            "Input backend. The portable full pipeline selects PostgreSQL "
+            "unless --skip-postgres is used."
+        ),
+    )
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> None:
     """Build, validate, and save all temporal datasets."""
 
+    args = build_parser().parse_args(argv)
     config = load_yaml(CONFIG_PATH)
     hazard_config = load_yaml(HAZARD_CONFIG_PATH)
     simulation_as_of_date = pd.Timestamp(
         hazard_config["simulation"]["as_of_date"]
     )
-    employees = load_table("employees.csv")
-    departments = load_table("departments.csv")
-    locations = load_table("locations.csv")
-    job_roles = load_table("job_roles.csv")
-    compensation = load_table("compensation_history.csv")
-    performance = load_table("performance_reviews.csv")
-    training = load_table("training_records.csv")
-    events = load_table("employee_events.csv")
+    with V2DataSource(args.source, project_root=PROJECT_ROOT) as source:
+        employees = source.load_table("employees.csv")
+        departments = source.load_table("departments.csv")
+        locations = source.load_table("locations.csv")
+        job_roles = source.load_table("job_roles.csv")
+        compensation = source.load_table("compensation_history.csv")
+        performance = source.load_table("performance_reviews.csv")
+        training = source.load_table("training_records.csv")
+        events = source.load_table("employee_events.csv")
+        source_provenance = source.provenance_frame()
 
     minimum_tenure_days = int(
         config["eligibility"]["minimum_tenure_days"]
@@ -1269,8 +1274,11 @@ def main() -> None:
         validation_table,
         snapshot_summary,
         panel_summary,
+        source_provenance,
     )
 
+    print(f"\nVERSION 2 SOURCE BACKEND: {args.source.upper()}")
+    print(source_provenance.to_string(index=False))
     print("\nTEMPORAL DATASET VALIDATION")
     print(validation_table.to_string(index=False))
     print("\nHISTORICAL SNAPSHOT SUMMARY")

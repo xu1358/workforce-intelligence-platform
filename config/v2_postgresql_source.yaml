@@ -1,0 +1,81 @@
+version: "1.0"
+description: >
+  Executable contract for sourcing the Version 2 temporal retention dataset
+  from PostgreSQL while retaining an explicit CSV fallback.
+
+database:
+  env_file: .env
+  schema: public
+  view_sql: sql/create_v2_analytics_views.sql
+  connection_environment:
+    host: DB_HOST
+    port: DB_PORT
+    dbname: DB_NAME
+    user: DB_USER
+    password: DB_PASSWORD
+
+source_tables:
+  employees.csv:
+    relation: analytics_v2_employees
+    primary_key: employee_id
+  departments.csv:
+    relation: analytics_v2_departments
+    primary_key: department_id
+  locations.csv:
+    relation: analytics_v2_locations
+    primary_key: location_id
+  job_roles.csv:
+    relation: analytics_v2_job_roles
+    primary_key: job_role_id
+  compensation_history.csv:
+    relation: analytics_v2_compensation_history
+    primary_key: compensation_id
+  performance_reviews.csv:
+    relation: analytics_v2_performance_reviews
+    primary_key: review_id
+  training_records.csv:
+    relation: analytics_v2_training_records
+    primary_key: training_record_id
+  employee_events.csv:
+    relation: analytics_v2_employee_events
+    primary_key: event_id
+
+pipeline:
+  default_when_postgresql_enabled: postgresql
+  explicit_fallback_when_postgresql_skipped: csv
+  postgres_builder_arguments:
+    - "--source"
+    - "postgresql"
+  csv_builder_arguments:
+    - "--source"
+    - "csv"
+
+expected_temporal_outputs:
+  data/processed/retention_multi_snapshot.csv:
+    rows: 16673
+    columns: 52
+    canonical_content_sha256: 6db69525669a82b72ef64439b7744abe5dfc0a2ad3e54b4d311db8c01a141358
+  data/processed/current_active_scoring_population.csv:
+    rows: 7409
+    columns: 52
+    canonical_content_sha256: fce85e6e870f99156374d12d58b2a64006ce30ccc7bb2f472d6990ce289beef4
+
+validation:
+  expected_source_table_count: 8
+  require_column_order_parity: true
+  require_row_count_parity: true
+  require_primary_key_uniqueness: true
+  require_content_fingerprint_parity: true
+  normalize_csv_serialization_before_output_hashing: true
+  require_postgresql_provenance: true
+
+governance:
+  changes_synthetic_records: false
+  changes_temporal_dataset_values: false
+  changes_model_results: false
+  reopens_final_test: false
+  changes_frozen_policy: false
+  changes_dashboard_data: false
+  database_integration_only: true
+
+output_directory: data/processed/v2_postgresql_integration

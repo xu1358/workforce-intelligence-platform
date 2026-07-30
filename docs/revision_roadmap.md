@@ -87,10 +87,13 @@ so the roadmap matches the implemented Git history.
 - **Checkpoint 61:** Separate the synthetic-generator signal acceptance check
   from model performance and document the design chronology without reopening
   any analytical result.
+- **Checkpoint 62:** Make PostgreSQL the primary Version 2 temporal-data source,
+  add least-privilege analytical views, and enforce database/CSV and frozen
+  output parity before downstream modeling.
 
 ## Optional Advanced Extensions
 
-- **Checkpoint 62:** Deploy a public demonstration dashboard if a hosted demo
+- **Future option:** Deploy a public demonstration dashboard if a hosted demo
   is later required.
 
 ## Primary Version 2 Decision Question

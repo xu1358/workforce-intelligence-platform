@@ -53,6 +53,7 @@ jobs:
       - name: Validate cross-platform pipeline resolution
         run: |
           python src/validate_cross_platform_runner.py
+          python scripts/run_project.py --dry-run postgres
           python scripts/run_project.py --dry-run pipeline
 
       - name: Compile Python

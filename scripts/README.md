@@ -30,6 +30,13 @@ Run the complete Version 2 pipeline:
 python scripts/run_project.py pipeline
 ```
 
+Load PostgreSQL, build the Version 2 temporal datasets from analytical views,
+and validate database/CSV parity:
+
+```bash
+python scripts/run_project.py postgres
+```
+
 Launch the dashboard:
 
 ```bash
@@ -56,7 +63,7 @@ The `pipeline` command supports:
 | --- | --- |
 | `--skip-quality` | Skip compile, lint, formatting, and tests |
 | `--skip-data-generation` | Reuse existing generated CSV files |
-| `--skip-postgres` | Run the file-based analytical path without PostgreSQL |
+| `--skip-postgres` | Use the parity-tested CSV fallback instead of the primary PostgreSQL source |
 | `--include-legacy-v1` | Rebuild deprecated Version 1 outputs |
 | `--skip-external-benchmark` | Skip the isolated IBM benchmark |
 
