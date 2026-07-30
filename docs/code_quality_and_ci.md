@@ -214,7 +214,7 @@ After the workflow file is committed and pushed:
 1. Open the GitHub repository.
 2. Select the **Actions** tab.
 3. Select **Python quality**.
-4. Open the newest run for `revision-v2`.
+4. Open the newest run for `master`.
 
 A green check means every gate passed.
 

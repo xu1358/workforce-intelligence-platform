@@ -1,6 +1,6 @@
 # Workforce Intelligence and Retention Decision Platform
 
-[![Python quality](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml/badge.svg?branch=revision-v2)](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml)
+[![Python quality](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml/badge.svg?branch=master)](https://github.com/xu1358/workforce-intelligence-platform/actions/workflows/python-quality.yml)
 
 An end-to-end people-analytics portfolio project that converts six fragmented
 synthetic HR systems into a leakage-aware retention model, a budget-constrained
@@ -500,7 +500,6 @@ employee-level review lists.
 ```bash
 git clone https://github.com/xu1358/workforce-intelligence-platform.git
 cd workforce-intelligence-platform
-git checkout revision-v2
 
 python -m venv .venv
 ```
@@ -685,12 +684,15 @@ hashes and validates the installed environment locally and in CI.
 
 ## Version History
 
+- `master` is the current Version 2 portfolio release. It contains the temporal
+  modeling, calibration, fairness, economics, policy, current-state dashboard,
+  PostgreSQL and SQL-validation path, testing, CI, curated portfolio revisions,
+  isolated IBM methodological benchmark, aggregate explanation-stability and
+  survival analyses, salary-allocation equity audit, and deployed-policy
+  fairness audit.
 - `v1.0-portfolio` preserves the completed Version 1 baseline.
-- `revision-v2` contains the temporal modeling, calibration, fairness,
-  economics, policy, current-state dashboard, testing, CI, and curated
-  portfolio revisions, plus the isolated IBM methodological benchmark,
-  aggregate explanation-stability and survival analyses, and a post-policy
-  salary-allocation equity audit with a hashed dependency lock.
+- `revision-v2` is the preserved development branch used to build and validate
+  Version 2 before its release to `master`.
 
 ## Disclaimer
 

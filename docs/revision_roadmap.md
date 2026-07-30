@@ -2,9 +2,14 @@
 
 ## Purpose
 
-Version 1 of the Workforce Intelligence Platform was completed after Checkpoint 30 and preserved with the Git tag `v1.0-portfolio`.
+Version 1 of the Workforce Intelligence Platform was completed after Checkpoint
+30 and remains preserved with the Git tag `v1.0-portfolio`.
 
-Version 2 will strengthen the project's analytical validity, operational usefulness, engineering quality, and portfolio presentation. Development will take place on the `revision-v2` branch so that the completed Version 1 project remains recoverable.
+Version 2 strengthened the project's analytical validity, operational
+usefulness, engineering quality, and portfolio presentation. Development took
+place on the `revision-v2` branch, and the validated Version 2 release is now
+published on `master`. The Version 1 tag remains recoverable independently of
+the current default branch.
 
 ## Revision Principles
 
